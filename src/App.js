@@ -1,10 +1,17 @@
 import React from "react";
+import { AppLoading } from "expo";
 import { StatusBar } from "expo-status-bar";
 
-import { VerifyDetails, CreateAccount, SignIn } from "./screens/auth";
 import AppNavigator from "./navigation";
+import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
 
 export default function App() {
+    const [fontsLoaded] = useFonts({ Lato_400Regular });
+
+    if (!fontsLoaded) {
+        return <AppLoading />;
+    }
+
     return (
         <>
             <StatusBar style="light" />

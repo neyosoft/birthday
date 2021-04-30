@@ -15,9 +15,9 @@ export const Welcome = ({ navigation }) => {
             <View style={styles.buttonWrapper}>
                 <AppButton variant="secondary" label="Sign In" onPress={() => navigation.navigate("SignIn")} />
                 <AppButton
-                    style={styles.btnSeparator}
                     variant="primary"
                     label="Create Account"
+                    style={styles.btnSeparator}
                     onPress={() => navigation.navigate("CreateAccount")}
                 />
             </View>

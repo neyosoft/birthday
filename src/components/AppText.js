@@ -11,6 +11,6 @@ const styles = StyleSheet.create({
     container: {
         fontSize: 15,
         color: "#fff",
-        // fontFamily: "ProximaNova-Regular",
+        fontFamily: "Lato_400Regular",
     },
 });
