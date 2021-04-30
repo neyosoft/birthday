@@ -25,7 +25,12 @@ export const CreateAccount = ({ navigation }) => {
                 <View style={styles.form}>
                     <TextField label="Bank Verification Number" placeholder="221459940304" keyboardType="number-pad" />
 
-                    <AppButton variant="secondary" label="Validate" style={styles.validateBtn} />
+                    <AppButton
+                        label="Validate"
+                        variant="secondary"
+                        style={styles.validateBtn}
+                        onPress={() => navigation.navigate("VerifyDetails")}
+                    />
                 </View>
 
                 <View style={styles.information}>

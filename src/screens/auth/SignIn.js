@@ -2,8 +2,8 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
-import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 import { BackIcon, BarcodeScan, Fingerprint } from "../../../assets/svg";
+import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 
 import { theme } from "../../theme";
 
@@ -37,7 +37,12 @@ export const SignIn = ({ navigation }) => {
                 </View>
                 <View style={styles.buttonWrapper}>
                     <AppButton variant="secondary" label="Sign In" />
-                    <AppButton style={styles.btnSeparator} variant="primary" label="Create Account" />
+                    <AppButton
+                        variant="primary"
+                        label="Create Account"
+                        style={styles.btnSeparator}
+                        onPress={() => navigation.navigate("CreateAccount")}
+                    />
                 </View>
             </ScrollView>
         </Page>

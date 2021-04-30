@@ -7,7 +7,7 @@ import Illustration1 from "../../../assets/images/illustration1.png";
 export const Welcome = ({ navigation }) => {
     return (
         <Page style={styles.container}>
-            <Image source={Illustration1} style={styles.illustration} />
+            <Image source={Illustration1} style={styles.illustration} resizeMode="contain" />
             <View style={styles.textWrapper}>
                 <AppText style={styles.title}>Celebrate with others while celebrating yourself</AppText>
                 <AppText style={styles.description}>Share fun moments with friends and loved ones</AppText>
@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
     },
     illustration: {
+        height: 299,
+        width: 288.75,
         alignSelf: "center",
     },
     textWrapper: {

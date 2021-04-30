@@ -9,7 +9,7 @@ export default function App() {
     const [fontsLoaded] = useFonts({ Lato_400Regular });
 
     if (!fontsLoaded) {
-        return <AppLoading />;
+        return null;
     }
 
     return (

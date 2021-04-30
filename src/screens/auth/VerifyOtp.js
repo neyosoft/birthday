@@ -4,7 +4,7 @@ import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 import { BackIcon } from "../../../assets/svg";
 import { AppText, Page, AppButton, TextField, PasswordField, AutoFillField, DateField } from "../../components";
 
-export const VerifyDetails = ({ navigation }) => {
+export const VerifyOtp = ({ navigation }) => {
     return (
         <Page>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -12,10 +12,10 @@ export const VerifyDetails = ({ navigation }) => {
                     <BackIcon />
                 </TouchableOpacity>
                 <View style={styles.titleRow}>
-                    <AppText style={styles.title}>Verify Details</AppText>
+                    <AppText style={styles.title}>Verify Phone number</AppText>
                 </View>
 
-                <AppText style={styles.welcomeMessage}>Kindly verify the details provided from bvn</AppText>
+                <AppText style={styles.welcomeMessage}>We sent you an OTP code as sms</AppText>
 
                 <View style={styles.form}>
                     <AutoFillField value="Emmanuel" />
@@ -35,18 +35,8 @@ export const VerifyDetails = ({ navigation }) => {
                     <TextField label="Email" style={styles.formGroup} placeholder="Enter email address" />
                     <PasswordField style={styles.formGroup} label="Password" placeholder="Enter password" />
 
-                    <AppButton
-                        variant="secondary"
-                        label="Continue"
-                        style={styles.button}
-                        onPress={() => navigation.navigate("VerifyOtp")}
-                    />
-                    <AppButton
-                        variant="primary"
-                        label="Sign in Instead"
-                        style={styles.button}
-                        onPress={() => navigation.navigate("SignIn")}
-                    />
+                    <AppButton variant="secondary" label="Continue" style={styles.button} />
+                    <AppButton variant="primary" label="Sign in Instead" style={styles.button} />
                 </View>
             </ScrollView>
         </Page>
