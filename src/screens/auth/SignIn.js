@@ -2,16 +2,18 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
-import { AppText, Page, AppButton, TextField } from "../../components";
+import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 import { BackIcon, BarcodeScan, Fingerprint } from "../../../assets/svg";
 
 import { theme } from "../../theme";
 
-export const SignIn = () => {
+export const SignIn = ({ navigation }) => {
     return (
         <Page>
-            <ScrollView>
-                <BackIcon style={styles.backIcon} />
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
+                    <BackIcon />
+                </TouchableOpacity>
                 <View style={styles.titleRow}>
                     <AppText style={styles.title}>Sign In</AppText>
                     <Image source={LockImage} style={styles.lockIcon} />
@@ -20,7 +22,7 @@ export const SignIn = () => {
 
                 <View style={styles.form}>
                     <TextField label="Email Address" placeholder="Enter email address" />
-                    <TextField style={{ marginTop: 20 }} label="Password" placeholder="Enter password" />
+                    <PasswordField style={{ marginTop: 20 }} label="Password" placeholder="Enter password" />
 
                     <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
 

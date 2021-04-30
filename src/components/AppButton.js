@@ -4,27 +4,33 @@ import { View, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform }
 import { theme } from "../theme";
 import { AppText } from "./AppText";
 
-const Touchable = Platform.OS === "ios" ? TouchableOpacity : TouchableNativeFeedback;
-
 export const AppButton = ({ style, textStyle, variant = "primary", label, children, ...rest }) => {
     const buttonStyle = [style, styles.container];
     const buttonTextStyle = [textStyle, styles.label];
 
     if (variant === "primary") {
         buttonStyle.push(styles.primaryBtn);
-
         buttonTextStyle.push(styles.primaryBtnLabel);
     } else if (variant === "secondary") {
         buttonStyle.push(styles.secondaryBtn);
         buttonTextStyle.push(styles.secondaryBtnLabel);
     }
-    return (
-        <View style={buttonStyle}>
-            <Touchable {...rest}>
+
+    if (Platform.OS === "ios") {
+        return (
+            <TouchableOpacity style={buttonStyle} {...rest}>
                 <View>{children ? children : <AppText style={buttonTextStyle}>{label}</AppText>}</View>
-            </Touchable>
-        </View>
-    );
+            </TouchableOpacity>
+        );
+    } else {
+        return (
+            <TouchableNativeFeedback {...rest}>
+                <View style={buttonStyle}>
+                    {children ? children : <AppText style={buttonTextStyle}>{label}</AppText>}
+                </View>
+            </TouchableNativeFeedback>
+        );
+    }
 };
 
 const styles = StyleSheet.create({

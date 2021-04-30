@@ -4,7 +4,7 @@ import { StyleSheet, Image, View } from "react-native";
 import { AppText, Page, AppButton } from "../../components";
 import Illustration1 from "../../../assets/images/illustration1.png";
 
-export const Welcome = () => {
+export const Welcome = ({ navigation }) => {
     return (
         <Page style={styles.container}>
             <Image source={Illustration1} style={styles.illustration} />
@@ -13,8 +13,13 @@ export const Welcome = () => {
                 <AppText style={styles.description}>Share fun moments with friends and loved ones</AppText>
             </View>
             <View style={styles.buttonWrapper}>
-                <AppButton variant="secondary" label="Sign In" />
-                <AppButton style={styles.btnSeparator} variant="primary" label="Create Account" />
+                <AppButton variant="secondary" label="Sign In" onPress={() => navigation.navigate("SignIn")} />
+                <AppButton
+                    style={styles.btnSeparator}
+                    variant="primary"
+                    label="Create Account"
+                    onPress={() => navigation.navigate("CreateAccount")}
+                />
             </View>
         </Page>
     );
@@ -38,12 +43,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     description: {
-        fontSize: 15,
+        fontSize: 13,
         marginTop: 6,
         color: "#A3A2A2",
+        textAlign: "center",
     },
     buttonWrapper: {
-        marginTop: 60,
+        marginTop: 50,
         marginBottom: 15,
     },
     btnSeparator: {

@@ -1,17 +1,19 @@
 import React from "react";
-import { StyleSheet, View, Image, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
 
+import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
-import { BackIcon, BarcodeScan, Fingerprint } from "../../../assets/svg";
 
 import { theme } from "../../theme";
 
-export const CreateAccount = () => {
+export const CreateAccount = ({ navigation }) => {
     return (
         <Page>
-            <ScrollView>
-                <BackIcon style={styles.backIcon} />
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
+                    <BackIcon />
+                </TouchableOpacity>
                 <View style={styles.titleRow}>
                     <AppText style={styles.title}>Create Account</AppText>
                     <Image source={HandIcon} style={styles.lockIcon} />
