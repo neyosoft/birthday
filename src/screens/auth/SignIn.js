@@ -46,9 +46,6 @@ const styles = StyleSheet.create({
     backIcon: {
         marginVertical: 25,
     },
-    illustration: {
-        alignSelf: "center",
-    },
     titleRow: {
         flexDirection: "row",
         alignItems: "center",
