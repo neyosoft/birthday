@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 
+import OTPTextView from "react-native-otp-textinput";
+
+import { theme } from "../../theme";
 import { BackIcon } from "../../../assets/svg";
-import { AppText, Page, AppButton, TextField, PasswordField, AutoFillField, DateField } from "../../components";
+import { AppText, Page } from "../../components";
 
 export const VerifyOtp = ({ navigation }) => {
+    const otpInput = useRef();
+    const [otp, setOtp] = useState("");
+
+    useEffect(() => {
+        if (otp.length === 4) {
+            handleSubmit();
+        }
+    }, [otp]);
+
+    const handleSubmit = () => {
+        console.log("Verifying OTP: ", otp);
+    };
+
     return (
         <Page>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -18,25 +34,23 @@ export const VerifyOtp = ({ navigation }) => {
                 <AppText style={styles.welcomeMessage}>We sent you an OTP code as sms</AppText>
 
                 <View style={styles.form}>
-                    <AutoFillField value="Emmanuel" />
-                    <AutoFillField value="Adeniyi" style={styles.formGroup} />
-                    <DateField
-                        label="Date of Birth"
-                        placeholder="DD - MM - YY"
-                        keyboardType="number-pad"
-                        style={styles.formGroup}
+                    <OTPTextView
+                        ref={otpInput}
+                        inputCount={4}
+                        keyboardType="numeric"
+                        handleTextChange={setOtp}
+                        tintColor={theme.color.secondary}
+                        offTintColor={theme.color.primary}
+                        textInputStyle={styles.roundedTextInput}
+                        containerStyle={styles.textInputContainer}
                     />
-                    <TextField
-                        style={styles.formGroup}
-                        label="Complete the phone number below"
-                        placeholder="0802404 - "
-                        keyboardType="number-pad"
-                    />
-                    <TextField label="Email" style={styles.formGroup} placeholder="Enter email address" />
-                    <PasswordField style={styles.formGroup} label="Password" placeholder="Enter password" />
 
-                    <AppButton variant="secondary" label="Continue" style={styles.button} />
-                    <AppButton variant="primary" label="Sign in Instead" style={styles.button} />
+                    <View style={styles.resendRow}>
+                        <AppText>Didnt’ receive OTP?</AppText>
+                        <TouchableOpacity style={{ marginLeft: 5 }}>
+                            <AppText style={styles.resendTextStyle}>Resend</AppText>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </Page>
@@ -64,10 +78,28 @@ const styles = StyleSheet.create({
     form: {
         marginTop: 30,
     },
-    formGroup: {
-        marginTop: 15,
-    },
     button: {
         marginTop: 20,
+    },
+    textInputContainer: {
+        marginBottom: 20,
+    },
+    roundedTextInput: {
+        width: 75,
+        height: 66,
+        fontSize: 20,
+        borderWidth: 0,
+        color: theme.white,
+        borderBottomWidth: 2,
+        borderRadius: theme.radii.sm,
+        backgroundColor: theme.color.primary,
+    },
+    resendRow: {
+        marginTop: 40,
+        flexDirection: "row",
+        justifyContent: "center",
+    },
+    resendTextStyle: {
+        color: theme.color.yellow,
     },
 });

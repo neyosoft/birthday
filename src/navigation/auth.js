@@ -6,7 +6,7 @@ import { Welcome, SignIn, CreateAccount, VerifyDetails, VerifyOtp } from "../scr
 const Stack = createStackNavigator();
 
 const AuthenticationNavigator = () => (
-    <Stack.Navigator initialRouteName="Welcome" headerMode="VerifyOtp">
+    <Stack.Navigator initialRouteName="VerifyOtp" headerMode="none">
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="VerifyOtp" component={VerifyOtp} />
