@@ -1,13 +1,12 @@
 import React from "react";
 import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 import { theme } from "../../theme";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 
-export const Profile = ({ navigation }) => {
+export const Donation = ({ navigation }) => {
     return (
         <Page>
             <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
@@ -27,35 +26,15 @@ export const Profile = ({ navigation }) => {
                     <AppText style={styles.subtitle}>April, 10</AppText>
                 </View>
                 <View style={styles.separator} />
-                <View style={styles.rowItem}>
-                    <AppText style={styles.subtitle}>Donations</AppText>
-                    <AppText style={styles.subtitleValue}>200</AppText>
-                </View>
-                <View style={styles.separator} />
-                <View style={styles.rowItem}>
-                    <AppText style={styles.subtitle}>Email</AppText>
-                    <AppText style={styles.subtitleValue}>darmieey@gmail.com</AppText>
-                </View>
-                <View style={styles.separator} />
-                <View style={styles.rowItem}>
-                    <AppText style={styles.subtitle}>Phone number</AppText>
-                    <AppText style={styles.subtitleValue}>08024041227</AppText>
-                </View>
-                <View style={styles.separator} />
-                <View style={styles.rowItem}>
-                    <AppText style={styles.subtitle}>Password</AppText>
-                    <AppText style={[styles.subtitleValue, { color: theme.color.yellow }]}>Change</AppText>
-                </View>
-                <View style={styles.separator} />
-                <View style={styles.rowItem}>
-                    <AppText style={styles.subtitle}>About us</AppText>
-                    <Ionicons name="open-outline" size={24} color="#A3A2A2" />
+                <View>
+                    <AppText style={styles.subtitle}>Donations to others</AppText>
+                    <AppText style={styles.subtitleValue}>200 Donations</AppText>
                 </View>
             </View>
 
             <View style={{ flex: 1 }} />
 
-            <AppButton label="Log out" labelStyle={styles.btnLabelStyle} />
+            <AppButton variant="secondary" label="Donate" />
         </Page>
     );
 };
@@ -88,6 +67,7 @@ const styles = StyleSheet.create({
     },
     subtitleValue: {
         color: "#fff",
+        fontSize: 20,
         fontWeight: "700",
     },
     rowItem: {
