@@ -16,7 +16,7 @@ export const CreateAccount = ({ navigation }) => {
                 </TouchableOpacity>
                 <View style={styles.titleRow}>
                     <AppText style={styles.title}>Create Account</AppText>
-                    <Image source={HandIcon} style={styles.lockIcon} />
+                    <Image source={HandIcon} style={styles.titleIcon} />
                 </View>
                 <AppText style={styles.welcomeMessage}>
                     Get celebrated while celebrating others. Kindly provide your bank verification number (BVN)
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
     },
-    lockIcon: {
+    titleIcon: {
         marginLeft: 10,
     },
     welcomeMessage: {

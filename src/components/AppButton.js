@@ -5,7 +5,7 @@ import { theme } from "../theme";
 import { AppText } from "./AppText";
 
 export const AppButton = ({ style, textStyle, variant = "primary", label, children, ...rest }) => {
-    const buttonStyle = [style, styles.container];
+    const buttonStyle = [styles.container, style];
     const buttonTextStyle = [textStyle, styles.label];
 
     if (variant === "primary") {
