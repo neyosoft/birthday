@@ -4,9 +4,9 @@ import { View, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform }
 import { theme } from "../theme";
 import { AppText } from "./AppText";
 
-export const AppButton = ({ style, textStyle, variant = "primary", label, children, ...rest }) => {
+export const AppButton = ({ style, labelStyle, variant = "primary", label, children, ...rest }) => {
     const buttonStyle = [styles.container, style];
-    const buttonTextStyle = [textStyle, styles.label];
+    const buttonTextStyle = [styles.label];
 
     if (variant === "primary") {
         buttonStyle.push(styles.primaryBtn);
@@ -15,6 +15,8 @@ export const AppButton = ({ style, textStyle, variant = "primary", label, childr
         buttonStyle.push(styles.secondaryBtn);
         buttonTextStyle.push(styles.secondaryBtnLabel);
     }
+
+    buttonTextStyle.push(labelStyle);
 
     if (Platform.OS === "ios") {
         return (
