@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { StyleSheet, View, FlatList, Image } from "react-native";
 
 import { theme } from "../../theme";
-import { AppButton, AppText, Page } from "../../components";
+import { AppButton, AppText, Page, TextField, AutoFillField } from "../../components";
 
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
@@ -11,6 +12,8 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 
 export const Dashboard = ({ navigation }) => {
+    const bottomSheetRef = useRef();
+
     return (
         <Page>
             <View style={styles.header}>
@@ -39,7 +42,12 @@ export const Dashboard = ({ navigation }) => {
                     <AppText style={styles.walletBalance}>NGN0.00</AppText>
                 </View>
 
-                <AppButton variant="secondary" label="Withdraw" style={styles.withdrawBtn} />
+                <AppButton
+                    variant="secondary"
+                    label="Withdraw"
+                    style={styles.withdrawBtn}
+                    onPress={() => bottomSheetRef.current.expand()}
+                />
             </View>
 
             <View style={styles.celebrantPanel}>
@@ -60,6 +68,42 @@ export const Dashboard = ({ navigation }) => {
                     }}
                 />
             </View>
+
+            <BottomSheet
+                index={0}
+                ref={bottomSheetRef}
+                snapPoints={[-1, "64%"]}
+                handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
+                backgroundComponent={({ pointerEvents, style }) => (
+                    <View
+                        pointerEvents={pointerEvents}
+                        style={{
+                            borderTopLeftRadius: 30,
+                            borderTopRightRadius: 30,
+                            backgroundColor: theme.backgroundColor,
+                        }}
+                    />
+                )}
+                // enableHandlePanningGesture={false}
+                // enableContentPanningGesture={false}
+                backdropComponent={BottomSheetBackdrop}
+                enableFlashScrollableIndicatorOnExpand={false}>
+                <View style={styles.contentContainer}>
+                    <AppText>Withdraw Funds</AppText>
+
+                    <TextField style={styles.formGroup} label="Amount" />
+                    <TextField style={styles.formGroup} label="Select Bank" />
+                    <TextField style={styles.formGroup} label="Account Number" />
+                    <AutoFillField style={styles.formGroup} value="Obagunwa Emmanuel" />
+
+                    <AppButton
+                        style={styles.formGroup}
+                        variant="secondary"
+                        label="Continue"
+                        onPress={() => bottomSheetRef.current.close()}
+                    />
+                </View>
+            </BottomSheet>
         </Page>
     );
 };
@@ -143,5 +187,15 @@ const styles = StyleSheet.create({
     renderItemText: {
         fontSize: 14,
         marginTop: 10,
+    },
+    formGroup: {
+        marginTop: 20,
+    },
+    contentContainer: {
+        flex: 1,
+        padding: 25,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        backgroundColor: theme.backgroundColor,
     },
 });
