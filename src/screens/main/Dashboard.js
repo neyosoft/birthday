@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import RNPickerSelect from "react-native-picker-select";
-import { Ionicons } from "@expo/vector-icons";
 
 import { theme } from "../../theme";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
@@ -15,7 +15,11 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 
 export const Dashboard = ({ navigation }) => {
+    const cardInputRef = useRef();
     const fundWalletRef = useRef();
+    const confirmOtpRef = useRef();
+    const fundingSuccessfulRef = useRef();
+
     const bottomSheetRef = useRef();
     const confirmWithdrawRef = useRef();
 
@@ -23,8 +27,12 @@ export const Dashboard = ({ navigation }) => {
         <Page>
             <View style={styles.header}>
                 <View style={styles.titleRow}>
-                    <Image source={UserAvatar} style={styles.userIcon} />
-                    <AppText style={styles.title}>Hi, Emmanuel</AppText>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Profile")}
+                        style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Image source={UserAvatar} style={styles.userIcon} />
+                        <AppText style={styles.title}>Hi, Emmanuel</AppText>
+                    </TouchableOpacity>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
                 <TouchableOpacity style={styles.titleRow} onPress={() => fundWalletRef.current.present()}>
@@ -65,10 +73,12 @@ export const Dashboard = ({ navigation }) => {
                     keyExtractor={(_, index) => `index-${index}`}
                     renderItem={() => {
                         return (
-                            <View style={styles.renderItemContainer}>
+                            <TouchableOpacity
+                                style={styles.renderItemContainer}
+                                onPress={() => navigation.navigate("Donation")}>
                                 <Image source={UserOne} />
                                 <AppText style={styles.renderItemText}>Damilola</AppText>
-                            </View>
+                            </TouchableOpacity>
                         );
                     }}
                 />
@@ -80,20 +90,11 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={fundWalletRef}
                     snapPoints={[-1, 310]}
-                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
-                    backgroundComponent={({ pointerEvents }) => (
-                        <View
-                            pointerEvents={pointerEvents}
-                            style={{
-                                borderTopLeftRadius: 30,
-                                borderTopRightRadius: 30,
-                                backgroundColor: theme.backgroundColor,
-                            }}
-                        />
-                    )}
+                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
-                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Fund Wallet</AppText>
@@ -104,7 +105,7 @@ export const Dashboard = ({ navigation }) => {
                                     <AppText>0107724790</AppText>
                                     <AppText style={styles.fundAccountName}>Obagunwa Emmanuel</AppText>
                                 </View>
-                                <View>
+                                <View style={{ alignItems: "flex-end" }}>
                                     <View style={{ flexDirection: "row" }}>
                                         <Image source={CopyIcon} />
                                         <AppText style={styles.fundCopyText}>Tap to copy account number</AppText>
@@ -123,7 +124,103 @@ export const Dashboard = ({ navigation }) => {
                             variant="secondary"
                             style={styles.submitBtn}
                             label="Fund wallet with Bank Card"
-                            onPress={() => fundWalletRef.current.dismiss()}
+                            onPress={() => cardInputRef.current.present()}
+                        />
+                    </View>
+                </BottomSheetModal>
+                <BottomSheetModal
+                    index={1}
+                    ref={cardInputRef}
+                    stackBehavior="push"
+                    snapPoints={[-1, 460]}
+                    handleComponent={HandleComponent}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Fund Wallet</AppText>
+
+                        <TextField style={styles.formGroup} label="Amount" keyboardType="numeric" />
+
+                        <TextField style={styles.formGroup} label="Card Number" keyboardType="numeric" />
+
+                        <View style={styles.cardInputRow}>
+                            <TextField
+                                label="Expiry"
+                                placeholder="MM/YY"
+                                keyboardType="numeric"
+                                style={styles.cardInputRowItem}
+                            />
+
+                            <TextField style={styles.cardInputRowItem} label="CVV" keyboardType="numeric" />
+                        </View>
+
+                        <AppButton
+                            label="Pay"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => confirmOtpRef.current.present()}
+                        />
+                    </View>
+                </BottomSheetModal>
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    ref={confirmOtpRef}
+                    snapPoints={[-1, 310]}
+                    handleComponent={HandleComponent}
+                    backgroundComponent={BackgroundComponent}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={BackdropComponent}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Confirm OTP</AppText>
+                        <AppText style={styles.modalDescription}>
+                            Enter OTP Code sent to 0802404xxxx to authorize this payment
+                        </AppText>
+
+                        <PasswordField label="OTP Code" style={styles.formGroup} placeholder="X X X X" />
+
+                        <AppButton
+                            label="Authorize"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => {
+                                fundingSuccessfulRef.current.present();
+                            }}
+                        />
+                    </View>
+                </BottomSheetModal>
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    snapPoints={[-1, 250]}
+                    ref={fundingSuccessfulRef}
+                    handleComponent={HandleComponent}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <View style={{ alignItems: "center", marginTop: 10, fontWeight: "600" }}>
+                            <Ionicons name="checkmark-circle-outline" size={50} color="#03E895" />
+                            <AppText style={{ fontSize: 20, marginTop: 15 }}>Success</AppText>
+                        </View>
+
+                        <AppButton
+                            label="Dismiss"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => {
+                                fundingSuccessfulRef.current.dismiss();
+                                cardInputRef.current.dismiss();
+                                confirmOtpRef.current.dismiss();
+                                fundWalletRef.current.dismiss();
+                            }}
                         />
                     </View>
                 </BottomSheetModal>
@@ -133,20 +230,11 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={bottomSheetRef}
                     snapPoints={[-1, 530]}
-                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
-                    backgroundComponent={({ pointerEvents }) => (
-                        <View
-                            pointerEvents={pointerEvents}
-                            style={{
-                                borderTopLeftRadius: 30,
-                                borderTopRightRadius: 30,
-                                backgroundColor: theme.backgroundColor,
-                            }}
-                        />
-                    )}
+                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
-                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
@@ -188,20 +276,11 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={confirmWithdrawRef}
                     snapPoints={[-1, 350]}
-                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
-                    backgroundComponent={({ pointerEvents }) => (
-                        <View
-                            pointerEvents={pointerEvents}
-                            style={{
-                                borderTopLeftRadius: 30,
-                                borderTopRightRadius: 30,
-                                backgroundColor: theme.backgroundColor,
-                            }}
-                        />
-                    )}
+                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
-                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm Withdrawal</AppText>
@@ -231,6 +310,19 @@ export const Dashboard = ({ navigation }) => {
         </Page>
     );
 };
+
+BackdropComponent = (props) => <BottomSheetBackdrop opacity={0.7} {...props} />;
+const HandleComponent = () => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />;
+const BackgroundComponent = ({ pointerEvents }) => (
+    <View
+        pointerEvents={pointerEvents}
+        style={{
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            backgroundColor: theme.backgroundColor,
+        }}
+    />
+);
 
 const styles = StyleSheet.create({
     header: {
@@ -317,6 +409,14 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         marginTop: 30,
+    },
+    cardInputRow: {
+        marginTop: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    cardInputRowItem: {
+        width: "45%",
     },
     fundCard: {
         padding: 20,

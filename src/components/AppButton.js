@@ -5,7 +5,7 @@ import { theme } from "../theme";
 import { AppText } from "./AppText";
 
 export const AppButton = ({ style, labelStyle, variant = "primary", label, children, ...rest }) => {
-    const buttonStyle = [styles.container, style];
+    const buttonStyle = [styles.container];
     const buttonTextStyle = [styles.label];
 
     if (variant === "primary") {
@@ -17,6 +17,7 @@ export const AppButton = ({ style, labelStyle, variant = "primary", label, child
     }
 
     buttonTextStyle.push(labelStyle);
+    buttonStyle.push(style);
 
     if (Platform.OS === "ios") {
         return (
