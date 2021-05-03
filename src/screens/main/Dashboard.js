@@ -1,18 +1,23 @@
 import React, { useRef } from "react";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { StyleSheet, View, FlatList, Image } from "react-native";
+import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import RNPickerSelect from "react-native-picker-select";
+import { Ionicons } from "@expo/vector-icons";
 
 import { theme } from "../../theme";
-import { AppButton, AppText, Page, TextField, AutoFillField } from "../../components";
+import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
+import CopyIcon from "../../../assets/images/copy.png";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 
 export const Dashboard = ({ navigation }) => {
+    const fundWalletRef = useRef();
     const bottomSheetRef = useRef();
+    const confirmWithdrawRef = useRef();
 
     return (
         <Page>
@@ -22,10 +27,10 @@ export const Dashboard = ({ navigation }) => {
                     <AppText style={styles.title}>Hi, Emmanuel</AppText>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
-                <View style={styles.titleRow}>
+                <TouchableOpacity style={styles.titleRow} onPress={() => fundWalletRef.current.present()}>
                     <Image source={PlusIcon} style={styles.titleIcon} />
                     <AppText style={{ marginLeft: 10 }}>Fund Wallet</AppText>
-                </View>
+                </TouchableOpacity>
             </View>
 
             <View style={styles.birthdayInformtionContainer}>
@@ -46,7 +51,7 @@ export const Dashboard = ({ navigation }) => {
                     variant="secondary"
                     label="Withdraw"
                     style={styles.withdrawBtn}
-                    onPress={() => bottomSheetRef.current.expand()}
+                    onPress={() => bottomSheetRef.current.present()}
                 />
             </View>
 
@@ -69,41 +74,160 @@ export const Dashboard = ({ navigation }) => {
                 />
             </View>
 
-            <BottomSheet
-                index={0}
-                ref={bottomSheetRef}
-                snapPoints={[-1, "64%"]}
-                handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
-                backgroundComponent={({ pointerEvents, style }) => (
-                    <View
-                        pointerEvents={pointerEvents}
-                        style={{
-                            borderTopLeftRadius: 30,
-                            borderTopRightRadius: 30,
-                            backgroundColor: theme.backgroundColor,
-                        }}
-                    />
-                )}
-                // enableHandlePanningGesture={false}
-                // enableContentPanningGesture={false}
-                backdropComponent={BottomSheetBackdrop}
-                enableFlashScrollableIndicatorOnExpand={false}>
-                <View style={styles.contentContainer}>
-                    <AppText>Withdraw Funds</AppText>
+            <BottomSheetModalProvider>
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    ref={fundWalletRef}
+                    snapPoints={[-1, 310]}
+                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
+                    backgroundComponent={({ pointerEvents }) => (
+                        <View
+                            pointerEvents={pointerEvents}
+                            style={{
+                                borderTopLeftRadius: 30,
+                                borderTopRightRadius: 30,
+                                backgroundColor: theme.backgroundColor,
+                            }}
+                        />
+                    )}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Fund Wallet</AppText>
 
-                    <TextField style={styles.formGroup} label="Amount" />
-                    <TextField style={styles.formGroup} label="Select Bank" />
-                    <TextField style={styles.formGroup} label="Account Number" />
-                    <AutoFillField style={styles.formGroup} value="Obagunwa Emmanuel" />
+                        <TouchableOpacity>
+                            <View style={styles.fundCard}>
+                                <View>
+                                    <AppText>0107724790</AppText>
+                                    <AppText style={styles.fundAccountName}>Obagunwa Emmanuel</AppText>
+                                </View>
+                                <View>
+                                    <View style={{ flexDirection: "row" }}>
+                                        <Image source={CopyIcon} />
+                                        <AppText style={styles.fundCopyText}>Tap to copy account number</AppText>
+                                    </View>
+                                    <AppText style={styles.fundBankName}>Rubies MFB</AppText>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
 
-                    <AppButton
-                        style={styles.formGroup}
-                        variant="secondary"
-                        label="Continue"
-                        onPress={() => bottomSheetRef.current.close()}
-                    />
-                </View>
-            </BottomSheet>
+                        <AppText style={styles.fundAccountDescription}>
+                            You can send money to the account number above. Funds will reflect in your wallet in
+                            minutes.
+                        </AppText>
+
+                        <AppButton
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            label="Fund wallet with Bank Card"
+                            onPress={() => fundWalletRef.current.dismiss()}
+                        />
+                    </View>
+                </BottomSheetModal>
+
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    ref={bottomSheetRef}
+                    snapPoints={[-1, 530]}
+                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
+                    backgroundComponent={({ pointerEvents }) => (
+                        <View
+                            pointerEvents={pointerEvents}
+                            style={{
+                                borderTopLeftRadius: 30,
+                                borderTopRightRadius: 30,
+                                backgroundColor: theme.backgroundColor,
+                            }}
+                        />
+                    )}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
+
+                        <TextField style={styles.formGroup} label="Amount" keyboardType="numeric" />
+                        <AppText style={styles.formGroup}>Select Bank</AppText>
+                        <RNPickerSelect
+                            useNativeAndroidPickerStyle={false}
+                            onValueChange={(value) => console.log(value)}
+                            placeholder={{ label: "Select Bank", value: null }}
+                            items={[
+                                { label: "UBA", value: "UBA" },
+                                { label: "GTBank", value: "GTBank" },
+                                { label: "Access Bank", value: "Access Bank" },
+                            ]}
+                            Icon={() => <Ionicons name="chevron-down" size={24} color="#fff" />}
+                            style={{
+                                inputIOS: styles.dropdownInput,
+                                inputAndroid: styles.dropdownInput,
+                                iconContainer: {
+                                    top: 25,
+                                    right: 12,
+                                },
+                            }}
+                        />
+                        <TextField style={styles.formGroup} label="Account Number" keyboardType="numeric" />
+                        <AutoFillField style={styles.formGroup} value="Obagunwa Emmanuel" />
+
+                        <AppButton
+                            label="Continue"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => confirmWithdrawRef.current.present()}
+                        />
+                    </View>
+                </BottomSheetModal>
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    ref={confirmWithdrawRef}
+                    snapPoints={[-1, 350]}
+                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
+                    backgroundComponent={({ pointerEvents }) => (
+                        <View
+                            pointerEvents={pointerEvents}
+                            style={{
+                                borderTopLeftRadius: 30,
+                                borderTopRightRadius: 30,
+                                backgroundColor: theme.backgroundColor,
+                            }}
+                        />
+                    )}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Confirm Withdrawal</AppText>
+                        <AppText style={styles.modalDescription}>
+                            You are about to withdraw the amount of NGN20,000 to Ogunsanya Damilola - 0107724790, GTbank
+                        </AppText>
+
+                        <PasswordField
+                            label="Password"
+                            style={styles.formGroup}
+                            placeholder="X X X X X X X X X X X X"
+                        />
+                        <AppText style={styles.formGroup}>Select Bank</AppText>
+
+                        <AppButton
+                            label="Withdraw"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => {
+                                confirmWithdrawRef.current.dismiss();
+                                bottomSheetRef.current.dismiss();
+                            }}
+                        />
+                    </View>
+                </BottomSheetModal>
+            </BottomSheetModalProvider>
         </Page>
     );
 };
@@ -191,11 +315,56 @@ const styles = StyleSheet.create({
     formGroup: {
         marginTop: 20,
     },
+    submitBtn: {
+        marginTop: 30,
+    },
+    fundCard: {
+        padding: 20,
+        marginTop: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: theme.color.primary,
+    },
+    fundCopyText: {
+        fontSize: 12,
+        marginLeft: 5,
+        color: "#A3A2A2",
+    },
+    fundBankName: {
+        marginTop: 14,
+        color: theme.color.yellow,
+    },
+    fundAccountName: {
+        marginTop: 12,
+    },
+    fundAccountDescription: {
+        fontSize: 14,
+        marginTop: 20,
+        color: "#F6F6F6",
+        textAlign: "center",
+    },
     contentContainer: {
         flex: 1,
         padding: 25,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         backgroundColor: theme.backgroundColor,
+    },
+    modalTitle: {
+        fontSize: 20,
+    },
+    modalDescription: {
+        marginTop: 10,
+    },
+    dropdownInput: {
+        fontSize: 15,
+        marginTop: 10,
+        borderRadius: 8,
+        paddingRight: 40,
+        color: theme.white,
+        paddingVertical: 13,
+        paddingHorizontal: 20,
+        borderRadius: theme.radii.sm,
+        backgroundColor: theme.color.primary,
     },
 });
