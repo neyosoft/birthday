@@ -6,7 +6,7 @@ import MainApplicationNavigator from "./main";
 
 const AppNavigation = () => (
     <NavigationContainer>
-        <MainApplicationNavigator />
+        <AuthenticationNavigator />
     </NavigationContainer>
 );
 

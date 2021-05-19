@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-nat
 
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
-import { AppText, Page, AppButton, TextField } from "../../components";
+import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 
 import { theme } from "../../theme";
 
@@ -23,37 +23,31 @@ export const CreateAccount = ({ navigation }) => {
                 </AppText>
 
                 <View style={styles.form}>
-                    <TextField label="Bank Verification Number" placeholder="221459940304" keyboardType="number-pad" />
+                    <TextField label="First Name" placeholder="Enter first name" />
+                    <TextField style={styles.formField} label="Last Name" placeholder="Enter last name" />
+                    <TextField style={styles.formField} label="Email" placeholder="Enter email address" />
+                    <TextField
+                        style={styles.formField}
+                        label="Phone Number"
+                        placeholder="e.g 08099999999"
+                        keyboardType="number-pad"
+                    />
+                    <PasswordField
+                        style={styles.formField}
+                        style={{ marginTop: 20 }}
+                        label="Password"
+                        placeholder="Enter password"
+                    />
 
                     <AppButton
-                        label="Validate"
+                        label="Continue"
                         variant="secondary"
                         style={styles.validateBtn}
-                        onPress={() => navigation.navigate("VerifyDetails")}
+                        onPress={() => navigation.navigate("SignupDateofBirth")}
                     />
-                </View>
 
-                <View style={styles.information}>
-                    <AppText style={styles.informationTitle}>Why BVN</AppText>
-                    <AppText style={{ marginBottom: 5 }}>We only need to access your:</AppText>
-                    <View style={styles.bvnItemRow}>
-                        <View style={styles.smallBox} />
-                        <AppText style={styles.bvnItemText}>Full name</AppText>
-                    </View>
-                    <View style={styles.bvnItemRow}>
-                        <View style={styles.smallBox} />
-                        <AppText style={styles.bvnItemText}>Phone number</AppText>
-                    </View>
-                    <View style={styles.bvnItemRow}>
-                        <View style={styles.smallBox} />
-                        <AppText style={styles.bvnItemText}>Date of birth</AppText>
-                    </View>
-                    <AppText style={{ marginTop: 10 }}>
-                        We do not use BVN to access to your bank account nor transactions.
-                    </AppText>
+                    <AppButton variant="primary" label="Skip in stead" style={styles.infoBtn} />
                 </View>
-
-                <AppButton variant="primary" label="Get BVN.. Dial *565*0#" style={styles.infoBtn} />
             </ScrollView>
         </Page>
     );
@@ -80,36 +74,13 @@ const styles = StyleSheet.create({
     form: {
         marginTop: 30,
     },
+    formField: {
+        marginTop: 15,
+    },
     validateBtn: {
-        marginTop: 20,
-    },
-    information: {
-        padding: 20,
-        marginTop: 30,
-        backgroundColor: theme.color.primary,
-    },
-    informationTitle: {
-        marginBottom: 10,
-        paddingBottom: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#464646",
-    },
-    bvnItemRow: {
-        marginLeft: 5,
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    bvnItemText: {
-        fontSize: 14,
-        marginLeft: 5,
-    },
-    smallBox: {
-        width: 6,
-        height: 6,
-        borderRadius: 6,
-        backgroundColor: theme.white,
+        marginTop: 40,
     },
     infoBtn: {
-        marginTop: 50,
+        marginTop: 20,
     },
 });
