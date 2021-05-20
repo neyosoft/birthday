@@ -1,13 +1,25 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity, Platform } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { BackIcon, ShieldIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { AppText, Page, AppButton, TextField } from "../../components";
+import { AppText, Page, AppButton, DateField } from "../../components";
 
 import { theme } from "../../theme";
+import { useState } from "react";
+import { format } from "date-fns";
 
 export const SignupDateofBirth = ({ navigation }) => {
+    const [show, setShow] = useState(false);
+    const [date, setDate] = useState(null);
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === "ios");
+        setDate(currentDate);
+    };
+
     return (
         <Page>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -21,7 +33,12 @@ export const SignupDateofBirth = ({ navigation }) => {
                 <AppText style={styles.welcomeMessage}>Celebrate your birthday in style. </AppText>
 
                 <View style={styles.form}>
-                    <TextField label="Date of Birth" placeholder="DD - MM - YY" keyboardType="number-pad" />
+                    <DateField
+                        label="Date of Birth"
+                        placeholder="DD - MM - YY"
+                        onPress={() => setShow(true)}
+                        value={date ? format(new Date(date), "dd-MM-yyyy") : null}
+                    />
                 </View>
 
                 <View style={styles.information}>
@@ -55,6 +72,7 @@ export const SignupDateofBirth = ({ navigation }) => {
                     onPress={() => navigation.navigate("VerifyDetails")}
                 />
             </ScrollView>
+            {show && <DateTimePicker mode="date" value={date} display="default" onChange={onChange} />}
         </Page>
     );
 };

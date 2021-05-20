@@ -5,13 +5,13 @@ import { theme } from "../theme";
 import { AppText } from "./AppText";
 import CalendarIcon from "../../assets/images/calendar.png";
 
-export const DateField = ({ style, inputStyle, labelStyle, label, value, placeholder }) => (
+export const DateField = ({ style, inputStyle, labelStyle, label, value, placeholder, onPress }) => (
     <View style={style}>
         <AppText style={[styles.label, labelStyle]}>{label}</AppText>
 
         <View style={styles.row}>
             <AppText style={[styles.input, inputStyle]}>{value || placeholder}</AppText>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={onPress}>
                 <Image source={CalendarIcon} />
             </TouchableOpacity>
         </View>

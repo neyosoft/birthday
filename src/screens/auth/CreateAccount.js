@@ -1,13 +1,11 @@
 import React from "react";
+import { Formik } from "formik";
+import { object, string } from "yup";
 import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
-
-import { theme } from "../../theme";
-import { object, string } from "yup";
 
 export const CreateAccount = ({ navigation }) => {
     return (
@@ -53,9 +51,11 @@ export const CreateAccount = ({ navigation }) => {
                             />
                             <TextField
                                 label="Email"
+                                autoCapitalize="none"
                                 value={values.email}
                                 style={styles.formField}
                                 onBlur={handleBlur("email")}
+                                keyboardType="email-address"
                                 placeholder="Enter email address"
                                 onChangeText={handleChange("email")}
                                 hasError={errors.email && touched.email}

@@ -21,6 +21,7 @@ export const PasswordField = ({ style, inputStyle, hasError, labelStyle, label, 
 
             <View style={[styles.row, stateStyle]}>
                 <TextInput
+                    autoCapitalize="none"
                     returnKeyType="done"
                     secureTextEntry={!show}
                     clearButtonMode="always"
