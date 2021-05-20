@@ -3,21 +3,30 @@ import { View, TextInput, StyleSheet } from "react-native";
 import { theme } from "../theme";
 import { AppText } from "./AppText";
 
-export const TextField = ({ style, inputStyle, labelStyle, label, ...rest }) => (
-    <View style={style}>
-        <AppText style={[styles.label, labelStyle]}>{label}</AppText>
+export const TextField = ({ style, hasError, inputStyle, labelStyle, label, ...rest }) => {
+    const stateStyle = {};
 
-        <TextInput
-            returnKeyType="done"
-            clearButtonMode="always"
-            placeholderTextColor="#A3A2A2"
-            underlineColorAndroid="transparent"
-            enablesReturnKeyAutomatically={true}
-            {...rest}
-            style={[styles.input, inputStyle]}
-        />
-    </View>
-);
+    if (hasError) {
+        stateStyle.borderWidth = 0.5;
+        stateStyle.borderColor = "#EE3A3A";
+    }
+
+    return (
+        <View style={style}>
+            <AppText style={[styles.label, labelStyle]}>{label}</AppText>
+
+            <TextInput
+                returnKeyType="done"
+                clearButtonMode="always"
+                placeholderTextColor="#A3A2A2"
+                underlineColorAndroid="transparent"
+                enablesReturnKeyAutomatically={true}
+                {...rest}
+                style={[styles.input, inputStyle, stateStyle]}
+            />
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     label: {},

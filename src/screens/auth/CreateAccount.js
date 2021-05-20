@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 
 import { theme } from "../../theme";
+import { object, string } from "yup";
 
 export const CreateAccount = ({ navigation }) => {
     return (
@@ -22,36 +24,86 @@ export const CreateAccount = ({ navigation }) => {
                     Get celebrated while celebrating others. Kindly provide your bank verification number (BVN)
                 </AppText>
 
-                <View style={styles.form}>
-                    <TextField label="First Name" placeholder="Enter first name" />
-                    <TextField style={styles.formField} label="Last Name" placeholder="Enter last name" />
-                    <TextField style={styles.formField} label="Email" placeholder="Enter email address" />
-                    <TextField
-                        style={styles.formField}
-                        label="Phone Number"
-                        placeholder="e.g 08099999999"
-                        keyboardType="number-pad"
-                    />
-                    <PasswordField
-                        style={styles.formField}
-                        style={{ marginTop: 20 }}
-                        label="Password"
-                        placeholder="Enter password"
-                    />
+                <Formik
+                    validationSchema={registrationSchema}
+                    initialValues={{ firstName: "", lastName: "", email: "", phoneNumber: "", password: "" }}
+                    onSubmit={(values) => {
+                        console.log("Registration form: ", values);
 
-                    <AppButton
-                        label="Continue"
-                        variant="secondary"
-                        style={styles.validateBtn}
-                        onPress={() => navigation.navigate("SignupDateofBirth")}
-                    />
+                        navigation.navigate("SignupDateofBirth", { record: values });
+                    }}>
+                    {({ isSubmitting, handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                        <View style={styles.form}>
+                            <TextField
+                                label="First Name"
+                                value={values.firstName}
+                                placeholder="Enter first name"
+                                onBlur={handleBlur("firstName")}
+                                onChangeText={handleChange("firstName")}
+                                hasError={errors.firstName && touched.firstName}
+                            />
+                            <TextField
+                                label="Last Name"
+                                value={values.lastName}
+                                style={styles.formField}
+                                placeholder="Enter last name"
+                                onBlur={handleBlur("lastName")}
+                                onChangeText={handleChange("lastName")}
+                                hasError={errors.lastName && touched.lastName}
+                            />
+                            <TextField
+                                label="Email"
+                                value={values.email}
+                                style={styles.formField}
+                                onBlur={handleBlur("email")}
+                                placeholder="Enter email address"
+                                onChangeText={handleChange("email")}
+                                hasError={errors.email && touched.email}
+                            />
+                            <TextField
+                                label="Phone Number"
+                                style={styles.formField}
+                                keyboardType="number-pad"
+                                value={values.phoneNumber}
+                                placeholder="e.g 08099999999"
+                                onBlur={handleBlur("phoneNumber")}
+                                onChangeText={handleChange("phoneNumber")}
+                                hasError={errors.phoneNumber && touched.phoneNumber}
+                            />
+                            <PasswordField
+                                label="Password"
+                                value={values.password}
+                                style={styles.formField}
+                                style={{ marginTop: 20 }}
+                                placeholder="Enter password"
+                                onBlur={handleBlur("password")}
+                                onChangeText={handleChange("password")}
+                                hasError={errors.password && touched.password}
+                            />
 
-                    <AppButton variant="primary" label="Skip in stead" style={styles.infoBtn} />
-                </View>
+                            <AppButton
+                                label="Continue"
+                                variant="secondary"
+                                onPress={handleSubmit}
+                                style={styles.validateBtn}
+                            />
+
+                            <AppButton variant="primary" label="Skip in stead" style={styles.infoBtn} />
+                        </View>
+                    )}
+                </Formik>
             </ScrollView>
         </Page>
     );
 };
+
+const registrationSchema = object().shape({
+    firstName: string().required("First name is required").trim(),
+    lastName: string().required("Last name is required").trim(),
+    email: string().email("Invalid email").required().lowercase(),
+    phoneNumber: string().required("Phone number is required.").trim(),
+    password: string().required("Password is required.").min(6),
+});
 
 const styles = StyleSheet.create({
     backIcon: {
