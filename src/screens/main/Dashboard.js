@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
+import { useQuery } from "react-query";
 import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 
 import { theme } from "../../theme";
-import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
 import { useAuth } from "../../context";
 import UserOne from "../../../assets/images/user1.png";
@@ -14,17 +15,37 @@ import CopyIcon from "../../../assets/images/copy.png";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
+import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
+
+const getDurationToBirthday = (dateOfBirth) => {
+    const thisYearBirthday = setYear(new Date(dateOfBirth), getYear(new Date()));
+
+    let nextBirthday;
+
+    if (isPast(thisYearBirthday)) {
+        nextBirthday = addYears(thisYearBirthday, 1);
+    } else {
+        nextBirthday = thisYearBirthday;
+    }
+
+    const numberOfDays = differenceInDays(nextBirthday, new Date());
+
+    const weeks = Math.ceil(numberOfDays / 7);
+    const days = numberOfDays % 7;
+
+    if (weeks > 0) {
+        if (days > 0) {
+            return `${weeks} weeks and ${days} days`;
+        } else {
+            return `${weeks} weeks`;
+        }
+    } else {
+        return `${days} days`;
+    }
+};
 
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
-
-    useEffect(() => {
-        authenticatedRequest()
-            .get("/app/user/information")
-            .then(({ data }) => {
-                console.log("User information: ", data);
-            });
-    });
 
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
@@ -34,6 +55,70 @@ export const Dashboard = ({ navigation }) => {
     const bottomSheetRef = useRef();
     const confirmWithdrawRef = useRef();
 
+    const wallet = useQuery("wallet", async () => {
+        try {
+            const { data } = await authenticatedRequest().get(`/wallet/inquiry/balance/${user.accountNumber}`);
+
+            if (data && data.responseCode === "00") {
+                return data.availableBalance;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const birthdayUser = useQuery("birthdayUsers", async () => {
+        try {
+            const { data } = await authenticatedRequest().get(`/app/bvn/all/1/100`);
+
+            if (data) {
+                return data;
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const renderBirthdayList = () => {
+        if (birthdayUser.isLoading) {
+            return (
+                <View style={styles.descriptionViewStyle}>
+                    <AppText style={styles.descriptionLabelStyle}>Loading birthday users...</AppText>
+                </View>
+            );
+        }
+
+        if (birthdayUser.data && birthdayUser.data.length === 0) {
+            return (
+                <View style={styles.descriptionViewStyle}>
+                    <AppText style={styles.descriptionLabelStyle}>No birthday available...</AppText>
+                </View>
+            );
+        }
+        return (
+            <FlatList
+                numColumns={4}
+                style={styles.flatList}
+                data={birthdayUser.data}
+                keyExtractor={(_, index) => `index-${index}`}
+                renderItem={() => {
+                    return (
+                        <TouchableOpacity
+                            style={styles.renderItemContainer}
+                            onPress={() => navigation.navigate("Donation")}>
+                            <Image source={UserOne} />
+                            <AppText style={styles.renderItemText}>Damilola</AppText>
+                        </TouchableOpacity>
+                    );
+                }}
+            />
+        );
+    };
+
     return (
         <Page>
             <View style={styles.header}>
@@ -42,7 +127,7 @@ export const Dashboard = ({ navigation }) => {
                         onPress={() => navigation.navigate("Profile")}
                         style={{ flexDirection: "row", alignItems: "center" }}>
                         <Image source={UserAvatar} style={styles.userIcon} />
-                        <AppText style={styles.title}>Hi, {user.given_name}</AppText>
+                        <AppText style={styles.title}>Hi, {user.givenName}</AppText>
                     </TouchableOpacity>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
@@ -55,7 +140,9 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.birthdayInformtionContainer}>
                 <View>
                     <AppText style={styles.shortStyle}>Your birthday is in</AppText>
-                    <AppText style={styles.birthdayCountdown}>5 weeks and 3 days | August, 3</AppText>
+                    <AppText style={styles.birthdayCountdown}>
+                        {getDurationToBirthday(user.dob)} | {format(new Date(user.dob), "MMMM, dd")}
+                    </AppText>
                 </View>
                 <Image source={BirthdayIcon} />
             </View>
@@ -63,12 +150,14 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.walletContainer}>
                 <View>
                     <AppText style={styles.availableBalance}>Available Balance</AppText>
-                    <AppText style={styles.walletBalance}>NGN0.00</AppText>
+                    <AppText style={styles.walletBalance}>
+                        {wallet.isLoading ? "Loading..." : `NGN ${wallet.data}`}
+                    </AppText>
                 </View>
 
                 <AppButton
-                    variant="secondary"
                     label="Withdraw"
+                    variant="secondary"
                     style={styles.withdrawBtn}
                     onPress={() => bottomSheetRef.current.present()}
                 />
@@ -77,22 +166,7 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.celebrantPanel}>
                 <AppText style={styles.celebrantTitle}>Today's Celebrants</AppText>
 
-                <FlatList
-                    numColumns={4}
-                    style={styles.flatList}
-                    data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]}
-                    keyExtractor={(_, index) => `index-${index}`}
-                    renderItem={() => {
-                        return (
-                            <TouchableOpacity
-                                style={styles.renderItemContainer}
-                                onPress={() => navigation.navigate("Donation")}>
-                                <Image source={UserOne} />
-                                <AppText style={styles.renderItemText}>Damilola</AppText>
-                            </TouchableOpacity>
-                        );
-                    }}
-                />
+                {renderBirthdayList()}
             </View>
 
             <BottomSheetModalProvider>
@@ -100,7 +174,7 @@ export const Dashboard = ({ navigation }) => {
                     index={1}
                     stackBehavior="push"
                     ref={fundWalletRef}
-                    snapPoints={[-1, 310]}
+                    snapPoints={[-1, 350]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
@@ -112,11 +186,11 @@ export const Dashboard = ({ navigation }) => {
 
                         <TouchableOpacity>
                             <View style={styles.fundCard}>
-                                <View>
-                                    <AppText>0107724790</AppText>
-                                    <AppText style={styles.fundAccountName}>Obagunwa Emmanuel</AppText>
+                                <View style={{ flex: 1 }}>
+                                    <AppText>{user.virtualAccountNumber}</AppText>
+                                    <AppText style={styles.fundAccountName}>{user.virtualAccountName}</AppText>
                                 </View>
-                                <View style={{ alignItems: "flex-end" }}>
+                                <View style={{ alignItems: "flex-end", width: "40%" }}>
                                     <View style={{ flexDirection: "row" }}>
                                         <Image source={CopyIcon} />
                                         <AppText style={styles.fundCopyText}>Tap to copy account number</AppText>
@@ -354,6 +428,13 @@ const styles = StyleSheet.create({
     },
     userIcon: {
         marginRight: 10,
+    },
+    descriptionViewStyle: {
+        marginTop: 20,
+    },
+    descriptionLabelStyle: {
+        fontSize: 12,
+        color: "gray",
     },
     birthdayInformtionContainer: {
         padding: 20,

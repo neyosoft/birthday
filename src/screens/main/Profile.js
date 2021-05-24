@@ -3,11 +3,15 @@ import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { theme } from "../../theme";
+import { useAuth } from "../../context";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
+import format from "date-fns/format/index.js";
 
 export const Profile = ({ navigation }) => {
+    const { user, logout } = useAuth();
+
     return (
         <Page>
             <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
@@ -19,12 +23,14 @@ export const Profile = ({ navigation }) => {
                 <UserAvatarIcon />
             </View>
 
-            <AppText style={styles.username}>Obagunwa Emmanuel</AppText>
+            <AppText style={styles.username}>
+                {user.givenName} {user.familyName}
+            </AppText>
 
             <View style={styles.form}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Image source={BirthdayIcon} style={{ width: 20, height: 20, marginRight: 10 }} />
-                    <AppText style={styles.subtitle}>April, 10</AppText>
+                    <AppText style={styles.subtitle}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
@@ -34,7 +40,7 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Email</AppText>
-                    <AppText style={styles.subtitleValue}>darmieey@gmail.com</AppText>
+                    <AppText style={styles.subtitleValue}>{user.email}</AppText>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
@@ -55,7 +61,7 @@ export const Profile = ({ navigation }) => {
 
             <View style={{ flex: 1 }} />
 
-            <AppButton label="Log out" labelStyle={styles.btnLabelStyle} />
+            <AppButton label="Log out" labelStyle={styles.btnLabelStyle} onPress={logout} />
         </Page>
     );
 };

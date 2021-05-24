@@ -9,7 +9,6 @@ import {
     getRefreshToken,
     removeUserToken,
     saveRefreshToken,
-    removeUserDetail,
     removeRefreshToken,
 } from "../utils/storage.utils";
 import Config from "../config";
@@ -33,7 +32,7 @@ export default class AuthProvider extends Component {
 
             await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
 
-            const { data } = await axios.get("/auth/realms/vibes/protocol/openid-connect/userinfo", {
+            const { data } = await axios.get("/app/user/information", {
                 baseURL: Config.SERVER_URL,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -65,11 +64,11 @@ export default class AuthProvider extends Component {
             });
         },
         logout: async () => {
-            await Promise.all([removeUserToken(), removeUserDetail(), removeRefreshToken()]);
+            await Promise.all([removeUserToken(), removeRefreshToken()]);
 
             this.setState({
                 user: null,
-                token: null,
+                getUserToken: null,
                 refreshToken: null,
             });
         },
@@ -106,7 +105,7 @@ export default class AuthProvider extends Component {
             refreshToken = await getRefreshToken();
 
             if (accessToken) {
-                const { data } = await axios.get("/auth/realms/vibes/protocol/openid-connect/userinfo", {
+                const { data } = await axios.get("/app/user/information", {
                     baseURL: Config.SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
