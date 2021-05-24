@@ -16,8 +16,13 @@ export const AppButton = ({ style, labelStyle, variant = "primary", label, child
         buttonTextStyle.push(styles.secondaryBtnLabel);
     }
 
-    buttonTextStyle.push(labelStyle);
     buttonStyle.push(style);
+    buttonTextStyle.push(labelStyle);
+
+    if (rest.disabled) {
+        buttonStyle.push(styles.disabledBtn);
+        buttonTextStyle.push(styles.disabledBtnLabel);
+    }
 
     if (Platform.OS === "ios") {
         return (
@@ -58,5 +63,11 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 15,
         textAlign: "center",
+    },
+    disabledBtn: {
+        backgroundColor: "#999",
+    },
+    disabledBtnLabel: {
+        color: "#ddd",
     },
 });

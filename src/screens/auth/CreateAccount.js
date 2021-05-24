@@ -26,8 +26,6 @@ export const CreateAccount = ({ navigation }) => {
                     validationSchema={registrationSchema}
                     initialValues={{ firstName: "", lastName: "", email: "", phoneNumber: "", password: "" }}
                     onSubmit={(values) => {
-                        console.log("Registration form: ", values);
-
                         navigation.navigate("SignupDateofBirth", { record: values });
                     }}>
                     {({ isSubmitting, handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
@@ -102,7 +100,12 @@ const registrationSchema = object().shape({
     lastName: string().required("Last name is required").trim(),
     email: string().email("Invalid email").required().lowercase(),
     phoneNumber: string().required("Phone number is required.").trim(),
-    password: string().required("Password is required.").min(6),
+    password: string()
+        .required("Password is required.")
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+            "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character",
+        ),
 });
 
 const styles = StyleSheet.create({

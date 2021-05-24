@@ -3,8 +3,10 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import AppNavigator from "./navigation";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
+
+import AppNavigator from "./navigation";
+import AuthProvider from "./context/auth.context";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -23,7 +25,9 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
             <SafeAreaProvider>
                 <StatusBar style="light" />
-                <AppNavigator />
+                <AuthProvider>
+                    <AppNavigator />
+                </AuthProvider>
             </SafeAreaProvider>
         </QueryClientProvider>
     );

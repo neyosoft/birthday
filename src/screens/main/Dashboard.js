@@ -7,6 +7,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 import { theme } from "../../theme";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
+import { useAuth } from "../../context";
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
 import CopyIcon from "../../../assets/images/copy.png";
@@ -15,6 +16,8 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 
 export const Dashboard = ({ navigation }) => {
+    const { user } = useAuth();
+
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
     const confirmOtpRef = useRef();
@@ -31,7 +34,7 @@ export const Dashboard = ({ navigation }) => {
                         onPress={() => navigation.navigate("Profile")}
                         style={{ flexDirection: "row", alignItems: "center" }}>
                         <Image source={UserAvatar} style={styles.userIcon} />
-                        <AppText style={styles.title}>Hi, Emmanuel</AppText>
+                        <AppText style={styles.title}>Hi, {user.given_name}</AppText>
                     </TouchableOpacity>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
