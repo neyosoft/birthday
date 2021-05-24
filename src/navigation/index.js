@@ -1,14 +1,14 @@
 import React from "react";
+import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 import { useAuth } from "../context";
+import { AppText } from "../components";
 import AuthenticationNavigator from "./auth";
 import MainApplicationNavigator from "./main";
-import { View } from "react-native";
-import { AppText } from "../components";
 
 const AppNavigation = () => {
-    const { isLoading, accessToken } = useAuth();
+    const { user, isLoading } = useAuth();
 
     if (isLoading) {
         return (
@@ -19,9 +19,7 @@ const AppNavigation = () => {
     }
 
     return (
-        <NavigationContainer>
-            {accessToken ? <MainApplicationNavigator /> : <AuthenticationNavigator />}
-        </NavigationContainer>
+        <NavigationContainer>{user ? <MainApplicationNavigator /> : <AuthenticationNavigator />}</NavigationContainer>
     );
 };
 

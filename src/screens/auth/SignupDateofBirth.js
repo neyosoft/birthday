@@ -39,7 +39,7 @@ export const SignupDateofBirth = ({ navigation, route }) => {
 
             await baseRequest.post("/app/auth/signup", accountPayload);
 
-            Alert.alert("Success", "An email has been sent to your for verification.");
+            Alert.alert("Success", "An email has been sent to your email for verification.");
 
             navigation.navigate("SignIn");
         } catch (error) {

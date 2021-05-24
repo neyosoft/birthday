@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
@@ -16,7 +16,15 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 
 export const Dashboard = ({ navigation }) => {
-    const { user } = useAuth();
+    const { user, authenticatedRequest } = useAuth();
+
+    useEffect(() => {
+        authenticatedRequest()
+            .get("/app/user/information")
+            .then(({ data }) => {
+                console.log("User information: ", data);
+            });
+    });
 
     const cardInputRef = useRef();
     const fundWalletRef = useRef();

@@ -78,8 +78,6 @@ export default class AuthProvider extends Component {
         authenticatedRequest: () => {
             const { accessToken } = this.state;
 
-            console.log("state token: ", accessToken);
-
             const instance = axios.create({
                 baseURL: Config.SERVER_URL,
                 headers: {

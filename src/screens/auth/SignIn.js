@@ -31,11 +31,7 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
-            console.log("data: ", data);
-
             if (data && data.access_token && data.refresh_token) {
-                Alert.alert("Success", "Kindly check your email to complete account verification.");
-
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
