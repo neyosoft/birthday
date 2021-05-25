@@ -94,10 +94,8 @@ export default class AuthProvider extends Component {
     }
 
     boostrapApp = async () => {
-        console.log("boostraping application");
-
-        let accessToken = null,
-            user = null,
+        let user = null,
+            accessToken = null,
             refreshToken = null;
 
         try {

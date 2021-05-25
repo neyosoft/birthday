@@ -1,13 +1,13 @@
 import React from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import format from "date-fns/format/index.js";
 
 export const Profile = ({ navigation }) => {
     const { user, logout } = useAuth();
@@ -35,7 +35,7 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Donations</AppText>
-                    <AppText style={styles.subtitleValue}>200</AppText>
+                    <AppText style={styles.subtitleValue}>{user.donationVolume}</AppText>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
@@ -45,7 +45,7 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Phone number</AppText>
-                    <AppText style={styles.subtitleValue}>08024041227</AppText>
+                    <AppText style={styles.subtitleValue}>{user.mobileNumber}</AppText>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>

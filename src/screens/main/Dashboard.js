@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { theme } from "../../theme";
 
@@ -52,8 +52,10 @@ export const Dashboard = ({ navigation }) => {
     const confirmOtpRef = useRef();
     const fundingSuccessfulRef = useRef();
 
-    const bottomSheetRef = useRef();
+    const withdrawalRef = useRef();
     const confirmWithdrawRef = useRef();
+
+    const [fundAmount, setFundAmount] = useState("");
 
     const wallet = useQuery("wallet", async () => {
         try {
@@ -217,7 +219,7 @@ export const Dashboard = ({ navigation }) => {
                     index={1}
                     ref={cardInputRef}
                     stackBehavior="push"
-                    snapPoints={[-1, 460]}
+                    snapPoints={[-1, 300]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
@@ -227,26 +229,26 @@ export const Dashboard = ({ navigation }) => {
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Fund Wallet</AppText>
 
-                        <TextField style={styles.formGroup} label="Amount" keyboardType="numeric" />
-
-                        <TextField style={styles.formGroup} label="Card Number" keyboardType="numeric" />
-
-                        <View style={styles.cardInputRow}>
-                            <TextField
-                                label="Expiry"
-                                placeholder="MM/YY"
-                                keyboardType="numeric"
-                                style={styles.cardInputRowItem}
-                            />
-
-                            <TextField style={styles.cardInputRowItem} label="CVV" keyboardType="numeric" />
-                        </View>
+                        <TextField
+                            label="Amount"
+                            value={fundAmount}
+                            keyboardType="numeric"
+                            style={styles.formGroup}
+                            onChangeText={setFundAmount}
+                        />
 
                         <AppButton
                             label="Pay"
                             variant="secondary"
                             style={styles.submitBtn}
-                            onPress={() => confirmOtpRef.current.present()}
+                            onPress={() => {
+                                cardInputRef.current.dismiss();
+                                fundWalletRef.current.dismiss();
+
+                                setTimeout(() => {
+                                    navigation.navigate("PayWithPaystack", { amount: fundAmount });
+                                }, 1000);
+                            }}
                         />
                     </View>
                 </BottomSheetModal>
@@ -313,7 +315,7 @@ export const Dashboard = ({ navigation }) => {
                 <BottomSheetModal
                     index={1}
                     stackBehavior="push"
-                    ref={bottomSheetRef}
+                    ref={withdrawalRef}
                     snapPoints={[-1, 530]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
@@ -386,7 +388,7 @@ export const Dashboard = ({ navigation }) => {
                             style={styles.submitBtn}
                             onPress={() => {
                                 confirmWithdrawRef.current.dismiss();
-                                bottomSheetRef.current.dismiss();
+                                withdrawalRef.current.dismiss();
                             }}
                         />
                     </View>
@@ -501,14 +503,6 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         marginTop: 30,
-    },
-    cardInputRow: {
-        marginTop: 20,
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    cardInputRowItem: {
-        width: "45%",
     },
     fundCard: {
         padding: 20,
