@@ -161,7 +161,7 @@ export const Dashboard = ({ navigation }) => {
                     label="Withdraw"
                     variant="secondary"
                     style={styles.withdrawBtn}
-                    onPress={() => bottomSheetRef.current.present()}
+                    onPress={() => withdrawalRef.current.present()}
                 />
             </View>
 
