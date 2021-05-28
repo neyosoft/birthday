@@ -1,13 +1,12 @@
+import OTPTextView from "react-native-otp-textinput";
 import React, { useRef, useState, useEffect } from "react";
 import { StyleSheet, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-
-import OTPTextView from "react-native-otp-textinput";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import { AppText, Page } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const VerifyPhoneNumber = ({ navigation }) => {
     const { user, refreshUser, authenticatedRequest } = useAuth();
@@ -50,7 +49,6 @@ export const VerifyPhoneNumber = ({ navigation }) => {
             }
         } catch (error) {
             Alert.alert("Verification", extractResponseErrorMessage(error));
-            debugAxiosError(error);
         }
     };
 

@@ -1,8 +1,9 @@
 import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
+import Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
-import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, FlatList, Image, TouchableOpacity, Alert } from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -47,8 +48,6 @@ const getDurationToBirthday = (dateOfBirth) => {
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
 
-    console.log({ user });
-
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
     const confirmOtpRef = useRef();
@@ -63,8 +62,6 @@ export const Dashboard = ({ navigation }) => {
     const wallet = useQuery("wallet", async () => {
         try {
             const { data } = await authenticatedRequest().get(`/wallet/inquiry/balance/${user.accountNumber}`);
-
-            console.log("wallet: ", data);
 
             if (data && data.responseCode === "00") {
                 return data.availableBalance;
@@ -124,6 +121,12 @@ export const Dashboard = ({ navigation }) => {
                 }}
             />
         );
+    };
+
+    const handleCopyAccountNumber = async () => {
+        await Clipboard.setString(user.virtualAccountNumber);
+
+        Alert.alert("Wallet", "Account number has been copied.");
     };
 
     return (
@@ -191,7 +194,7 @@ export const Dashboard = ({ navigation }) => {
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Fund Wallet</AppText>
 
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={handleCopyAccountNumber}>
                             <View style={styles.fundCard}>
                                 <View style={{ flex: 1 }}>
                                     <AppText>{user.virtualAccountNumber}</AppText>

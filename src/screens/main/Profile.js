@@ -8,7 +8,6 @@ import { useAuth } from "../../context";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { debugAxiosError } from "../../utils/request.utils";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
@@ -67,11 +66,8 @@ export const Profile = ({ navigation }) => {
         try {
             const { data } = await authenticatedRequest().post(`/app/auth/change/password/${user.email}`);
 
-            console.log("The response data: ", data);
-
             Alert.alert("Password Reset", "Kindly check your email to complete password change.");
         } catch (error) {
-            debugAxiosError(error);
             Alert.alert("Password Reset", "There is a problem changing password.");
         } finally {
             setLoading(null);
