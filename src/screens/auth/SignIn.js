@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { useToast } from "react-native-fast-toast";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
@@ -14,6 +15,7 @@ import { useAuth } from "../../context";
 
 export const SignIn = ({ navigation }) => {
     const { authenticate } = useAuth();
+    const toast = useToast();
 
     const handleSubmit = async (values) => {
         const params = new URLSearchParams();
@@ -42,7 +44,8 @@ export const SignIn = ({ navigation }) => {
             } else {
                 message = error.message;
             }
-            Alert.alert("Sign In Failed.", message);
+
+            toast.show(message, { type: "success" });
         }
     };
 

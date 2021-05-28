@@ -32,7 +32,6 @@ export const VerifyBvn = ({ navigation }) => {
                 Alert.alert("Verification", "BVN verification failed.");
             }
         } catch (error) {
-            debugAxiosError(error);
             Alert.alert("Verification", extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
