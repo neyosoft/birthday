@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 
 import {
     Welcome,
@@ -15,7 +15,12 @@ import {
 const Stack = createStackNavigator();
 
 const AuthenticationNavigator = () => (
-    <Stack.Navigator initialRouteName="Welcome" headerMode="none">
+    <Stack.Navigator
+        headerMode="none"
+        initialRouteName="Welcome"
+        screenOptions={{
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="VerifyOtp" component={VerifyOtp} />

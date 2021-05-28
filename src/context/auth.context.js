@@ -72,16 +72,35 @@ export default class AuthProvider extends Component {
                 refreshToken: null,
             });
         },
-        setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
+        refreshUser: async () => {
+            try {
+                const { data } = await axios.get("/app/user/information", {
+                    baseURL: Config.SERVER_URL,
+                    headers: {
+                        Authorization: `Bearer ${this.state.accessToken}`,
+                    },
+                });
+
+                if (data && data.email) {
+                    this.setState({ user: data });
+                }
+            } catch (e) {}
+        },
         setupCompleted: () => this.setState({ accountSetupCompleted: true }),
+        setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
         authenticatedRequest: () => {
             const { accessToken } = this.state;
+
+            const now = new Date();
 
             const instance = axios.create({
                 baseURL: Config.SERVER_URL,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     Accept: "application/json",
+                    TimeStamp: `${now.getFullYear()}-${
+                        now.getMonth() + 1
+                    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
                 },
             });
 

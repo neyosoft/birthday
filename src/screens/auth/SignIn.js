@@ -35,8 +35,6 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            console.log("error message: ", error);
-
             let message;
 
             if (error.response) {

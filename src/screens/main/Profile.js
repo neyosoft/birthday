@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
@@ -9,8 +9,26 @@ import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 
+const extractProfileInfo = (userInfo) => {
+    const output = {};
+
+    const tier = userInfo.kyclevel;
+
+    output.isEmailVerified = tier === "TIER2";
+    output.isPhoneNumberVerified = tier === "TIER3";
+    output.canUpdatePhoneNumber = tier === "TIER2";
+    output.isBvnVerified = tier === "TIER4";
+    output.canUpdateBvn = tier === "TIER3";
+
+    return output;
+};
+
 export const Profile = ({ navigation }) => {
     const { user, logout } = useAuth();
+
+    console.log("userinfo: ", user);
+
+    const userMeta = extractProfileInfo(user);
 
     return (
         <Page>
@@ -40,17 +58,56 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Email</AppText>
-                    <AppText style={styles.subtitleValue}>{user.email}</AppText>
+                    {userMeta.isEmailVerified ? (
+                        <AppText style={styles.subtitleValue}>{user.email}</AppText>
+                    ) : (
+                        <TouchableOpacity>
+                            <AppText style={styles.invalid}>Not Verified</AppText>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Phone number</AppText>
-                    <AppText style={styles.subtitleValue}>{user.mobileNumber}</AppText>
+                    {userMeta.isPhoneNumberVerified ? (
+                        <AppText style={styles.subtitleValue}>{user.mobileNumber}</AppText>
+                    ) : (
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (userMeta.canUpdatePhoneNumber) {
+                                    navigation.navigate("VerifyPhoneNumber");
+                                } else {
+                                    Alert.alert("Verification", "You need to verify email before you proceed.");
+                                }
+                            }}>
+                            <AppText style={styles.invalid}>Not Verified</AppText>
+                        </TouchableOpacity>
+                    )}
+                </View>
+                <View style={styles.separator} />
+                <View style={styles.rowItem}>
+                    <AppText style={styles.subtitle}>BVN</AppText>
+                    {userMeta.isBvnVerified ? (
+                        <AppText style={styles.subtitleValue}>{user.mobileNumber}</AppText>
+                    ) : (
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (userMeta.canUpdateBvn) {
+                                    navigation.navigate("VerifyPhoneNumber");
+                                } else {
+                                    Alert.alert("Verification", "You need to verify phone number before you proceed.");
+                                }
+                            }}>
+                            <AppText style={styles.invalid}>Not Verified</AppText>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Password</AppText>
-                    <AppText style={[styles.subtitleValue, { color: theme.color.yellow }]}>Change</AppText>
+                    <TouchableOpacity>
+                        <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>Change</AppText>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
@@ -94,6 +151,10 @@ const styles = StyleSheet.create({
     },
     subtitleValue: {
         color: "#fff",
+        fontWeight: "700",
+    },
+    invalid: {
+        color: "#EE3A3A",
         fontWeight: "700",
     },
     rowItem: {

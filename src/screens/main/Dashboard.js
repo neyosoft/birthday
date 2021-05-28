@@ -47,12 +47,15 @@ const getDurationToBirthday = (dateOfBirth) => {
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
 
+    console.log({ user });
+
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
     const confirmOtpRef = useRef();
     const fundingSuccessfulRef = useRef();
 
     const withdrawalRef = useRef();
+    const upcomingFeatureRef = useRef();
     const confirmWithdrawRef = useRef();
 
     const [fundAmount, setFundAmount] = useState("");
@@ -60,6 +63,8 @@ export const Dashboard = ({ navigation }) => {
     const wallet = useQuery("wallet", async () => {
         try {
             const { data } = await authenticatedRequest().get(`/wallet/inquiry/balance/${user.accountNumber}`);
+
+            console.log("wallet: ", data);
 
             if (data && data.responseCode === "00") {
                 return data.availableBalance;
@@ -161,7 +166,7 @@ export const Dashboard = ({ navigation }) => {
                     label="Withdraw"
                     variant="secondary"
                     style={styles.withdrawBtn}
-                    onPress={() => withdrawalRef.current.present()}
+                    onPress={() => upcomingFeatureRef.current.present()}
                 />
             </View>
 
@@ -312,6 +317,32 @@ export const Dashboard = ({ navigation }) => {
                     </View>
                 </BottomSheetModal>
 
+                <BottomSheetModal
+                    index={1}
+                    stackBehavior="push"
+                    snapPoints={[-1, 220]}
+                    ref={upcomingFeatureRef}
+                    handleComponent={HandleComponent}
+                    enableHandlePanningGesture={false}
+                    enableContentPanningGesture={false}
+                    backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
+                    enableFlashScrollableIndicatorOnExpand={false}>
+                    <View style={styles.contentContainer}>
+                        <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
+
+                        <AppText style={styles.featureDescription}>
+                            We are currently working on this feature. Kindly check back soon!!!
+                        </AppText>
+
+                        <AppButton
+                            label="Continue"
+                            variant="secondary"
+                            style={styles.submitBtn}
+                            onPress={() => upcomingFeatureRef.current.dismiss()}
+                        />
+                    </View>
+                </BottomSheetModal>
                 <BottomSheetModal
                     index={1}
                     stackBehavior="push"
@@ -552,5 +583,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,
+    },
+    featureDescription: {
+        fontSize: 13,
+        width: "80%",
+        marginTop: 20,
+        lineHeight: 20,
+        textAlign: "center",
+        alignSelf: "center",
     },
 });

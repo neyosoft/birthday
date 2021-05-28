@@ -11,10 +11,9 @@ import { baseRequest, extractResponseErrorMessage } from "../../utils/request.ut
 import { theme } from "../../theme";
 
 export const SignupDateofBirth = ({ navigation, route }) => {
-    const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
     const [date, setDate] = useState(null);
-    const [notification, setNotification] = useState({ visible: false, message: null });
+    const [loading, setLoading] = useState(false);
 
     const { record } = route.params;
 
@@ -25,18 +24,19 @@ export const SignupDateofBirth = ({ navigation, route }) => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
+
+        const accountPayload = {
+            ...record,
+            dob: format(date, "yyyy-MM-dd"),
+            mobileNumber: parseInt(
+                record.phoneNumber.startsWith("0") ? `234${record.phoneNumber.substring(1)}` : record.phoneNumber,
+            ),
+        };
+
+        delete accountPayload.phoneNumber;
+
         try {
-            setLoading(true);
-            const accountPayload = {
-                ...record,
-                dob: format(date, "yyyy-MM-dd"),
-                mobileNumber: parseInt(
-                    record.phoneNumber.startsWith("0") ? `234${record.phoneNumber.substring(1)}` : record.phoneNumber,
-                ),
-            };
-
-            delete accountPayload.phoneNumber;
-
             await baseRequest.post("/app/auth/signup", accountPayload);
 
             Alert.alert("Success", "An email has been sent to your email for verification.");
@@ -94,11 +94,11 @@ export const SignupDateofBirth = ({ navigation, route }) => {
             </View>
 
             <AppButton
-                disbled={loading}
                 label="Continue"
+                disabled={loading}
                 variant="secondary"
-                style={styles.continueBtn}
                 onPress={handleSubmit}
+                style={styles.continueBtn}
             />
 
             {show && <DateTimePicker mode="date" value={date || new Date()} display="default" onChange={onChange} />}
