@@ -9,8 +9,8 @@ import { AppText, Page } from "../../components";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const VerifyPhoneNumber = ({ navigation }) => {
-    const { user, refreshUser, authenticatedRequest } = useAuth();
     const [loading, setLoading] = useState(false);
+    const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const otpInput = useRef();
     const [otp, setOtp] = useState("");
@@ -27,7 +27,7 @@ export const VerifyPhoneNumber = ({ navigation }) => {
     };
 
     useEffect(() => {
-        sendOTP();
+        // sendOTP();
     }, []);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export const VerifyPhoneNumber = ({ navigation }) => {
 
                 navigation.navigate("Profile");
             } else {
-                Alert.alert("Verification", extractResponseErrorMessage(error));
+                Alert.alert("Verification", "There is a problem verifying your phone number.");
             }
         } catch (error) {
             Alert.alert("Verification", extractResponseErrorMessage(error));
@@ -79,7 +79,7 @@ export const VerifyPhoneNumber = ({ navigation }) => {
                     {loading ? (
                         <View style={styles.resendRow}>
                             <ActivityIndicator color="white" size="large" />
-                            <AppText>Sending OTP</AppText>
+                            <AppText style={{ marginLeft: 10 }}>Sending OTP</AppText>
                         </View>
                     ) : (
                         <View style={styles.resendRow}>
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     },
     resendRow: {
         marginTop: 40,
+        alignItems: "center",
         flexDirection: "row",
         justifyContent: "center",
     },

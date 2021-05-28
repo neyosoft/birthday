@@ -6,6 +6,7 @@ import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const VerifyBvn = ({ navigation }) => {
     const { refreshUser, authenticatedRequest } = useAuth();
@@ -14,7 +15,7 @@ export const VerifyBvn = ({ navigation }) => {
     const [bvn, setBvn] = useState("");
 
     const handleSubmit = async () => {
-        setLoading(false);
+        setLoading(true);
 
         if (bvn.trim().length !== 11) {
             return Alert.alert("OTP Validation", "OTP can only be eleven(11) characters.");
@@ -31,7 +32,10 @@ export const VerifyBvn = ({ navigation }) => {
                 Alert.alert("Verification", "BVN verification failed.");
             }
         } catch (error) {
+            debugAxiosError(error);
             Alert.alert("Verification", extractResponseErrorMessage(error));
+        } finally {
+            setLoading(false);
         }
     };
 
