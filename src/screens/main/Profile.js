@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import Toast from "react-native-fast-toast";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
 
@@ -61,8 +60,6 @@ export const Profile = ({ navigation }) => {
     const [loading, setLoading] = useState(null);
 
     const userMeta = extractProfileInfo(user);
-
-    console.log({ user, userMeta });
 
     const handlePasswordChange = async () => {
         setLoading("change-password");

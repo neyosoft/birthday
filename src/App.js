@@ -1,5 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
+import { ToastProvider } from "react-native-fast-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -23,12 +24,14 @@ export default function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <SafeAreaProvider>
-                <StatusBar style="light" />
-                <AuthProvider>
-                    <AppNavigator />
-                </AuthProvider>
-            </SafeAreaProvider>
+            <ToastProvider>
+                <SafeAreaProvider>
+                    <StatusBar style="light" />
+                    <AuthProvider>
+                        <AppNavigator />
+                    </AuthProvider>
+                </SafeAreaProvider>
+            </ToastProvider>
         </QueryClientProvider>
     );
 }

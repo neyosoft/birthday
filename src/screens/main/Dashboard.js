@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
+import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity, Alert } from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
@@ -47,6 +48,8 @@ const getDurationToBirthday = (dateOfBirth) => {
 
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
+
+    const toast = useToast();
 
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
@@ -96,6 +99,8 @@ export const Dashboard = ({ navigation }) => {
             );
         }
 
+        console.log("birthdays: ", birthdayUser.data);
+
         if (birthdayUser.data && birthdayUser.data.length === 0) {
             return (
                 <View style={styles.descriptionViewStyle}>
@@ -126,7 +131,7 @@ export const Dashboard = ({ navigation }) => {
     const handleCopyAccountNumber = async () => {
         await Clipboard.setString(user.virtualAccountNumber);
 
-        Alert.alert("Wallet", "Account number has been copied.");
+        toast.show("Account number has been copied.");
     };
 
     return (
