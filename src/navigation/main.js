@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 
-import { Dashboard, Profile, Donation, PayWithPaystack, VerifyPhoneNumber } from "../screens/main";
+import { Dashboard, Profile, Donation, VerifyBvn, PayWithPaystack, VerifyPhoneNumber } from "../screens/main";
 
 const Stack = createStackNavigator();
 
@@ -14,6 +14,7 @@ const MainApplicationNavigation = () => (
         }}>
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Donation" component={Donation} />
+        <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="PayWithPaystack" component={PayWithPaystack} />
         <Stack.Screen name="VerifyPhoneNumber" component={VerifyPhoneNumber} />

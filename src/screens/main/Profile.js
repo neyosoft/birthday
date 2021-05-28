@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
@@ -8,27 +8,75 @@ import { useAuth } from "../../context";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
+import { debugAxiosError } from "../../utils/request.utils";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
 
-    const tier = userInfo.kyclevel;
+    switch (userInfo.kyclevel) {
+        case "TIER1":
+            output.isEmailVerified = false;
+            output.isPhoneNumberVerified = false;
+            output.canUpdatePhoneNumber = false;
+            output.isBvnVerified = false;
+            output.canUpdateBvn = false;
+            break;
+        case "TIER2":
+            output.isEmailVerified = true;
+            output.isPhoneNumberVerified = false;
+            output.canUpdatePhoneNumber = true;
+            output.isBvnVerified = false;
+            output.canUpdateBvn = false;
+        case "TIER3":
+            output.isEmailVerified = true;
+            output.isPhoneNumberVerified = true;
+            output.canUpdatePhoneNumber = false;
+            output.isBvnVerified = false;
+            output.canUpdateBvn = true;
+            break;
+        case "TIER4":
+            output.isEmailVerified = true;
+            output.isPhoneNumberVerified = true;
+            output.canUpdatePhoneNumber = false;
+            output.isBvnVerified = true;
+            output.canUpdateBvn = false;
+            break;
 
-    output.isEmailVerified = tier === "TIER2";
-    output.isPhoneNumberVerified = tier === "TIER3";
-    output.canUpdatePhoneNumber = tier === "TIER2";
-    output.isBvnVerified = tier === "TIER4";
-    output.canUpdateBvn = tier === "TIER3";
+        default:
+            output.isEmailVerified = false;
+            output.isPhoneNumberVerified = false;
+            output.canUpdatePhoneNumber = false;
+            output.isBvnVerified = false;
+            output.canUpdateBvn = false;
+            break;
+    }
 
     return output;
 };
 
 export const Profile = ({ navigation }) => {
-    const { user, logout } = useAuth();
+    const { user, logout, authenticatedRequest } = useAuth();
 
-    console.log("userinfo: ", user);
+    const [loading, setLoading] = useState(null);
 
     const userMeta = extractProfileInfo(user);
+
+    const handlePasswordChange = async () => {
+        setLoading("change-password");
+
+        try {
+            const { data } = await authenticatedRequest().post(`/app/auth/change/password/${user.email}`);
+
+            console.log("The response data: ", data);
+
+            Alert.alert("Password Reset", "Kindly check your email to complete password change.");
+        } catch (error) {
+            debugAxiosError(error);
+            Alert.alert("Password Reset", "There is a problem changing password.");
+        } finally {
+            setLoading(null);
+        }
+    };
 
     return (
         <Page>
@@ -88,12 +136,12 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>BVN</AppText>
                     {userMeta.isBvnVerified ? (
-                        <AppText style={styles.subtitleValue}>{user.mobileNumber}</AppText>
+                        <AppText style={styles.subtitleValue}>{user.bvn}</AppText>
                     ) : (
                         <TouchableOpacity
                             onPress={() => {
                                 if (userMeta.canUpdateBvn) {
-                                    navigation.navigate("VerifyPhoneNumber");
+                                    navigation.navigate("VerifyBvn");
                                 } else {
                                     Alert.alert("Verification", "You need to verify phone number before you proceed.");
                                 }
@@ -105,8 +153,10 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Password</AppText>
-                    <TouchableOpacity>
-                        <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>Change</AppText>
+                    <TouchableOpacity onPress={handlePasswordChange}>
+                        <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>
+                            {loading === "change-password" ? "Processing..." : "Change"}
+                        </AppText>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.separator} />

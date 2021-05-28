@@ -1,13 +1,40 @@
-import React from "react";
-import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity, Alert } from "react-native";
 
+import { theme } from "../../theme";
+import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
 
-import { theme } from "../../theme";
-
 export const VerifyBvn = ({ navigation }) => {
+    const { refreshUser, authenticatedRequest } = useAuth();
+
+    const [loading, setLoading] = useState(false);
+    const [bvn, setBvn] = useState("");
+
+    const handleSubmit = async () => {
+        setLoading(false);
+
+        if (bvn.trim().length !== 11) {
+            return Alert.alert("OTP Validation", "OTP can only be eleven(11) characters.");
+        }
+
+        try {
+            const { data } = await authenticatedRequest().post(`/app/bvn/verify/${bvn}`);
+
+            if (data && data.responseCode === "00") {
+                await refreshUser();
+
+                navigation.navigate("Profile");
+            } else {
+                Alert.alert("Verification", "BVN verification failed.");
+            }
+        } catch (error) {
+            Alert.alert("Verification", extractResponseErrorMessage(error));
+        }
+    };
+
     return (
         <Page>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -23,13 +50,19 @@ export const VerifyBvn = ({ navigation }) => {
                 </AppText>
 
                 <View style={styles.form}>
-                    <TextField label="Bank Verification Number" placeholder="221459940304" keyboardType="number-pad" />
+                    <TextField
+                        onChangeText={setBvn}
+                        keyboardType="number-pad"
+                        placeholder="221459940304"
+                        label="Bank Verification Number"
+                    />
 
                     <AppButton
                         label="Validate"
+                        disabled={loading}
                         variant="secondary"
+                        onPress={handleSubmit}
                         style={styles.validateBtn}
-                        onPress={() => navigation.navigate("VerifyDetails")}
                     />
                 </View>
 

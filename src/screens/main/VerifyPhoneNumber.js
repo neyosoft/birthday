@@ -21,13 +21,14 @@ export const VerifyPhoneNumber = ({ navigation }) => {
         try {
             await authenticatedRequest().post(`/app/auth/otp/${user.mobileNumber}`);
         } catch (error) {
+            console, log("There is a problem sending OTP: ", error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        // sendOTP();
+        sendOTP();
     }, []);
 
     useEffect(() => {
@@ -47,8 +48,6 @@ export const VerifyPhoneNumber = ({ navigation }) => {
             } else {
                 Alert.alert("Verification", extractResponseErrorMessage(error));
             }
-
-            console.log("verification status: ", data);
         } catch (error) {
             Alert.alert("Verification", extractResponseErrorMessage(error));
             debugAxiosError(error);
