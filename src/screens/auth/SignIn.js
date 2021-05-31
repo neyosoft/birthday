@@ -1,17 +1,18 @@
 import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import * as Device from "expo-device";
 import { useToast } from "react-native-fast-toast";
-import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Platform } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
 import { BackIcon, BarcodeScan, Fingerprint } from "../../../assets/svg";
 import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
 
+import Config from "../../config";
 import { theme } from "../../theme";
-import { baseRequest } from "../../utils/request.utils";
-
 import { useAuth } from "../../context";
+import { baseRequest } from "../../utils/request.utils";
 
 export const SignIn = ({ navigation }) => {
     const { authenticate } = useAuth();
@@ -33,10 +34,27 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
+            const devicePayload = {
+                deviceType: Platform.OS.toUpperCase(),
+                osVersion: Device.osVersion,
+                deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
+                versionCode: Config.appVersion,
+            };
+
+            console.log("devicePayload: ", devicePayload);
+
             if (data && data.access_token && data.refresh_token) {
+                await baseRequest.put("/app/user/app/update", devicePayload, {
+                    headers: {
+                        Authorization: `Bearer ${data.access_token}`,
+                    },
+                });
+
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
+            console.log("Got here again: ", error);
+
             let message;
 
             if (error.response) {
@@ -45,7 +63,7 @@ export const SignIn = ({ navigation }) => {
                 message = error.message;
             }
 
-            toast.show(message, { type: "success" });
+            toast.show(message, { type: "danger" });
         }
     };
 

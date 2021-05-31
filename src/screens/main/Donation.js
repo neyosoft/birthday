@@ -1,17 +1,58 @@
-import React, { useRef } from "react";
+import { format } from "date-fns";
+import React, { useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { theme } from "../../theme";
-import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
+import { useAuth } from "../../context";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import CalendarIcon from "../../../assets/images/Calendar2.png";
+import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
 
-export const Donation = ({ navigation }) => {
+export const Donation = ({ navigation, route }) => {
+    const { user, authenticatedRequest } = useAuth();
+
     const donationRef = useRef();
     const confirmDonationRef = useRef();
+
+    const { profile, walletBalance } = route.params;
+
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(null);
+    const [donationAmount, setDonationAmount] = useState("");
+
+    const handleDonation = async () => {
+        const amount = parseFloat(donationAmount) || 0;
+
+        if (amount <= 0) {
+            return Alert.alert("Donation", "Kindly input a valid donation amount.");
+        }
+
+        try {
+            setLoading("donation");
+
+            const { data } = await authenticatedRequest().post("/app/user/validate/transaction", {
+                amount,
+                password,
+                toUserId: profile.uid,
+            });
+
+            console.log("The response data: ", data);
+
+            donationRef.current.dismiss();
+            confirmDonationRef.current.dismiss();
+
+            Alert.alert("Donation", "Donation successfully submitted.");
+        } catch (error) {
+            debugAxiosError(error);
+            Alert.alert("Donation", extractResponseErrorMessage(error));
+        } finally {
+            setLoading(null);
+        }
+    };
 
     return (
         <Page>
@@ -24,17 +65,19 @@ export const Donation = ({ navigation }) => {
                 <UserAvatarIcon />
             </View>
 
-            <AppText style={styles.username}>Obagunwa Emmanuel</AppText>
+            <AppText style={styles.username}>
+                {profile.family_name} {profile.given_name}
+            </AppText>
 
             <View style={styles.form}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Image source={BirthdayIcon} style={{ width: 20, height: 20, marginRight: 10 }} />
-                    <AppText style={styles.subtitle}>April, 10</AppText>
+                    <AppText style={styles.subtitle}>{format(new Date(), "MMM, dd")}</AppText>
                 </View>
                 <View style={styles.separator} />
                 <View>
                     <AppText style={styles.subtitle}>Donations to others</AppText>
-                    <AppText style={styles.subtitleValue}>200 Donations</AppText>
+                    <AppText style={styles.subtitleValue}>{profile.donationsVolume} Donations</AppText>
                 </View>
                 <View style={styles.separator} />
             </View>
@@ -70,7 +113,7 @@ export const Donation = ({ navigation }) => {
                         <View style={styles.donationBalanceContainer}>
                             <View>
                                 <AppText style={styles.balanceText}>Available Balance</AppText>
-                                <AppText style={{ marginTop: 5 }}>NGN0.00</AppText>
+                                <AppText style={{ marginTop: 5 }}>NGN {walletBalance}</AppText>
                             </View>
 
                             <AppButton
@@ -92,12 +135,22 @@ export const Donation = ({ navigation }) => {
                         <View style={styles.donationInformationCard}>
                             <Image source={CalendarIcon} />
                             <View style={{ marginLeft: 10, flex: 1 }}>
-                                <AppText>Donation to - Ogunsanya Damilola</AppText>
-                                <AppText style={{ color: "#C4C4C4", marginTop: 5 }}>April, 10</AppText>
+                                <AppText>
+                                    Donation to - {profile.family_name} {profile.given_name}
+                                </AppText>
+                                <AppText style={{ color: "#C4C4C4", marginTop: 5 }}>
+                                    {format(new Date(), "MMM, dd")}
+                                </AppText>
                             </View>
                         </View>
 
-                        <TextField style={styles.formGroup} label="Amount" keyboardType="numeric" />
+                        <TextField
+                            label="Amount"
+                            keyboardType="numeric"
+                            value={donationAmount}
+                            style={styles.formGroup}
+                            onChangeText={setDonationAmount}
+                        />
 
                         <AppButton
                             label="Proceed"
@@ -130,24 +183,24 @@ export const Donation = ({ navigation }) => {
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm Donation</AppText>
                         <AppText style={styles.modalDescription}>
-                            You are about to donate NGN20,000 to Ogunsanya Damilola for their birthday
+                            You are about to donate NGN {donationAmount} to {profile.family_name} {profile.given_name}{" "}
+                            for their birthday
                         </AppText>
 
                         <PasswordField
                             label="Password"
+                            value={password}
                             style={styles.formGroup}
+                            onChangeText={setPassword}
                             placeholder="X X X X X X X X X X X X"
                         />
-                        <AppText style={styles.formGroup}>Select Bank</AppText>
 
                         <AppButton
                             label="Donate"
                             variant="secondary"
                             style={styles.submitBtn}
-                            onPress={() => {
-                                donationRef.current.dismiss();
-                                confirmDonationRef.current.dismiss();
-                            }}
+                            onPress={handleDonation}
+                            disabled={loading === "donation"}
                         />
                     </View>
                 </BottomSheetModal>

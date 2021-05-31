@@ -8,6 +8,8 @@ import { StyleSheet, View, FlatList, Image, TouchableOpacity, Alert } from "reac
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
+import Config from "../../config";
+
 import { theme } from "../../theme";
 
 import { useAuth } from "../../context";
@@ -90,7 +92,7 @@ export const Dashboard = ({ navigation }) => {
         }
     });
 
-    const renderBirthdayList = () => {
+    const renderBirthdayList = (walletBalance) => {
         if (birthdayUser.isLoading) {
             return (
                 <View style={styles.descriptionViewStyle}>
@@ -114,13 +116,16 @@ export const Dashboard = ({ navigation }) => {
                 style={styles.flatList}
                 data={birthdayUser.data}
                 keyExtractor={(_, index) => `index-${index}`}
-                renderItem={() => {
+                renderItem={({ item }) => {
                     return (
                         <TouchableOpacity
                             style={styles.renderItemContainer}
-                            onPress={() => navigation.navigate("Donation")}>
-                            <Image source={UserOne} />
-                            <AppText style={styles.renderItemText}>Damilola</AppText>
+                            onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
+                            <Image
+                                source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
+                                style={styles.profileImage}
+                            />
+                            <AppText style={styles.renderItemText}>{item.given_name}</AppText>
                         </TouchableOpacity>
                     );
                 }}
@@ -181,7 +186,7 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.celebrantPanel}>
                 <AppText style={styles.celebrantTitle}>Today's Celebrants</AppText>
 
-                {renderBirthdayList()}
+                {renderBirthdayList(wallet.data)}
             </View>
 
             <BottomSheetModalProvider>
@@ -599,5 +604,9 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         textAlign: "center",
         alignSelf: "center",
+    },
+    profileImage: {
+        width: 50,
+        height: 50,
     },
 });

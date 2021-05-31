@@ -56,6 +56,7 @@ const extractProfileInfo = (userInfo) => {
 
 export const Profile = ({ navigation }) => {
     const { user, logout, authenticatedRequest } = useAuth();
+    const [profileImage, setProfileImage] = useState(null);
 
     const [loading, setLoading] = useState(null);
 
@@ -65,7 +66,7 @@ export const Profile = ({ navigation }) => {
         setLoading("change-password");
 
         try {
-            const { data } = await authenticatedRequest().post(`/app/auth/change/password/${user.email}`);
+            await authenticatedRequest().post(`/app/auth/change/password/${user.email}`);
 
             Alert.alert("Password Reset", "Kindly check your email to complete password change.");
         } catch (error) {
@@ -82,9 +83,9 @@ export const Profile = ({ navigation }) => {
             </TouchableOpacity>
             <AppText style={styles.title}>Profile</AppText>
 
-            <View style={styles.avatarWrapper}>
+            <TouchableOpacity style={styles.avatarWrapper}>
                 <UserAvatarIcon />
-            </View>
+            </TouchableOpacity>
 
             <AppText style={styles.username}>
                 {user.givenName} {user.familyName}

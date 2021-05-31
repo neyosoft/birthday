@@ -12,6 +12,7 @@ import {
     removeRefreshToken,
 } from "../utils/storage.utils";
 import Config from "../config";
+import { debugAxiosError } from "../utils/request.utils";
 
 const AuthContext = React.createContext();
 
@@ -73,6 +74,7 @@ export default class AuthProvider extends Component {
             });
         },
         refreshUser: async () => {
+            console.log("Got to refresh user");
             try {
                 const { data } = await axios.get("/app/user/information", {
                     baseURL: Config.SERVER_URL,
@@ -84,7 +86,9 @@ export default class AuthProvider extends Component {
                 if (data && data.email) {
                     this.setState({ user: data });
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.log("Cant refresh user: ", e);
+            }
         },
         setupCompleted: () => this.setState({ accountSetupCompleted: true }),
         setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
@@ -133,7 +137,9 @@ export default class AuthProvider extends Component {
                     user = data;
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            debugAxiosError(e);
+        }
 
         const stateUpdate = { accessToken, refreshToken, user, isLoading: false };
 
