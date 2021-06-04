@@ -41,20 +41,18 @@ export const SignIn = ({ navigation }) => {
                 versionCode: Config.appVersion,
             };
 
-            console.log("devicePayload: ", devicePayload);
-
             if (data && data.access_token && data.refresh_token) {
-                await baseRequest.put("/app/user/app/update", devicePayload, {
-                    headers: {
-                        Authorization: `Bearer ${data.access_token}`,
-                    },
-                });
+                try {
+                    await baseRequest.put("/app/user/app/update", devicePayload, {
+                        headers: {
+                            Authorization: `Bearer ${data.access_token}`,
+                        },
+                    });
+                } catch (error) {}
 
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            console.log("Got here again: ", error);
-
             let message;
 
             if (error.response) {

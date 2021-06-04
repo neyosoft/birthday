@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
+import { useToast } from "react-native-fast-toast";
+import { StyleSheet, View, TouchableOpacity, Image, Alert, Platform, ScrollView } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
@@ -55,8 +57,10 @@ const extractProfileInfo = (userInfo) => {
 };
 
 export const Profile = ({ navigation }) => {
+    const toast = useToast();
+
     const { user, logout, authenticatedRequest } = useAuth();
-    const [profileImage, setProfileImage] = useState(null);
+    const [profileImage, setProfileImage] = useState(user.picUrl);
 
     const [loading, setLoading] = useState(null);
 
@@ -76,6 +80,27 @@ export const Profile = ({ navigation }) => {
         }
     };
 
+    const handleImageUpload = async () => {
+        if (Platform.OS !== "web") {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== "granted") {
+                toast.show("Sorry, we need camera roll permissions to change profile picture.", { type: "danger" });
+            } else {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [4, 3],
+                    quality: 1,
+                });
+
+                if (!result.cancelled) {
+                    setProfileImage(result.uri);
+                }
+            }
+        }
+    };
+
     return (
         <Page>
             <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
@@ -83,15 +108,19 @@ export const Profile = ({ navigation }) => {
             </TouchableOpacity>
             <AppText style={styles.title}>Profile</AppText>
 
-            <TouchableOpacity style={styles.avatarWrapper}>
-                <UserAvatarIcon />
+            <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
+                {profileImage ? (
+                    <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
+                ) : (
+                    <UserAvatarIcon />
+                )}
             </TouchableOpacity>
 
             <AppText style={styles.username}>
                 {user.givenName} {user.familyName}
             </AppText>
 
-            <View style={styles.form}>
+            <ScrollView style={styles.form}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Image source={BirthdayIcon} style={{ width: 20, height: 20, marginRight: 10 }} />
                     <AppText style={styles.subtitle}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
@@ -159,10 +188,21 @@ export const Profile = ({ navigation }) => {
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
+                    <AppText style={styles.subtitle}>PIN</AppText>
+                    {user.pinSet ? (
+                        <AppText style={styles.subtitleValue}>******</AppText>
+                    ) : (
+                        <TouchableOpacity onPress={() => navigation.navigate("CreateTransactionPin")}>
+                            <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>Set PIN</AppText>
+                        </TouchableOpacity>
+                    )}
+                </View>
+                <View style={styles.separator} />
+                <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>About us</AppText>
                     <Ionicons name="open-outline" size={24} color="#A3A2A2" />
                 </View>
-            </View>
+            </ScrollView>
 
             <View style={{ flex: 1 }} />
 
@@ -184,6 +224,7 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 17,
         marginVertical: 15,
+        overflow: "hidden",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: theme.color.primary,

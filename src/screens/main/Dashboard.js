@@ -101,8 +101,6 @@ export const Dashboard = ({ navigation }) => {
             );
         }
 
-        console.log("birthdays: ", birthdayUser.data);
-
         if (birthdayUser.data && birthdayUser.data.length === 0) {
             return (
                 <View style={styles.descriptionViewStyle}>
@@ -115,7 +113,7 @@ export const Dashboard = ({ navigation }) => {
                 numColumns={4}
                 style={styles.flatList}
                 data={birthdayUser.data}
-                keyExtractor={(_, index) => `index-${index}`}
+                keyExtractor={(item) => item.bioId}
                 renderItem={({ item }) => {
                     return (
                         <TouchableOpacity

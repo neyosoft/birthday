@@ -4,3 +4,4 @@ export { VerifyBvn } from "./VerifyBvn";
 export { Dashboard } from "./Dashboard";
 export { PayWithPaystack } from "./PayWithPaystack";
 export { VerifyPhoneNumber } from "./VerifyPhoneNumber";
+export { CreateTransactionPin } from "./CreateTransactionPin";

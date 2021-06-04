@@ -21,8 +21,8 @@ export const useAuth = () => useContext(AuthContext);
 export default class AuthProvider extends Component {
     state = {
         user: null,
-        accessToken: null,
         isLoading: true,
+        accessToken: null,
         refreshToken: null,
         onboardingCompleted: false,
         accountSetupCompleted: true,
@@ -74,7 +74,6 @@ export default class AuthProvider extends Component {
             });
         },
         refreshUser: async () => {
-            console.log("Got to refresh user");
             try {
                 const { data } = await axios.get("/app/user/information", {
                     baseURL: Config.SERVER_URL,
@@ -86,9 +85,7 @@ export default class AuthProvider extends Component {
                 if (data && data.email) {
                     this.setState({ user: data });
                 }
-            } catch (e) {
-                console.log("Cant refresh user: ", e);
-            }
+            } catch (e) {}
         },
         setupCompleted: () => this.setState({ accountSetupCompleted: true }),
         setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
@@ -121,6 +118,8 @@ export default class AuthProvider extends Component {
             accessToken = null,
             refreshToken = null;
 
+        const now = new Date();
+
         try {
             accessToken = await getUserToken();
             refreshToken = await getRefreshToken();
@@ -130,6 +129,9 @@ export default class AuthProvider extends Component {
                     baseURL: Config.SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
+                        TimeStamp: `${now.getFullYear()}-${
+                            now.getMonth() + 1
+                        }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
                     },
                 });
 

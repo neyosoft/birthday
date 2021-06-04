@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import React, { useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useToast } from "react-native-fast-toast";
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -13,6 +14,7 @@ import CalendarIcon from "../../../assets/images/Calendar2.png";
 import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
 
 export const Donation = ({ navigation, route }) => {
+    const toast = useToast();
     const { user, authenticatedRequest } = useAuth();
 
     const donationRef = useRef();
@@ -36,8 +38,8 @@ export const Donation = ({ navigation, route }) => {
 
             const { data } = await authenticatedRequest().post("/app/user/validate/transaction", {
                 amount,
-                password,
-                toUserId: profile.uid,
+                pin: password,
+                toUserId: profile.bioId,
             });
 
             console.log("The response data: ", data);
@@ -45,10 +47,12 @@ export const Donation = ({ navigation, route }) => {
             donationRef.current.dismiss();
             confirmDonationRef.current.dismiss();
 
-            Alert.alert("Donation", "Donation successfully submitted.");
+            setTimeout(() => {
+                navigation.navigate("Dashboard");
+            }, 200);
         } catch (error) {
             debugAxiosError(error);
-            Alert.alert("Donation", extractResponseErrorMessage(error));
+            toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(null);
         }
@@ -188,11 +192,12 @@ export const Donation = ({ navigation, route }) => {
                         </AppText>
 
                         <PasswordField
-                            label="Password"
+                            label="Pin"
                             value={password}
+                            placeholder="X X X X"
                             style={styles.formGroup}
+                            keyboardType="number-pad"
                             onChangeText={setPassword}
-                            placeholder="X X X X X X X X X X X X"
                         />
 
                         <AppButton
