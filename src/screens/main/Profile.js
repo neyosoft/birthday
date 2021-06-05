@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
-import { StyleSheet, View, TouchableOpacity, Image, Alert, Platform, ScrollView } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
 import { theme } from "../../theme";
@@ -72,9 +72,9 @@ export const Profile = ({ navigation }) => {
         try {
             await authenticatedRequest().post(`/app/auth/change/password/${user.email}`);
 
-            Alert.alert("Password Reset", "Kindly check your email to complete password change.");
+            toast.show("Kindly check your email to complete password change.");
         } catch (error) {
-            Alert.alert("Password Reset", "There is a problem changing password.");
+            toast.show("There is a problem changing password.");
         } finally {
             setLoading(null);
         }
@@ -152,7 +152,7 @@ export const Profile = ({ navigation }) => {
                                 if (userMeta.canUpdatePhoneNumber) {
                                     navigation.navigate("VerifyPhoneNumber");
                                 } else {
-                                    Alert.alert("Verification", "You need to verify email before you proceed.");
+                                    toast.show("You need to verify email before you proceed.");
                                 }
                             }}>
                             <AppText style={styles.invalid}>Not Verified</AppText>
@@ -170,7 +170,7 @@ export const Profile = ({ navigation }) => {
                                 if (userMeta.canUpdateBvn) {
                                     navigation.navigate("VerifyBvn");
                                 } else {
-                                    Alert.alert("Verification", "You need to verify phone number before you proceed.");
+                                    toast.show("You need to verify phone number before you proceed.");
                                 }
                             }}>
                             <AppText style={styles.invalid}>Not Verified</AppText>

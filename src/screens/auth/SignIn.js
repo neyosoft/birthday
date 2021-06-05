@@ -104,7 +104,9 @@ export const SignIn = ({ navigation }) => {
                                     hasError={errors.password && touched.password}
                                 />
 
-                                <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
+                                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                    <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
+                                </TouchableOpacity>
 
                                 <View style={styles.securityRole}>
                                     <TouchableOpacity>

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import { useToast } from "react-native-fast-toast";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const VerifyBvn = ({ navigation }) => {
+    const toast = useToast();
     const { refreshUser, authenticatedRequest } = useAuth();
 
     const [loading, setLoading] = useState(false);
@@ -18,7 +20,7 @@ export const VerifyBvn = ({ navigation }) => {
         setLoading(true);
 
         if (bvn.trim().length !== 11) {
-            return Alert.alert("OTP Validation", "OTP can only be eleven(11) characters.");
+            return toast.show("OTP can only be eleven(11) characters.");
         }
 
         try {
@@ -29,10 +31,10 @@ export const VerifyBvn = ({ navigation }) => {
 
                 navigation.navigate("Profile");
             } else {
-                Alert.alert("Verification", "BVN verification failed.");
+                toast.show("BVN verification failed.");
             }
         } catch (error) {
-            Alert.alert("Verification", extractResponseErrorMessage(error));
+            toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
         }

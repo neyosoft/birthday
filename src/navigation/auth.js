@@ -4,11 +4,12 @@ import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/
 import {
     Welcome,
     SignIn,
+    VerifyOtp,
+    CaptureImage,
     CreateAccount,
     VerifyDetails,
-    VerifyOtp,
     PictureChoice,
-    CaptureImage,
+    ForgetPassword,
     SignupDateofBirth,
 } from "../screens/auth";
 
@@ -28,6 +29,7 @@ const AuthenticationNavigator = () => (
         <Stack.Screen name="PictureChoice" component={PictureChoice} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="VerifyDetails" component={VerifyDetails} />
+        <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
         <Stack.Screen name="SignupDateofBirth" component={SignupDateofBirth} />
     </Stack.Navigator>
 );
