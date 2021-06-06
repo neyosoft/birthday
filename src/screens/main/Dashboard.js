@@ -1,23 +1,25 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
-import { StyleSheet, View, FlatList, Image, TouchableOpacity, Alert } from "react-native";
+import { useQueryClient } from "react-query";
+import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import Config from "../../config";
-
 import { theme } from "../../theme";
 
 import { useAuth } from "../../context";
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
 import CopyIcon from "../../../assets/images/copy.png";
+import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
@@ -52,15 +54,24 @@ export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
 
     const toast = useToast();
+    const queryClient = useQueryClient();
 
     const cardInputRef = useRef();
     const fundWalletRef = useRef();
     const confirmOtpRef = useRef();
     const fundingSuccessfulRef = useRef();
 
+    const [loading, setLoading] = useState(null);
+
     const withdrawalRef = useRef();
     const upcomingFeatureRef = useRef();
     const confirmWithdrawRef = useRef();
+
+    const [pin, setPin] = useState("");
+    const [bank, setBank] = useState("");
+    const [resolvedName, setResolvedName] = useState("");
+    const [accountNumber, setAccountNumber] = useState("");
+    const [withdrawAmount, setWithdrawAmount] = useState("");
 
     const [fundAmount, setFundAmount] = useState("");
 
@@ -73,6 +84,16 @@ export const Dashboard = ({ navigation }) => {
             } else {
                 throw new Error();
             }
+        } catch (error) {
+            throw new Error();
+        }
+    });
+
+    const banks = useQuery("banks", async () => {
+        try {
+            const { data } = await authenticatedRequest().get("/account/banks");
+
+            return data;
         } catch (error) {
             throw new Error();
         }
@@ -91,6 +112,80 @@ export const Dashboard = ({ navigation }) => {
             throw new Error();
         }
     });
+
+    useEffect(() => {
+        setResolvedName("");
+
+        if (accountNumber.length === 10 && bank) {
+            lookupAccount();
+        }
+
+        async function lookupAccount() {
+            try {
+                setLoading("resolving-account");
+                const { data } = await authenticatedRequest().get(`/account/inquiry/${accountNumber}/${bank}`);
+
+                if (data && data.status) {
+                    setResolvedName(data.data.account_name);
+                } else {
+                    toast.show(data.message, { duration: 3000 });
+                }
+            } catch (error) {
+                toast.show(extractResponseErrorMessage(error));
+            } finally {
+                setLoading(false);
+            }
+        }
+    }, [accountNumber, bank]);
+
+    const handleWithdrawal = async () => {
+        if (pin.length !== 4) {
+            return toast.show("You supplied invalid PIN");
+        }
+
+        if (!wallet.isSuccess) {
+            return toast.show("You available balance is not currently available. Kindly try again.");
+        }
+
+        if (wallet.data < withdrawAmount) {
+            return toast.show("Your wallet balance is insufficient to perform this transaction.");
+        }
+
+        try {
+            setLoading("withdrawing");
+
+            await authenticatedRequest().post("app/user/validate/withdrawal", {
+                pin,
+                accountNumber,
+                bankCode: bank,
+                currency: "NGN",
+                name: resolvedName,
+                amount: withdrawAmount,
+            });
+
+            withdrawalRef.current.dismiss();
+            confirmWithdrawRef.current.dismiss();
+
+            queryClient.invalidateQueries("wallet");
+
+            toast.show("Withdraw is in progress...", { type: "success", duration: 3000 });
+
+            setTimeout(() => {
+                navigation.navigate("Dashboard");
+            }, 1000);
+        } catch (error) {
+            console.log("Withdrawal failed: ", error);
+            toast.show(extractResponseErrorMessage(error));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCopyAccountNumber = async () => {
+        await Clipboard.setString(user.virtualAccountNumber);
+
+        toast.show("Account number has been copied.");
+    };
 
     const renderBirthdayList = (walletBalance) => {
         if (birthdayUser.isLoading) {
@@ -129,12 +224,6 @@ export const Dashboard = ({ navigation }) => {
                 }}
             />
         );
-    };
-
-    const handleCopyAccountNumber = async () => {
-        await Clipboard.setString(user.virtualAccountNumber);
-
-        toast.show("Account number has been copied.");
     };
 
     return (
@@ -177,7 +266,7 @@ export const Dashboard = ({ navigation }) => {
                     label="Withdraw"
                     variant="secondary"
                     style={styles.withdrawBtn}
-                    onPress={() => upcomingFeatureRef.current.present()}
+                    onPress={() => withdrawalRef.current.present()}
                 />
             </View>
 
@@ -354,10 +443,11 @@ export const Dashboard = ({ navigation }) => {
                         />
                     </View>
                 </BottomSheetModal>
+
                 <BottomSheetModal
                     index={1}
-                    stackBehavior="push"
                     ref={withdrawalRef}
+                    stackBehavior="push"
                     snapPoints={[-1, 530]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
@@ -367,36 +457,60 @@ export const Dashboard = ({ navigation }) => {
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
-
-                        <TextField style={styles.formGroup} label="Amount" keyboardType="numeric" />
+                        <TextField
+                            label="Amount"
+                            value={withdrawAmount}
+                            keyboardType="numeric"
+                            style={styles.formGroup}
+                            onChangeText={setWithdrawAmount}
+                        />
                         <AppText style={styles.formGroup}>Select Bank</AppText>
                         <RNPickerSelect
+                            value={bank}
+                            onValueChange={setBank}
                             useNativeAndroidPickerStyle={false}
-                            onValueChange={(value) => console.log(value)}
                             placeholder={{ label: "Select Bank", value: null }}
-                            items={[
-                                { label: "UBA", value: "UBA" },
-                                { label: "GTBank", value: "GTBank" },
-                                { label: "Access Bank", value: "Access Bank" },
-                            ]}
                             Icon={() => <Ionicons name="chevron-down" size={24} color="#fff" />}
+                            items={
+                                banks.isSuccess
+                                    ? banks.data.map((record) => ({ label: record.name, value: record.code }))
+                                    : { label: "Select Bank", value: "" }
+                            }
                             style={{
                                 inputIOS: styles.dropdownInput,
                                 inputAndroid: styles.dropdownInput,
-                                iconContainer: {
-                                    top: 25,
-                                    right: 12,
-                                },
+                                iconContainer: { top: 25, right: 12 },
                             }}
                         />
-                        <TextField style={styles.formGroup} label="Account Number" keyboardType="numeric" />
-                        <AutoFillField style={styles.formGroup} value="Obagunwa Emmanuel" />
+                        <TextField
+                            value={accountNumber}
+                            label="Account Number"
+                            keyboardType="numeric"
+                            style={styles.formGroup}
+                            onChangeText={setAccountNumber}
+                        />
+
+                        {loading === "resolving-account" ? (
+                            <AutoFillField style={styles.formGroup} value="Resolving Account..." />
+                        ) : null}
+
+                        {resolvedName ? <AutoFillField style={styles.formGroup} value={resolvedName} /> : null}
 
                         <AppButton
                             label="Continue"
                             variant="secondary"
                             style={styles.submitBtn}
-                            onPress={() => confirmWithdrawRef.current.present()}
+                            onPress={() => {
+                                if (withdrawAmount < 50) {
+                                    return toast.show("Withdrawal amount can not be less than 50");
+                                }
+
+                                if (!resolvedName) {
+                                    return toast.show("Kindly specify an active account for withdrawal.");
+                                }
+
+                                confirmWithdrawRef.current.present();
+                            }}
                         />
                     </View>
                 </BottomSheetModal>
@@ -414,24 +528,25 @@ export const Dashboard = ({ navigation }) => {
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm Withdrawal</AppText>
                         <AppText style={styles.modalDescription}>
-                            You are about to withdraw the amount of NGN20,000 to Ogunsanya Damilola - 0107724790, GTbank
+                            You are about to withdraw the amount of NGN{moneyFormatWNS(withdrawAmount)} to{" "}
+                            {resolvedName} - {accountNumber}, {bank}
                         </AppText>
 
                         <PasswordField
-                            label="Password"
+                            value={pin}
+                            label="PIN"
+                            maxLength={4}
+                            placeholder="X X X X"
+                            onChangeText={setPin}
+                            keyboardType="numeric"
                             style={styles.formGroup}
-                            placeholder="X X X X X X X X X X X X"
                         />
-                        <AppText style={styles.formGroup}>Select Bank</AppText>
 
                         <AppButton
                             label="Withdraw"
                             variant="secondary"
                             style={styles.submitBtn}
-                            onPress={() => {
-                                confirmWithdrawRef.current.dismiss();
-                                withdrawalRef.current.dismiss();
-                            }}
+                            onPress={handleWithdrawal}
                         />
                     </View>
                 </BottomSheetModal>

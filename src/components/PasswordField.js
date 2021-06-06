@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { theme } from "../theme";
 import { AppText } from "./AppText";
 
-export const PasswordField = ({ style, inputStyle, hasError, labelStyle, label, ...rest }) => {
+export const PasswordField = forwardRef(({ style, inputStyle, hasError, labelStyle, label, ...rest }, ref) => {
     const [show, setShow] = useState(false);
 
     const stateStyle = {};
@@ -21,6 +21,7 @@ export const PasswordField = ({ style, inputStyle, hasError, labelStyle, label, 
 
             <View style={[styles.row, stateStyle]}>
                 <TextInput
+                    ref={ref}
                     autoCapitalize="none"
                     returnKeyType="done"
                     secureTextEntry={!show}
@@ -37,7 +38,7 @@ export const PasswordField = ({ style, inputStyle, hasError, labelStyle, label, 
             </View>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     label: {},

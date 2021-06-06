@@ -1,9 +1,10 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
+
 import { theme } from "../theme";
 import { AppText } from "./AppText";
 
-export const TextField = ({ style, hasError, inputStyle, labelStyle, label, ...rest }) => {
+export const TextField = forwardRef(({ style, hasError, inputStyle, labelStyle, label, ...rest }, ref) => {
     const stateStyle = {};
 
     if (hasError) {
@@ -16,6 +17,7 @@ export const TextField = ({ style, hasError, inputStyle, labelStyle, label, ...r
             <AppText style={[styles.label, labelStyle]}>{label}</AppText>
 
             <TextInput
+                ref={ref}
                 returnKeyType="done"
                 clearButtonMode="always"
                 placeholderTextColor="#A3A2A2"
@@ -26,7 +28,7 @@ export const TextField = ({ style, hasError, inputStyle, labelStyle, label, ...r
             />
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     label: {},

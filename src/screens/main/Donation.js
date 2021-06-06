@@ -1,6 +1,7 @@
 import { format } from "date-fns";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, createRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
 import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -15,7 +16,10 @@ import { debugAxiosError, extractResponseErrorMessage } from "../../utils/reques
 
 export const Donation = ({ navigation, route }) => {
     const toast = useToast();
-    const { user, authenticatedRequest } = useAuth();
+    const pinInputRef = useRef();
+    const theAmountRef = useRef();
+    const queryClient = useQueryClient();
+    const { authenticatedRequest } = useAuth();
 
     const donationRef = useRef();
     const confirmDonationRef = useRef();
@@ -42,14 +46,20 @@ export const Donation = ({ navigation, route }) => {
                 toUserId: profile.bioId,
             });
 
-            console.log("The response data: ", data);
-
             donationRef.current.dismiss();
             confirmDonationRef.current.dismiss();
 
-            setTimeout(() => {
-                navigation.navigate("Dashboard");
-            }, 200);
+            if (data && data.responseCode === "00") {
+                toast.show("You have successfully completed your donation.", { type: "success", duration: 3000 });
+
+                queryClient.invalidateQueries("wallet");
+
+                setTimeout(() => {
+                    navigation.navigate("Dashboard");
+                }, 1000);
+            } else {
+                toast.show(data.responseDescription);
+            }
         } catch (error) {
             debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
@@ -150,6 +160,7 @@ export const Donation = ({ navigation, route }) => {
 
                         <TextField
                             label="Amount"
+                            ref={theAmountRef}
                             keyboardType="numeric"
                             value={donationAmount}
                             style={styles.formGroup}
@@ -160,7 +171,10 @@ export const Donation = ({ navigation, route }) => {
                             label="Proceed"
                             variant="secondary"
                             style={styles.submitBtn}
-                            onPress={() => confirmDonationRef.current.present()}
+                            onPress={() => {
+                                theAmountRef.current.blur();
+                                confirmDonationRef.current.present();
+                            }}
                         />
                     </View>
                 </BottomSheetModal>
@@ -193,10 +207,12 @@ export const Donation = ({ navigation, route }) => {
 
                         <PasswordField
                             label="Pin"
+                            maxLength={4}
                             value={password}
+                            ref={pinInputRef}
                             placeholder="X X X X"
+                            keyboardType="numeric"
                             style={styles.formGroup}
-                            keyboardType="number-pad"
                             onChangeText={setPassword}
                         />
 
