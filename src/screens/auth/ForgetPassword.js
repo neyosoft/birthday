@@ -25,8 +25,11 @@ export const ForgetPassword = ({ navigation }) => {
         try {
             await authenticatedRequest().post(`/app/auth/change/password/${email}`);
 
+            navigation.navigate("SignIn");
+
             toast.show("Kindly check your email to complete password change.");
         } catch (error) {
+            console.log("The response error: ", error);
             toast.show("There is a problem changing password.");
         } finally {
             setLoading(null);
