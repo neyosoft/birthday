@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Clipboard from "expo-clipboard";
+import { useQueryClient } from "react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
-import { useQueryClient } from "react-query";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -143,18 +143,10 @@ export const Dashboard = ({ navigation }) => {
             return toast.show("You supplied invalid PIN");
         }
 
-        if (!wallet.isSuccess) {
-            return toast.show("You available balance is not currently available. Kindly try again.");
-        }
-
-        if (wallet.data < withdrawAmount) {
-            return toast.show("Your wallet balance is insufficient to perform this transaction.");
-        }
-
         try {
             setLoading("withdrawing");
 
-            await authenticatedRequest().post("app/user/validate/withdrawal", {
+            await authenticatedRequest().post("/app/user/validate/withdrawal", {
                 pin,
                 accountNumber,
                 bankCode: bank,
@@ -174,7 +166,6 @@ export const Dashboard = ({ navigation }) => {
                 navigation.navigate("Dashboard");
             }, 1000);
         } catch (error) {
-            console.log("Withdrawal failed: ", error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
@@ -474,7 +465,7 @@ export const Dashboard = ({ navigation }) => {
                             items={
                                 banks.isSuccess
                                     ? banks.data.map((record) => ({ label: record.name, value: record.code }))
-                                    : { label: "Select Bank", value: "" }
+                                    : []
                             }
                             style={{
                                 inputIOS: styles.dropdownInput,
@@ -507,6 +498,18 @@ export const Dashboard = ({ navigation }) => {
 
                                 if (!resolvedName) {
                                     return toast.show("Kindly specify an active account for withdrawal.");
+                                }
+
+                                if (!wallet.isSuccess) {
+                                    return toast.show(
+                                        "You available balance is not currently available. Kindly try again.",
+                                    );
+                                }
+
+                                if (parseFloat(wallet.data) < parseFloat(withdrawAmount)) {
+                                    return toast.show(
+                                        "Your wallet balance is insufficient to perform this transaction.",
+                                    );
                                 }
 
                                 confirmWithdrawRef.current.present();
@@ -547,6 +550,7 @@ export const Dashboard = ({ navigation }) => {
                             variant="secondary"
                             style={styles.submitBtn}
                             onPress={handleWithdrawal}
+                            disabled={loading === "withdrawing"}
                         />
                     </View>
                 </BottomSheetModal>

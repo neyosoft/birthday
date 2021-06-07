@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 import React, { Component, useContext } from "react";
 
 import {
@@ -12,7 +13,7 @@ import {
     removeRefreshToken,
 } from "../utils/storage.utils";
 import Config from "../config";
-import { debugAxiosError } from "../utils/request.utils";
+import { isFuture, isPast } from "date-fns";
 
 const AuthContext = React.createContext();
 
@@ -90,7 +91,7 @@ export default class AuthProvider extends Component {
         setupCompleted: () => this.setState({ accountSetupCompleted: true }),
         setupNotCompleted: () => this.setState({ accountSetupCompleted: false }),
         authenticatedRequest: () => {
-            const { accessToken } = this.state;
+            const { accessToken, refreshToken } = this.state;
 
             const now = new Date();
 
@@ -103,6 +104,40 @@ export default class AuthProvider extends Component {
                         now.getMonth() + 1
                     }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
                 },
+            });
+
+            instance.interceptors.request.use(async (config) => {
+                const decoded = jwt_decode(accessToken);
+
+                if (isFuture(new Date(decoded.exp * 1000))) {
+                    return config;
+                } else {
+                    const params = new URLSearchParams();
+
+                    params.append("refresh_token", refreshToken);
+                    params.append("client_id", "api-access");
+                    params.append("grant_type", "refresh_token");
+                    params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+
+                    const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
+                        baseURL: Config.SERVER_URL,
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            TimeStamp: `${now.getFullYear()}-${
+                                now.getMonth() + 1
+                            }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                        },
+                    });
+
+                    if (data && data.access_token && data.refresh_token) {
+                        await Promise.all([saveUserToken(data.access_token), saveRefreshToken(data.refresh_token)]);
+                        this.setState({ accessToken: data.access_token, refreshToken: data.refresh_token });
+
+                        config.headers["Authorization"] = "Bearer " + data.access_token;
+
+                        return config;
+                    }
+                }
             });
 
             return instance;
@@ -125,23 +160,69 @@ export default class AuthProvider extends Component {
             refreshToken = await getRefreshToken();
 
             if (accessToken) {
-                const { data } = await axios.get("/app/user/information", {
-                    baseURL: Config.SERVER_URL,
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        TimeStamp: `${now.getFullYear()}-${
-                            now.getMonth() + 1
-                        }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
-                    },
-                });
+                const decoded = jwt_decode(accessToken);
 
-                if (data && data.email) {
-                    user = data;
+                if (isFuture(new Date(decoded.exp * 1000))) {
+                    const { data } = await axios.get("/app/user/information", {
+                        baseURL: Config.SERVER_URL,
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                            TimeStamp: `${now.getFullYear()}-${
+                                now.getMonth() + 1
+                            }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                        },
+                    });
+
+                    if (data && data.email) {
+                        user = data;
+                    }
+                } else {
+                    const params = new URLSearchParams();
+
+                    params.append("refresh_token", refreshToken);
+                    params.append("client_id", "api-access");
+                    params.append("grant_type", "refresh_token");
+                    params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+
+                    const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
+                        baseURL: Config.SERVER_URL,
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            TimeStamp: `${now.getFullYear()}-${
+                                now.getMonth() + 1
+                            }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                        },
+                    });
+
+                    if (data && data.access_token && data.refresh_token) {
+                        this.setState({ isLoading: true });
+
+                        accessToken = data.access_token;
+                        refreshToken = data.refresh_token;
+
+                        await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
+
+                        const { data: userData } = await axios.get("/app/user/information", {
+                            baseURL: Config.SERVER_URL,
+                            headers: {
+                                Authorization: `Bearer ${accessToken}`,
+                            },
+                        });
+
+                        if (userData && userData.email) {
+                            user = userData;
+                        }
+
+                        this.setState({
+                            user,
+                            accessToken,
+                            refreshToken,
+                            isLoading: false,
+                        });
+                    }
                 }
             }
-        } catch (e) {
-            debugAxiosError(e);
-        }
+        } catch (e) {}
 
         const stateUpdate = { accessToken, refreshToken, user, isLoading: false };
 
