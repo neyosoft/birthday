@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1097390964818",
+    "project_id": "pokeet",
+    "storage_bucket": "pokeet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097390964818:android:2305dc8251313957ba9f8b",
+        "android_client_info": {
+          "package_name": "co.pokeet.vibes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097390964818-e8ejll217seosf7oct9j0sflu0k6ic4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJMWpKhuk9neDlYHclzgBFsgHf43D9q7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097390964818-e8ejll217seosf7oct9j0sflu0k6ic4u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1097390964818-iv3p9h32fbim3mgb2hmhqg7geipn5ckb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.pokeet"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

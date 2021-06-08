@@ -1,13 +1,19 @@
 {
-  "name": "birthday",
-  "displayName": "birthday",
-  "expo": {
-    "name": "birthday",
-    "slug": "birthday",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "description": ""
-  }
+    "name": "Pokeet",
+    "displayName": "Pokeet",
+    "expo": {
+        "android": {
+            "package": "co.pokeet.vibes",
+            "googleServicesFile": "./google-services.json"
+        },
+        "ios": {
+            "bundleIdentifier": "co.pokeet.vibes",
+            "googleServicesFile": "./GoogleService-Info.plist"
+        },
+        "name": "Pokeet",
+        "slug": "pokeet",
+        "version": "1.0.0",
+        "assetBundlePatterns": ["**/*"],
+        "description": "A birthday giveaway application."
+    }
 }

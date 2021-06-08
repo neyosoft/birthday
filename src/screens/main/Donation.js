@@ -1,9 +1,9 @@
 import { format } from "date-fns";
-import React, { useRef, useState, createRef } from "react";
+import React, { useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
-import { StyleSheet, View, TouchableOpacity, Image, Alert } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { theme } from "../../theme";
@@ -11,8 +11,8 @@ import { useAuth } from "../../context";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import CalendarIcon from "../../../assets/images/Calendar2.png";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const Donation = ({ navigation, route }) => {
     const toast = useToast();
@@ -34,7 +34,7 @@ export const Donation = ({ navigation, route }) => {
         const amount = parseFloat(donationAmount) || 0;
 
         if (amount <= 0) {
-            return Alert.alert("Donation", "Kindly input a valid donation amount.");
+            return toast.show("Kindly input a valid donation amount.");
         }
 
         try {
@@ -61,7 +61,6 @@ export const Donation = ({ navigation, route }) => {
                 toast.show(data.responseDescription);
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(null);
