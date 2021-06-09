@@ -14,6 +14,6 @@
         "slug": "pokeet",
         "version": "1.0.0",
         "assetBundlePatterns": ["**/*"],
-        "description": "A birthday giveaway application."
+        "description": "A birthday give-away application."
     }
 }
