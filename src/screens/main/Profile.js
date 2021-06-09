@@ -1,15 +1,18 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useToast } from "react-native-fast-toast";
 import { StyleSheet, View, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 
+import config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
@@ -59,8 +62,8 @@ const extractProfileInfo = (userInfo) => {
 export const Profile = ({ navigation }) => {
     const toast = useToast();
 
-    const { user, logout, authenticatedRequest } = useAuth();
-    const [profileImage, setProfileImage] = useState(user.picUrl);
+    const { user, logout, accessToken, authenticatedRequest } = useAuth();
+    const [profileImage, setProfileImage] = useState(user.picUrl ? `${config.SERVER_URL}/${user.picUrl}` : null);
 
     const [loading, setLoading] = useState(null);
 
@@ -96,6 +99,33 @@ export const Profile = ({ navigation }) => {
 
                 if (!result.cancelled) {
                     setProfileImage(result.uri);
+
+                    setLoading("uploading-image");
+
+                    const now = new Date();
+
+                    const formdata = new FormData();
+
+                    formdata.append("imageFile", { uri: result.uri, type: result.type, name: "Emmanuel" });
+
+                    try {
+                        const { data } = await axios.put(`${config.SERVER_URL}/app/user/picture`, formdata, {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                                Authorization: `Bearer ${accessToken}`,
+                                TimeStamp: `${now.getFullYear()}-${
+                                    now.getMonth() + 1
+                                }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                            },
+                        });
+
+                        console.log("upload response: ", data);
+                    } catch (error) {
+                        debugAxiosError(error);
+                        toast.show(extractResponseErrorMessage(error));
+                    } finally {
+                        setLoading(null);
+                    }
                 }
             }
         }

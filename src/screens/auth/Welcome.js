@@ -3,10 +3,12 @@ import { StyleSheet, Image, View } from "react-native";
 
 import { AppText, Page, AppButton } from "../../components";
 import Illustration1 from "../../../assets/images/illustration1.png";
+import Logo from "../../../assets/images/Logo.png";
 
 export const Welcome = ({ navigation }) => {
     return (
         <Page style={styles.container}>
+            <Image source={Logo} style={styles.logo} />
             <Image source={Illustration1} style={styles.illustration} resizeMode="contain" />
             <View style={styles.textWrapper}>
                 <AppText style={styles.title}>Celebrate with others while celebrating yourself</AppText>
@@ -28,6 +30,12 @@ export const Welcome = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         justifyContent: "flex-end",
+    },
+    logo: {
+        width: 129,
+        height: 40,
+        alignSelf: "center",
+        marginBottom: 50,
     },
     illustration: {
         height: 299,

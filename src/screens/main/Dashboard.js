@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import Clipboard from "expo-clipboard";
 import { useQueryClient } from "react-query";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
@@ -19,7 +19,7 @@ import CopyIcon from "../../../assets/images/copy.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
@@ -439,7 +439,7 @@ export const Dashboard = ({ navigation }) => {
                     index={1}
                     ref={withdrawalRef}
                     stackBehavior="push"
-                    snapPoints={[-1, 530]}
+                    snapPoints={[-1, 570]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
@@ -448,6 +448,20 @@ export const Dashboard = ({ navigation }) => {
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
+                        <View
+                            style={{
+                                padding: 15,
+                                marginTop: 10,
+                                alignItems: "center",
+                                flexDirection: "row",
+                                backgroundColor: "#363F34",
+                                borderRadius: theme.radii.sm,
+                            }}>
+                            <AntDesign name="exclamationcircleo" size={24} color="#03E895" />
+                            <AppText style={{ flex: 1, fontSize: 12, marginLeft: 15 }}>
+                                Please note that Pokeet takes 10% from every withdrawal amount
+                            </AppText>
+                        </View>
                         <TextField
                             label="Amount"
                             value={withdrawAmount}
