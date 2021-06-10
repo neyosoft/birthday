@@ -2,7 +2,17 @@
     "name": "Pokeet",
     "displayName": "Pokeet",
     "expo": {
+        "icon": "./assets/images/icon.png",
+        "splash": {
+            "image": "./assets/images/splash.png",
+            "resizeMode": "cover",
+            "backgroundColor": "#000"
+        },
         "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "backgroundColor": "#FFF"
+            },
             "package": "co.pokeet.vibes",
             "googleServicesFile": "./google-services.json"
         },
