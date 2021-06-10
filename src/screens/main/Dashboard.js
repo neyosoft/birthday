@@ -19,7 +19,7 @@ import CopyIcon from "../../../assets/images/copy.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
@@ -206,8 +206,8 @@ export const Dashboard = ({ navigation }) => {
                             style={styles.renderItemContainer}
                             onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
                             <Image
-                                source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
                                 style={styles.profileImage}
+                                source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
                             />
                             <AppText style={styles.renderItemText}>{item.given_name}</AppText>
                         </TouchableOpacity>
