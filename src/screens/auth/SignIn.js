@@ -2,7 +2,9 @@ import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import * as Device from "expo-device";
+import Constants from "expo-constants";
 import { useToast } from "react-native-fast-toast";
+import * as Notifications from "expo-notifications";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Platform } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
@@ -35,10 +37,11 @@ export const SignIn = ({ navigation }) => {
             });
 
             const devicePayload = {
-                deviceType: Platform.OS.toUpperCase(),
                 osVersion: Device.osVersion,
-                deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
                 versionCode: Config.appVersion,
+                deviceType: Platform.OS.toUpperCase(),
+                deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
+                token: await registerForPushNotificationsAsync(),
             };
 
             if (data && data.access_token && data.refresh_token) {
@@ -62,6 +65,35 @@ export const SignIn = ({ navigation }) => {
             }
 
             toast.show(message, { type: "danger" });
+        }
+    };
+
+    const registerForPushNotificationsAsync = async () => {
+        if (Constants.isDevice) {
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+
+            let finalStatus = existingStatus;
+            if (existingStatus !== "granted") {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== "granted") {
+                alert("Failed to get push token for push notification!");
+                return;
+            }
+
+            return (await Notifications.getExpoPushTokenAsync()).data;
+        } else {
+            alert("Must use physical device for Push Notifications");
+        }
+
+        if (Platform.OS === "android") {
+            Notifications.setNotificationChannelAsync("default", {
+                name: "default",
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: "#FF231F7C",
+            });
         }
     };
 

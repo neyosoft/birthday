@@ -29,9 +29,7 @@ const MainApplicationNavigation = () => {
     });
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then((token) => {
-            console.log("token: ", token);
-        });
+        registerForPushNotificationsAsync();
 
         // This listener is fired whenever a notification is received while the app is foregrounded
         notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {

@@ -1,6 +1,9 @@
 {
     "name": "Pokeet",
     "displayName": "Pokeet",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "version": "1.0.1",
     "expo": {
         "icon": "./assets/images/icon.png",
         "splash": {
@@ -9,6 +12,7 @@
             "backgroundColor": "#000"
         },
         "android": {
+            "versionCode": 5,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/adaptive-icon.png",
                 "backgroundColor": "#FFF"
@@ -17,6 +21,7 @@
             "googleServicesFile": "./google-services.json"
         },
         "ios": {
+            "buildNumber": "1.0.1",
             "bundleIdentifier": "co.pokeet.vibes",
             "googleServicesFile": "./GoogleService-Info.plist"
         },
