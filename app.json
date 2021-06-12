@@ -23,7 +23,10 @@
         "ios": {
             "buildNumber": "1.0.1",
             "bundleIdentifier": "co.pokeet.vibes",
-            "googleServicesFile": "./GoogleService-Info.plist"
+            "googleServicesFile": "./GoogleService-Info.plist",
+            "infoPlist": {
+                "NSFaceIDUsageDescription": "Pokeet needs to use Face ID / Touch ID to authenticate you"
+            }
         },
         "name": "Pokeet",
         "slug": "pokeet",

@@ -217,8 +217,6 @@ export const Dashboard = ({ navigation }) => {
         );
     };
 
-    console.log("user: ", user);
-
     return (
         <Page>
             <View style={styles.header}>

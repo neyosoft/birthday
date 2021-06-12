@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { useToast } from "react-native-fast-toast";
 import * as Notifications from "expo-notifications";
+import * as LocalAuthentication from "expo-local-authentication";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Platform } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
@@ -15,10 +16,12 @@ import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { baseRequest } from "../../utils/request.utils";
+import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
     const { authenticate } = useAuth();
     const toast = useToast();
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (values) => {
         const params = new URLSearchParams();
@@ -45,6 +48,7 @@ export const SignIn = ({ navigation }) => {
             };
 
             if (data && data.access_token && data.refresh_token) {
+                await saveBiometricLogin(values);
                 try {
                     await baseRequest.put("/app/user/app/update", devicePayload, {
                         headers: {
@@ -65,6 +69,45 @@ export const SignIn = ({ navigation }) => {
             }
 
             toast.show(message, { type: "danger" });
+        }
+    };
+
+    const handleBiometricLogin = async (type) => {
+        try {
+            setLoading(true);
+            const isSupported = await LocalAuthentication.hasHardwareAsync();
+
+            if (!isSupported) {
+                return toast.show("Not currently supported. Kindly try manual login");
+            }
+
+            const supportedType = await LocalAuthentication.supportedAuthenticationTypesAsync();
+
+            if (!supportedType.includes(type)) {
+                return toast.show("Not currently supported. Kindly try manual login");
+            }
+
+            if (!LocalAuthentication.isEnrolledAsync()) {
+                return toast.show("Device setup not completed. Kindly try manual login");
+            }
+
+            const loginInfo = await getBiometricLogin();
+
+            if (!loginInfo) {
+                return toast.show("You need to first try manual login before this feature is enable.");
+            }
+
+            const response = await LocalAuthentication.authenticateAsync({
+                promptMessage: "Login with Biometrics.",
+            });
+
+            if (response.success) {
+                await handleSubmit(JSON.parse(loginInfo));
+            }
+        } catch (error) {
+            return toast.show("Not currently supported. Kindly try manual login");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -113,7 +156,7 @@ export const SignIn = ({ navigation }) => {
                     validationSchema={loginSchema}
                     initialValues={{ email: "", password: "" }}
                     onSubmit={handleSubmit}>
-                    {({ isSubmitting, handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                         <>
                             <View style={styles.form}>
                                 <TextField
@@ -141,10 +184,12 @@ export const SignIn = ({ navigation }) => {
                                 </TouchableOpacity>
 
                                 <View style={styles.securityRole}>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={() => handleBiometricLogin(2)}>
                                         <BarcodeScan />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={{ marginLeft: 35 }}>
+                                    <TouchableOpacity
+                                        style={{ marginLeft: 35 }}
+                                        onPress={() => handleBiometricLogin(1)}>
                                         <Fingerprint />
                                     </TouchableOpacity>
                                 </View>
@@ -152,9 +197,9 @@ export const SignIn = ({ navigation }) => {
                             <View style={styles.buttonWrapper}>
                                 <AppButton
                                     label="Sign In"
+                                    disabled={loading}
                                     variant="secondary"
                                     onPress={handleSubmit}
-                                    disabled={isSubmitting}
                                 />
 
                                 <AppButton

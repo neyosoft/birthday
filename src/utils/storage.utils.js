@@ -5,6 +5,8 @@ const USER_DETAIL_KEY = "userDetail";
 const USER_REFRESH_TOKEN_KEY = "userRefreshToken";
 const ONBOARDING_COMPLETED = "ONBOARDING_COMPLETED";
 
+const BIOMETRIC_AUTH = "BIOMETRIC_AUTH";
+
 export const saveUserToken = (token) => AsyncStorage.setItem(USER_TOKEN_KEY, token);
 export const getUserToken = () => AsyncStorage.getItem(USER_TOKEN_KEY);
 export const removeUserToken = () => AsyncStorage.removeItem(USER_TOKEN_KEY);
@@ -19,3 +21,6 @@ export const removeUserDetail = () => AsyncStorage.removeItem(USER_DETAIL_KEY);
 
 export const getOnboarding = () => AsyncStorage.getItem(ONBOARDING_COMPLETED);
 export const saveOnboarding = () => AsyncStorage.setItem(ONBOARDING_COMPLETED, "Completed");
+
+export const saveBiometricLogin = (payload) => AsyncStorage.setItem(BIOMETRIC_AUTH, JSON.stringify(payload));
+export const getBiometricLogin = () => AsyncStorage.getItem(BIOMETRIC_AUTH);
