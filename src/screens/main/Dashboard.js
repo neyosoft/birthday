@@ -217,6 +217,8 @@ export const Dashboard = ({ navigation }) => {
         );
     };
 
+    console.log("user: ", user);
+
     return (
         <Page>
             <View style={styles.header}>
@@ -229,7 +231,7 @@ export const Dashboard = ({ navigation }) => {
                     </TouchableOpacity>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
-                <TouchableOpacity style={styles.titleRow} onPress={() => fundWalletRef.current.present()}>
+                <TouchableOpacity style={styles.titleRow} onPress={() => cardInputRef.current.present()}>
                     <Image source={PlusIcon} style={styles.titleIcon} />
                     <AppText style={{ marginLeft: 10 }}>Fund Wallet</AppText>
                 </TouchableOpacity>
@@ -249,7 +251,7 @@ export const Dashboard = ({ navigation }) => {
                 <View>
                     <AppText style={styles.availableBalance}>Available Balance</AppText>
                     <AppText style={styles.walletBalance}>
-                        {wallet.isLoading ? "Loading..." : `NGN ${wallet.data}`}
+                        {wallet.isLoading ? "Loading..." : `NGN ${wallet.data || "0.00"}`}
                     </AppText>
                 </View>
 
@@ -264,7 +266,7 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.celebrantPanel}>
                 <AppText style={styles.celebrantTitle}>Today's Celebrants</AppText>
 
-                {renderBirthdayList(wallet.data)}
+                {renderBirthdayList(wallet.data || 0)}
             </View>
 
             <BottomSheetModalProvider>
@@ -339,7 +341,6 @@ export const Dashboard = ({ navigation }) => {
                             style={styles.submitBtn}
                             onPress={() => {
                                 cardInputRef.current.dismiss();
-                                fundWalletRef.current.dismiss();
 
                                 setTimeout(() => {
                                     navigation.navigate("PayWithPaystack", { amount: fundAmount });
@@ -402,7 +403,6 @@ export const Dashboard = ({ navigation }) => {
                                 fundingSuccessfulRef.current.dismiss();
                                 cardInputRef.current.dismiss();
                                 confirmOtpRef.current.dismiss();
-                                fundWalletRef.current.dismiss();
                             }}
                         />
                     </View>

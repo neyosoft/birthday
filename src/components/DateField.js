@@ -9,12 +9,10 @@ export const DateField = ({ style, inputStyle, labelStyle, label, value, placeho
     <View style={style}>
         <AppText style={[styles.label, labelStyle]}>{label}</AppText>
 
-        <View style={styles.row}>
+        <TouchableOpacity style={styles.row} onPress={onPress}>
             <AppText style={[styles.input, inputStyle]}>{value || placeholder}</AppText>
-            <TouchableOpacity onPress={onPress}>
-                <Image source={CalendarIcon} />
-            </TouchableOpacity>
-        </View>
+            <Image source={CalendarIcon} />
+        </TouchableOpacity>
     </View>
 );
 

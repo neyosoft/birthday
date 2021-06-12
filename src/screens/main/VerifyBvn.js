@@ -47,7 +47,7 @@ export const VerifyBvn = ({ navigation }) => {
                     <BackIcon />
                 </TouchableOpacity>
                 <View style={styles.titleRow}>
-                    <AppText style={styles.title}>Create Account</AppText>
+                    <AppText style={styles.title}>BVN Verification</AppText>
                     <Image source={HandIcon} style={styles.titleIcon} />
                 </View>
                 <AppText style={styles.welcomeMessage}>

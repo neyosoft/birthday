@@ -6,6 +6,7 @@ import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-nat
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
+import { theme } from "../../theme";
 
 export const CreateAccount = ({ navigation }) => {
     return (
@@ -28,7 +29,7 @@ export const CreateAccount = ({ navigation }) => {
                     onSubmit={(values) => {
                         navigation.navigate("SignupDateofBirth", { record: values });
                     }}>
-                    {({ isSubmitting, handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                    {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                         <View style={styles.form}>
                             <TextField
                                 label="First Name"
@@ -78,6 +79,10 @@ export const CreateAccount = ({ navigation }) => {
                                 onChangeText={handleChange("password")}
                                 hasError={errors.password && touched.password}
                             />
+                            <AppText style={{ fontSize: 10, color: "gray", marginTop: 4 }}>
+                                NOTE: Password must be atleast 8 characters and must contain atleast one uppercase
+                                letter, one number and one special character.
+                            </AppText>
 
                             <AppButton
                                 label="Continue"
@@ -85,8 +90,6 @@ export const CreateAccount = ({ navigation }) => {
                                 onPress={handleSubmit}
                                 style={styles.validateBtn}
                             />
-
-                            <AppButton variant="primary" label="Skip in stead" style={styles.infoBtn} />
                         </View>
                     )}
                 </Formik>

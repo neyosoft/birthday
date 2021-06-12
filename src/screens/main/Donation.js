@@ -126,23 +126,8 @@ export const Donation = ({ navigation, route }) => {
                         <View style={styles.donationBalanceContainer}>
                             <View>
                                 <AppText style={styles.balanceText}>Available Balance</AppText>
-                                <AppText style={{ marginTop: 5 }}>NGN {walletBalance}</AppText>
+                                <AppText style={{ marginTop: 5 }}>NGN {walletBalance || 0}</AppText>
                             </View>
-
-                            <AppButton
-                                style={{
-                                    backgroundColor: theme.color.yellow,
-                                    borderRadius: 10,
-                                    paddingVertical: 8,
-                                    paddingHorizontal: 10,
-                                }}>
-                                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <Ionicons name="add" size={24} color={theme.backgroundColor} />
-                                    <AppText style={{ color: theme.backgroundColor, marginLeft: 5 }}>
-                                        Fund Wallet
-                                    </AppText>
-                                </View>
-                            </AppButton>
                         </View>
 
                         <View style={styles.donationInformationCard}>
@@ -171,6 +156,16 @@ export const Donation = ({ navigation, route }) => {
                             variant="secondary"
                             style={styles.submitBtn}
                             onPress={() => {
+                                const amount = parseFloat(donationAmount) || 0;
+                                const myWalletBalance = walletBalance || 0;
+
+                                if (amount <= 0) {
+                                    return toast.show("Kindly specified amount to donate.");
+                                }
+
+                                if (amount > myWalletBalance) {
+                                    return toast.show("Your balance is not sufficient to complete this transaction.");
+                                }
                                 theAmountRef.current.blur();
                                 confirmDonationRef.current.present();
                             }}
