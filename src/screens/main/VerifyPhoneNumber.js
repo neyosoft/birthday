@@ -27,7 +27,7 @@ export const VerifyPhoneNumber = ({ navigation }) => {
     };
 
     useEffect(() => {
-        // sendOTP();
+        sendOTP();
     }, []);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export const VerifyPhoneNumber = ({ navigation }) => {
 
                 navigation.navigate("Profile");
             } else {
-                Alert.alert("Verification", "There is a problem verifying your phone number.");
+                Alert.alert("Verification", data.responseDescription);
             }
         } catch (error) {
             Alert.alert("Verification", extractResponseErrorMessage(error));

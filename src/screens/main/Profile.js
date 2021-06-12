@@ -138,13 +138,16 @@ export const Profile = ({ navigation }) => {
             </TouchableOpacity>
             <AppText style={styles.title}>Profile</AppText>
 
-            <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
+            {/* <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
                 {profileImage ? (
                     <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
                 ) : (
                     <UserAvatarIcon />
                 )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <View style={styles.avatarWrapper}>
+                <UserAvatarIcon />
+            </View>
 
             <AppText style={styles.username}>
                 {user.givenName} {user.familyName}

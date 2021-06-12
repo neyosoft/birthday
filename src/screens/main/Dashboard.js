@@ -200,19 +200,17 @@ export const Dashboard = ({ navigation }) => {
                 style={styles.flatList}
                 data={birthdayUser.data}
                 keyExtractor={(item) => item.bioId}
-                renderItem={({ item }) => {
-                    return (
-                        <TouchableOpacity
-                            style={styles.renderItemContainer}
-                            onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
-                            <Image
-                                style={styles.profileImage}
-                                source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
-                            />
-                            <AppText style={styles.renderItemText}>{item.given_name}</AppText>
-                        </TouchableOpacity>
-                    );
-                }}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={styles.renderItemContainer}
+                        onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
+                        <Image
+                            style={styles.profileImage}
+                            source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
+                        />
+                        <AppText style={styles.renderItemText}>{item.given_name}</AppText>
+                    </TouchableOpacity>
+                )}
             />
         );
     };
