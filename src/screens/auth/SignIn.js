@@ -44,8 +44,10 @@ export const SignIn = ({ navigation }) => {
                 versionCode: Config.appVersion,
                 deviceType: Platform.OS.toUpperCase(),
                 deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
-                token: await registerForPushNotificationsAsync(),
+                notificationToken: await registerForPushNotificationsAsync(),
             };
+
+            console.log("devicePayload: ", devicePayload);
 
             if (data && data.access_token && data.refresh_token) {
                 await saveBiometricLogin(values);

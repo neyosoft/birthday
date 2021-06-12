@@ -244,7 +244,7 @@ export const Dashboard = ({ navigation }) => {
             </View>
 
             <View style={styles.walletContainer}>
-                <View>
+                <View onPress={wallet.refetch}>
                     <AppText style={styles.availableBalance}>Available Balance</AppText>
                     <AppText style={styles.walletBalance}>
                         {wallet.isLoading ? "Loading..." : `NGN ${wallet.data || "0.00"}`}
@@ -435,7 +435,7 @@ export const Dashboard = ({ navigation }) => {
                     index={1}
                     ref={withdrawalRef}
                     stackBehavior="push"
-                    snapPoints={[-1, 570]}
+                    snapPoints={[-1, 590]}
                     handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
