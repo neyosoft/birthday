@@ -13,7 +13,7 @@ import {
     removeRefreshToken,
 } from "../utils/storage.utils";
 import Config from "../config";
-import { isFuture, isPast } from "date-fns";
+import { isFuture } from "date-fns";
 
 const AuthContext = React.createContext();
 
@@ -84,6 +84,7 @@ export default class AuthProvider extends Component {
                 });
 
                 if (data && data.email) {
+                    await saveUserDetail(data);
                     this.setState({ user: data });
                 }
             } catch (e) {}

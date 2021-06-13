@@ -9,6 +9,7 @@ import { StyleSheet, View, TouchableOpacity, Image, Platform, ScrollView } from 
 import config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
+import { moneyFormat } from "../../utils/money.utils";
 import { AppButton, AppText, Page } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
@@ -158,7 +159,9 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Donations</AppText>
-                    <AppText style={styles.subtitleValue}>{user.donationVolume}</AppText>
+                    <AppText style={styles.subtitleValue}>
+                        {moneyFormat(user.donationsValue) || 0} ({user.donationsVolume || 0}) total
+                    </AppText>
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>

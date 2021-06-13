@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import React, { useRef, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
 import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
@@ -19,7 +18,7 @@ export const Donation = ({ navigation, route }) => {
     const pinInputRef = useRef();
     const theAmountRef = useRef();
     const queryClient = useQueryClient();
-    const { authenticatedRequest } = useAuth();
+    const { refreshUser, authenticatedRequest } = useAuth();
 
     const donationRef = useRef();
     const confirmDonationRef = useRef();
@@ -53,6 +52,8 @@ export const Donation = ({ navigation, route }) => {
                 toast.show("You have successfully completed your donation.", { type: "success", duration: 3000 });
 
                 queryClient.invalidateQueries("wallet");
+
+                await refreshUser();
 
                 setTimeout(() => {
                     navigation.navigate("Dashboard");

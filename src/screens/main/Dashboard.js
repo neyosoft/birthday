@@ -5,7 +5,7 @@ import { useQueryClient } from "react-query";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
-import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, FlatList, Image, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -215,6 +215,8 @@ export const Dashboard = ({ navigation }) => {
         );
     };
 
+    console.log("user profile: ", user);
+
     return (
         <Page>
             <View style={styles.header}>
@@ -244,12 +246,20 @@ export const Dashboard = ({ navigation }) => {
             </View>
 
             <View style={styles.walletContainer}>
-                <View onPress={wallet.refetch}>
-                    <AppText style={styles.availableBalance}>Available Balance</AppText>
-                    <AppText style={styles.walletBalance}>
-                        {wallet.isLoading ? "Loading..." : `NGN ${wallet.data || "0.00"}`}
-                    </AppText>
-                </View>
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        console.log("about to refetch wallet balance:");
+                        wallet.refetch();
+                    }}>
+                    <View>
+                        <AppText style={styles.availableBalance}>Available Balance</AppText>
+                        <AppText style={styles.walletBalance}>
+                            {wallet.isLoading || wallet.isFetching
+                                ? "Loading..."
+                                : `NGN ${moneyFormatWNS(wallet.data, 2) || "0.00"}`}
+                        </AppText>
+                    </View>
+                </TouchableWithoutFeedback>
 
                 <AppButton
                     label="Withdraw"
