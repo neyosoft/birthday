@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
 
-import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
+import { baseRequest, debugAxiosError } from "../../utils/request.utils";
 
 export const ForgetPassword = ({ navigation }) => {
     const toast = useToast();
-
-    const { authenticatedRequest } = useAuth();
 
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
@@ -22,14 +20,21 @@ export const ForgetPassword = ({ navigation }) => {
             toast.show("Email is required.");
         }
 
+        const now = new Date();
+
         try {
-            await authenticatedRequest().post(`/app/auth/change/password/${email}`);
+            await baseRequest.post(`/app/auth/change/password/${email}`, {
+                headers: {
+                    TimeStamp: `${now.getFullYear()}-${
+                        now.getMonth() + 1
+                    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                },
+            });
 
             navigation.navigate("SignIn");
 
             toast.show("Kindly check your email to complete password change.");
         } catch (error) {
-            console.log("The response error: ", error);
             toast.show("There is a problem changing password.");
         } finally {
             setLoading(null);
@@ -58,11 +63,11 @@ export const ForgetPassword = ({ navigation }) => {
                     />
 
                     <AppButton
-                        label="Continue"
                         disabled={loading}
                         variant="secondary"
                         onPress={handleSubmit}
                         style={styles.continueBtn}
+                        label={loading ? "Processing..." : "Continue"}
                     />
                 </View>
             </ScrollView>

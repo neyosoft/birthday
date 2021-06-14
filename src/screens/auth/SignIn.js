@@ -29,7 +29,7 @@ export const SignIn = ({ navigation }) => {
         const params = new URLSearchParams();
 
         params.append("username", values.email);
-        params.append("password", values.password);
+        params.append("password", encodeURIComponent(values.password));
         params.append("grant_type", "password");
         params.append("client_id", "api-access");
         params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
