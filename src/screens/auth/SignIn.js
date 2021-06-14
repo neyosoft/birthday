@@ -24,6 +24,8 @@ export const SignIn = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (values) => {
+        setLoading(true);
+
         const params = new URLSearchParams();
 
         params.append("username", values.email);
@@ -73,6 +75,8 @@ export const SignIn = ({ navigation }) => {
             }
 
             toast.show(message, { type: "danger" });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -200,10 +204,10 @@ export const SignIn = ({ navigation }) => {
                             </View>
                             <View style={styles.buttonWrapper}>
                                 <AppButton
-                                    label="Sign In"
                                     disabled={loading}
                                     variant="secondary"
                                     onPress={handleSubmit}
+                                    label={loading ? "Processing..." : "Sign In"}
                                 />
 
                                 <AppButton
