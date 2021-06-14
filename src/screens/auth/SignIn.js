@@ -47,10 +47,9 @@ export const SignIn = ({ navigation }) => {
                 notificationToken: await registerForPushNotificationsAsync(),
             };
 
-            console.log("devicePayload: ", devicePayload);
-
             if (data && data.access_token && data.refresh_token) {
                 await saveBiometricLogin(values);
+
                 try {
                     await baseRequest.put("/app/user/app/update", devicePayload, {
                         headers: {

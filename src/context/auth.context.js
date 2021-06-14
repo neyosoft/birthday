@@ -28,8 +28,6 @@ export default class AuthProvider extends Component {
         onboardingCompleted: false,
         accountSetupCompleted: true,
         authenticate: async ({ accessToken, refreshToken, accountSetupCompleted = true }) => {
-            this.setState({ isLoading: true });
-
             let user = null;
 
             await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
