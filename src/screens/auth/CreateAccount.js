@@ -6,7 +6,6 @@ import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-nat
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField, PasswordField } from "../../components";
-import { theme } from "../../theme";
 
 export const CreateAccount = ({ navigation }) => {
     return (
@@ -20,7 +19,8 @@ export const CreateAccount = ({ navigation }) => {
                     <Image source={HandIcon} style={styles.titleIcon} />
                 </View>
                 <AppText style={styles.welcomeMessage}>
-                    Get celebrated while celebrating others. Kindly provide your bank verification number (BVN)
+                    Get celebrated while celebrating others. Kindly provide your personal information as provided on
+                    your bank verification number (BVN)
                 </AppText>
 
                 <Formik
