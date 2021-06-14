@@ -15,7 +15,7 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
@@ -39,6 +39,8 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
+            console.log("login data: ", data);
+
             const devicePayload = {
                 osVersion: Device.osVersion,
                 versionCode: Config.appVersion,
@@ -61,6 +63,7 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
+            debugAxiosError(error);
             let message;
 
             if (error.response) {

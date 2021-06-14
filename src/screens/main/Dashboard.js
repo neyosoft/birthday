@@ -158,9 +158,15 @@ export const Dashboard = ({ navigation }) => {
             withdrawalRef.current.dismiss();
             confirmWithdrawRef.current.dismiss();
 
+            setPin("");
+            setBank("");
+            setResolvedName("");
+            setAccountNumber("");
+            setWithdrawAmount("");
+
             queryClient.invalidateQueries("wallet");
 
-            toast.show("Withdraw is in progress...", { type: "success", duration: 3000 });
+            toast.show("Withdrawal is in progress...", { type: "success", duration: 3000 });
 
             setTimeout(() => {
                 navigation.navigate("Dashboard");
