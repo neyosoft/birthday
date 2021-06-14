@@ -30,6 +30,10 @@ export const Donation = ({ navigation, route }) => {
     const [donationAmount, setDonationAmount] = useState("");
 
     const handleDonation = async () => {
+        if (password.length !== 4) {
+            return toast.show("PIN must be four digit long.");
+        }
+
         const amount = parseFloat(donationAmount) || 0;
 
         if (amount <= 0) {
@@ -45,10 +49,13 @@ export const Donation = ({ navigation, route }) => {
                 toUserId: profile.bioId,
             });
 
-            donationRef.current.dismiss();
-            confirmDonationRef.current.dismiss();
-
             if (data && data.responseCode === "00") {
+                donationRef.current.dismiss();
+                confirmDonationRef.current.dismiss();
+
+                setPassword("");
+                setDonationAmount("");
+
                 toast.show("You have successfully completed your donation.", { type: "success", duration: 3000 });
 
                 queryClient.invalidateQueries("wallet");

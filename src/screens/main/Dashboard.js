@@ -215,8 +215,6 @@ export const Dashboard = ({ navigation }) => {
         );
     };
 
-    console.log("user profile: ", user);
-
     return (
         <Page>
             <View style={styles.header}>
@@ -248,7 +246,6 @@ export const Dashboard = ({ navigation }) => {
             <View style={styles.walletContainer}>
                 <TouchableWithoutFeedback
                     onPress={() => {
-                        console.log("about to refetch wallet balance:");
                         wallet.refetch();
                     }}>
                     <View>
