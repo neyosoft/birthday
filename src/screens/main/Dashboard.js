@@ -284,7 +284,6 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={fundWalletRef}
                     snapPoints={[-1, 350]}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -327,7 +326,6 @@ export const Dashboard = ({ navigation }) => {
                     ref={cardInputRef}
                     stackBehavior="push"
                     snapPoints={[-1, 300]}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -369,11 +367,10 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={confirmOtpRef}
                     snapPoints={[-1, 310]}
-                    handleComponent={HandleComponent}
-                    backgroundComponent={BackgroundComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
+                    backgroundComponent={BackgroundComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm OTP</AppText>
@@ -398,7 +395,6 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     snapPoints={[-1, 250]}
                     ref={fundingSuccessfulRef}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -428,7 +424,6 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     snapPoints={[-1, 220]}
                     ref={upcomingFeatureRef}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -455,7 +450,6 @@ export const Dashboard = ({ navigation }) => {
                     ref={withdrawalRef}
                     stackBehavior="push"
                     snapPoints={[-1, 590]}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -551,7 +545,6 @@ export const Dashboard = ({ navigation }) => {
                     stackBehavior="push"
                     ref={confirmWithdrawRef}
                     snapPoints={[-1, 350]}
-                    handleComponent={HandleComponent}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
@@ -588,7 +581,16 @@ export const Dashboard = ({ navigation }) => {
     );
 };
 
-BackdropComponent = (props) => <BottomSheetBackdrop opacity={0.7} {...props} />;
+BackdropComponent = (props) => (
+    <BottomSheetBackdrop
+        opacity={0.7}
+        closeOnPress={true}
+        appearsOnIndex={2}
+        disappearsOnIndex={1}
+        enableTouchThrough={true}
+        {...props}
+    />
+);
 const HandleComponent = () => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />;
 const BackgroundComponent = ({ pointerEvents }) => (
     <View
