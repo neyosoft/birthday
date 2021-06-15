@@ -4,12 +4,13 @@
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "version": "1.0.2",
+    "assetBundlePatterns": ["assets/images/*"],
     "expo": {
         "icon": "./assets/images/icon.png",
         "splash": {
-            "image": "./assets/images/splash.png",
             "resizeMode": "cover",
-            "backgroundColor": "#000"
+            "backgroundColor": "#000",
+            "image": "./assets/images/splash.png"
         },
         "android": {
             "versionCode": 8,
