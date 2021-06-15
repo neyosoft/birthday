@@ -12,11 +12,12 @@
             "backgroundColor": "#000"
         },
         "android": {
-            "versionCode": 5,
+            "versionCode": 7,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/images/adaptive-icon.png",
                 "backgroundColor": "#FFF"
             },
+            "permissions": ["CAMERA"],
             "package": "co.pokeet.vibes",
             "googleServicesFile": "./google-services.json"
         },
@@ -30,7 +31,7 @@
         },
         "name": "Pokeet",
         "slug": "pokeet",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "assetBundlePatterns": ["**/*"],
         "description": "A birthday give-away application."
     }

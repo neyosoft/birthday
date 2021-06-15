@@ -57,6 +57,7 @@ export const ForgetPassword = ({ navigation }) => {
                     <TextField
                         value={email}
                         label="Email"
+                        autoCapitalize="none"
                         onChangeText={setEmail}
                         keyboardType="email-address"
                         placeholder="someone@yahoo.com"

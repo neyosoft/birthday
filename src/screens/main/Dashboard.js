@@ -349,10 +349,16 @@ export const Dashboard = ({ navigation }) => {
                             variant="secondary"
                             style={styles.submitBtn}
                             onPress={() => {
+                                const theAmount = parseFloat(fundAmount) || 0;
+
+                                if (theAmount <= 0) {
+                                    return toast.show("Kindly specify amount.");
+                                }
+
                                 cardInputRef.current.dismiss();
 
                                 setTimeout(() => {
-                                    navigation.navigate("PayWithPaystack", { amount: fundAmount });
+                                    navigation.navigate("PayWithPaystack", { amount: theAmount });
                                 }, 1000);
                             }}
                         />

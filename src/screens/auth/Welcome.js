@@ -1,9 +1,11 @@
 import React from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, Image, View, Dimensions } from "react-native";
 
 import { AppText, Page, AppButton } from "../../components";
 import Illustration1 from "../../../assets/images/illustration1.png";
 import Logo from "../../../assets/images/Logo.png";
+
+const { width } = Dimensions.get("window");
 
 export const Welcome = ({ navigation }) => {
     return (
@@ -34,12 +36,12 @@ const styles = StyleSheet.create({
     logo: {
         width: 129,
         height: 40,
-        alignSelf: "center",
         marginBottom: 50,
+        alignSelf: "center",
     },
     illustration: {
-        height: 299,
-        width: 288.75,
+        width: "90%",
+        height: width * 0.7,
         alignSelf: "center",
     },
     textWrapper: {

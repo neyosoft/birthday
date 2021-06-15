@@ -24,8 +24,6 @@ export const SignIn = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (values) => {
-        setLoading(true);
-
         const params = new URLSearchParams();
 
         params.append("username", values.email);
@@ -35,13 +33,13 @@ export const SignIn = ({ navigation }) => {
         params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
 
         try {
+            setLoading(true);
+
             const { data } = await baseRequest.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
             });
-
-            console.log("login data: ", data);
 
             const devicePayload = {
                 osVersion: Device.osVersion,
@@ -65,7 +63,6 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            debugAxiosError(error);
             let message;
 
             if (error.response) {
@@ -75,7 +72,7 @@ export const SignIn = ({ navigation }) => {
             }
 
             toast.show(message, { type: "danger" });
-        } finally {
+
             setLoading(false);
         }
     };
@@ -111,11 +108,13 @@ export const SignIn = ({ navigation }) => {
 
             if (response.success) {
                 await handleSubmit(JSON.parse(loginInfo));
+            } else {
+                setLoading(false);
+                toast.show("Unable to login with biometrics at the moment...");
             }
         } catch (error) {
-            return toast.show("Not currently supported. Kindly try manual login");
-        } finally {
             setLoading(false);
+            toast.show("Not currently supported. Kindly try manual login");
         }
     };
 

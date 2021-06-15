@@ -139,20 +139,20 @@ export const Profile = ({ navigation }) => {
             </TouchableOpacity>
             <AppText style={styles.title}>Profile</AppText>
 
-            <TouchableOpacity style={styles.avatarWrapper}>
-                {profileImage ? (
-                    <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
-                ) : (
-                    <UserAvatarIcon />
-                )}
-            </TouchableOpacity>
+            <ScrollView>
+                <TouchableOpacity style={styles.avatarWrapper}>
+                    {profileImage ? (
+                        <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
+                    ) : (
+                        <UserAvatarIcon />
+                    )}
+                </TouchableOpacity>
 
-            <AppText style={styles.username}>
-                {user.givenName} {user.familyName}
-            </AppText>
+                <AppText style={styles.username}>
+                    {user.givenName} {user.familyName}
+                </AppText>
 
-            <ScrollView style={styles.form}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 20 }}>
                     <Image source={BirthdayIcon} style={{ width: 20, height: 20, marginRight: 10 }} />
                     <AppText style={styles.subtitle}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
                 </View>
@@ -237,7 +237,7 @@ export const Profile = ({ navigation }) => {
                 </View>
             </ScrollView>
 
-            <View style={{ flex: 1 }} />
+            <View style={{ flex: 1, marginTop: 5 }} />
 
             <AppButton label="Log out" labelStyle={styles.btnLabelStyle} onPress={logout} />
         </Page>
@@ -251,12 +251,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "700",
+        marginBottom: 10,
     },
     avatarWrapper: {
         width: 60,
         height: 60,
         borderRadius: 17,
-        marginVertical: 15,
+        marginBottom: 10,
         overflow: "hidden",
         alignItems: "center",
         justifyContent: "center",
@@ -264,9 +265,6 @@ const styles = StyleSheet.create({
     },
     username: {
         fontWeight: "600",
-    },
-    form: {
-        marginTop: 30,
     },
     subtitle: {
         color: "#A3A2A2",
