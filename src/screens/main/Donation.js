@@ -113,7 +113,6 @@ export const Donation = ({ navigation, route }) => {
                     ref={donationRef}
                     stackBehavior="push"
                     snapPoints={[-1, 420]}
-                    handleComponent={() => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />}
                     backgroundComponent={({ pointerEvents }) => (
                         <View
                             pointerEvents={pointerEvents}
@@ -198,6 +197,7 @@ export const Donation = ({ navigation, route }) => {
                     )}
                     enableHandlePanningGesture={false}
                     enableContentPanningGesture={false}
+                    handleComponent={BottomSheetHandleComponent}
                     backdropComponent={(props) => <BottomSheetBackdrop opacity={0.7} {...props} />}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
@@ -231,6 +231,20 @@ export const Donation = ({ navigation, route }) => {
         </Page>
     );
 };
+
+const BottomSheetHandleComponent = () => (
+    <View style={{ padding: 10 }}>
+        <View
+            style={{
+                height: 4,
+                borderRadius: 4,
+                alignSelf: "center",
+                width: (7.5 * WINDOW_WIDTH) / 100,
+                backgroundColor: theme.backgroundColor,
+            }}
+        />
+    </View>
+);
 
 const styles = StyleSheet.create({
     backIcon: {

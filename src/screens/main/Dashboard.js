@@ -5,12 +5,22 @@ import { useQueryClient } from "react-query";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
-import { StyleSheet, View, FlatList, Image, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import {
+    View,
+    Image,
+    FlatList,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+} from "react-native";
 import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import Config from "../../config";
 import { theme } from "../../theme";
+
+const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
 import { useAuth } from "../../context";
 import UserOne from "../../../assets/images/user1.png";
@@ -288,6 +298,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Fund Wallet</AppText>
@@ -330,6 +341,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Fund Wallet</AppText>
@@ -371,6 +383,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm OTP</AppText>
@@ -399,6 +412,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <View style={{ alignItems: "center", marginTop: 10, fontWeight: "600" }}>
@@ -428,6 +442,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
@@ -454,6 +469,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
@@ -549,6 +565,7 @@ export const Dashboard = ({ navigation }) => {
                     enableContentPanningGesture={false}
                     backdropComponent={BackdropComponent}
                     backgroundComponent={BackgroundComponent}
+                    handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
                     <View style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Confirm Withdrawal</AppText>
@@ -591,7 +608,21 @@ BackdropComponent = (props) => (
         {...props}
     />
 );
-const HandleComponent = () => <View style={{ backgroundColor: theme.backgroundColor, height: 1 }} />;
+
+const BottomSheetHandleComponent = () => (
+    <View style={{ padding: 10 }}>
+        <View
+            style={{
+                height: 4,
+                borderRadius: 4,
+                alignSelf: "center",
+                width: (7.5 * WINDOW_WIDTH) / 100,
+                backgroundColor: theme.backgroundColor,
+            }}
+        />
+    </View>
+);
+
 const BackgroundComponent = ({ pointerEvents }) => (
     <View
         pointerEvents={pointerEvents}
