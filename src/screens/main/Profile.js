@@ -133,13 +133,15 @@ export const Profile = ({ navigation }) => {
     };
 
     return (
-        <Page>
-            <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
-                <BackIcon />
-            </TouchableOpacity>
-            <AppText style={styles.title}>Profile</AppText>
+        <View style={styles.container}>
+            <View style={{ padding: 25, paddingBottom: 0 }}>
+                <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
+                    <BackIcon />
+                </TouchableOpacity>
+                <AppText style={styles.title}>Profile</AppText>
+            </View>
 
-            <ScrollView>
+            <ScrollView contentContainerStyle={{ padding: 25 }}>
                 <TouchableOpacity style={styles.avatarWrapper}>
                     {profileImage ? (
                         <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
@@ -210,6 +212,10 @@ export const Profile = ({ navigation }) => {
                         </TouchableOpacity>
                     )}
                 </View>
+                <AppText style={{ fontSize: 12, color: "gray", marginTop: 5 }}>
+                    We need your BVN so we can uniquely identify genuine users on our platform, prevent fraud and so
+                    your donations don’t get wasted.
+                </AppText>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Password</AppText>
@@ -239,12 +245,18 @@ export const Profile = ({ navigation }) => {
 
             <View style={{ flex: 1, marginTop: 5 }} />
 
-            <AppButton label="Log out" labelStyle={styles.btnLabelStyle} onPress={logout} />
-        </Page>
+            <View style={{ marginHorizontal: 25, marginVertical: 10 }}>
+                <AppButton onPress={logout} label="Log out" labelStyle={styles.btnLabelStyle} />
+            </View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.backgroundColor,
+    },
     backIcon: {
         marginVertical: 25,
     },

@@ -206,7 +206,10 @@ export const Dashboard = ({ navigation }) => {
         if (birthdayUser.data && birthdayUser.data.length === 0) {
             return (
                 <View style={styles.descriptionViewStyle}>
-                    <AppText style={styles.descriptionLabelStyle}>No birthday available...</AppText>
+                    <AppText style={styles.descriptionLabelStyle}>
+                        You can only appear on this list when it’s your birthday and if all your details have been
+                        verified and validated. Go to setting to verify your details
+                    </AppText>
                 </View>
             );
         }
@@ -216,6 +219,8 @@ export const Dashboard = ({ navigation }) => {
                 style={styles.flatList}
                 data={birthdayUser.data}
                 keyExtractor={(item) => item.bioId}
+                onRefresh={birthdayUser.refetch}
+                refreshing={birthdayUser.isFetching}
                 renderItem={({ item }) => (
                     <TouchableOpacity
                         style={styles.renderItemContainer}
@@ -655,7 +660,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     descriptionViewStyle: {
-        marginTop: 20,
+        marginTop: 10,
     },
     descriptionLabelStyle: {
         fontSize: 12,

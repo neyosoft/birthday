@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import React, { useRef, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Dimensions } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { theme } from "../../theme";
@@ -12,6 +12,8 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CalendarIcon from "../../../assets/images/Calendar2.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
+
+const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
 export const Donation = ({ navigation, route }) => {
     const toast = useToast();
