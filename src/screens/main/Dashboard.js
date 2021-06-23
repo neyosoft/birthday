@@ -5,6 +5,7 @@ import { useQueryClient } from "react-query";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import RNPickerSelect from "react-native-picker-select";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import {
     View,
     Image,
@@ -641,7 +642,8 @@ const BackgroundComponent = ({ pointerEvents }) => (
 
 const styles = StyleSheet.create({
     header: {
-        marginVertical: 25,
+        marginTop: 20,
+        marginBottom: 10,
         flexDirection: "row",
         justifyContent: "space-between",
     },
@@ -651,7 +653,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     title: {
-        fontSize: 15,
+        fontSize: RFPercentage(2),
     },
     titleIcon: {
         marginLeft: 10,
@@ -665,6 +667,7 @@ const styles = StyleSheet.create({
     descriptionLabelStyle: {
         fontSize: 12,
         color: "gray",
+        lineHeight: 20,
     },
     birthdayInformtionContainer: {
         padding: 20,
@@ -679,20 +682,21 @@ const styles = StyleSheet.create({
     },
     birthdayCountdown: {
         fontWeight: "700",
+        fontSize: RFPercentage(2.1),
     },
     walletContainer: {
-        marginTop: 40,
         flexDirection: "row",
         alignItems: "center",
+        marginTop: RFPercentage(3),
         justifyContent: "space-between",
     },
     availableBalance: {
-        fontSize: 13,
+        fontSize: RFPercentage(1.7),
         color: "#A3A2A2",
     },
     walletBalance: {
         marginTop: 3,
-        fontSize: 24,
+        fontSize: RFPercentage(3),
         fontWeight: "700",
     },
     withdrawBtn: {
@@ -703,11 +707,11 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 25,
         paddingBottom: 0,
-        marginTop: 40,
         marginBottom: -25,
         marginHorizontal: -25,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
+        marginTop: RFPercentage(4),
         backgroundColor: theme.color.primary,
     },
     celebrantTitle: {
@@ -792,5 +796,14 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 50,
         height: 50,
+    },
+    bottomSheetInput: {
+        height: 47,
+        fontSize: 15,
+        marginTop: 10,
+        color: theme.white,
+        paddingHorizontal: 20,
+        borderRadius: theme.radii.sm,
+        backgroundColor: theme.color.primary,
     },
 });
