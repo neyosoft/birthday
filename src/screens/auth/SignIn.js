@@ -78,28 +78,29 @@ export const SignIn = ({ navigation }) => {
     };
 
     const handleBiometricLogin = async (type) => {
+        setLoading(true);
+
         try {
-            setLoading(true);
             const isSupported = await LocalAuthentication.hasHardwareAsync();
 
             if (!isSupported) {
-                return toast.show("Not currently supported. Kindly try manual login");
+                throw new Error("Not currently supported. Kindly try manual login");
             }
 
             const supportedType = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
             if (!supportedType.includes(type)) {
-                return toast.show("Not currently supported. Kindly try manual login");
+                throw new Error("Not currently supported. Kindly try manual login");
             }
 
             if (!LocalAuthentication.isEnrolledAsync()) {
-                return toast.show("Device setup not completed. Kindly try manual login");
+                throw new Error("Device setup not completed. Kindly try manual login");
             }
 
             const loginInfo = await getBiometricLogin();
 
             if (!loginInfo) {
-                return toast.show("You need to first try manual login before this feature is enable.");
+                throw new Error("You need to first try manual login before this feature is enable.");
             }
 
             const response = await LocalAuthentication.authenticateAsync({
@@ -109,12 +110,11 @@ export const SignIn = ({ navigation }) => {
             if (response.success) {
                 await handleSubmit(JSON.parse(loginInfo));
             } else {
-                setLoading(false);
-                toast.show("Unable to login with biometrics at the moment...");
+                throw new Error("Unable to login with biometrics at the moment...");
             }
         } catch (error) {
             setLoading(false);
-            toast.show("Not currently supported. Kindly try manual login");
+            toast.show(error.message);
         }
     };
 
