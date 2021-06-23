@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     label: {},
     row: {
         marginTop: 10,
-        paddingVertical: 13,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 20,
@@ -53,6 +52,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
+        height: 47,
         fontSize: 15,
         color: theme.white,
     },

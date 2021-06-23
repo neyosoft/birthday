@@ -33,10 +33,10 @@ export const TextField = forwardRef(({ style, hasError, inputStyle, labelStyle, 
 const styles = StyleSheet.create({
     label: {},
     input: {
+        height: 47,
         fontSize: 15,
         marginTop: 10,
         color: theme.white,
-        paddingVertical: 13,
         paddingHorizontal: 20,
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,

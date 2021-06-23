@@ -1,4 +1,5 @@
 import React from "react";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { View, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from "react-native";
 
 import { theme } from "../theme";
@@ -43,8 +44,8 @@ export const AppButton = ({ style, labelStyle, variant = "primary", label, child
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        paddingVertical: 13,
+        padding: RFPercentage(2.7),
+        paddingVertical: RFPercentage(1.8),
         borderTopEndRadius: 5,
         borderRadius: theme.radii.button,
     },
