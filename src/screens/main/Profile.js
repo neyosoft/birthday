@@ -63,7 +63,7 @@ const extractProfileInfo = (userInfo) => {
 export const Profile = ({ navigation }) => {
     const toast = useToast();
 
-    const { user, logout, accessToken, authenticatedRequest } = useAuth();
+    const { user, logout, accessToken, refreshUser, authenticatedRequest } = useAuth();
     const [profileImage, setProfileImage] = useState(user.picUrl ? `${config.SERVER_URL}/${user.picUrl}` : null);
 
     const [loading, setLoading] = useState(null);
@@ -114,8 +114,9 @@ export const Profile = ({ navigation }) => {
                                 }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
                             },
                         });
+
+                        await refreshUser();
                     } catch (error) {
-                        console.log("Unable to upload image: ", error);
                         toast.show(extractResponseErrorMessage(error));
                     } finally {
                         setLoading(null);
