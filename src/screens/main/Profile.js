@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { useToast } from "react-native-fast-toast";
+import { launchImageLibrary } from "react-native-image-picker";
 import { StyleSheet, View, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
 
 import config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
-import { AppButton, AppText, Page } from "../../components";
+import { AppButton, AppText } from "../../components";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
@@ -85,26 +85,24 @@ export const Profile = ({ navigation }) => {
     };
 
     const handleImageUpload = async () => {
-        if (Platform.OS !== "web") {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        launchImageLibrary(
+            {
+                maxWidth: 500,
+                maxHeight: 500,
+                mediaType: "photo",
+                saveToPhotos: false,
+                includeBase64: false,
+            },
+            async (response) => {
+                if (response.assets && response.assets.length === 1) {
+                    const result = response.assets[0];
 
-            if (status !== "granted") {
-                toast.show("Sorry, we need camera roll permissions to change profile picture.", { type: "danger" });
-            } else {
-                const result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                    allowsEditing: true,
-                    aspect: [4, 3],
-                    quality: 1,
-                });
-
-                if (!result.cancelled) {
                     setProfileImage(result.uri);
                     setLoading("uploading-image");
                     const now = new Date();
 
                     const formdata = new FormData();
-                    formdata.append("imageFile", { uri: result.uri, type: result.type, name: "Emmanuel" });
+                    formdata.append("imageFile", { uri: result.uri, type: result.type, name: result.fileName });
 
                     try {
                         await axios.put(`${config.SERVER_URL}/app/user/picture`, formdata, {
@@ -116,17 +114,15 @@ export const Profile = ({ navigation }) => {
                                 }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
                             },
                         });
-
-                        console.log("upload response: ", data);
                     } catch (error) {
-                        debugAxiosError(error);
+                        console.log("Unable to upload image: ", error);
                         toast.show(extractResponseErrorMessage(error));
                     } finally {
                         setLoading(null);
                     }
                 }
-            }
-        }
+            },
+        );
     };
 
     return (
