@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import { launchImageLibrary } from "react-native-image-picker";
-import { StyleSheet, View, TouchableOpacity, Image, Platform, ScrollView } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-native";
 
 import config from "../../config";
 import { theme } from "../../theme";
