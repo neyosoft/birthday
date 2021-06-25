@@ -64,6 +64,22 @@ export default class AuthProvider extends Component {
             });
         },
         logout: async () => {
+            const params = new URLSearchParams();
+
+            params.append("client_id", "api-access");
+            params.append("refresh_token", this.state.refreshToken);
+            params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+
+            const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/logout", params, {
+                baseURL: Config.SERVER_URL,
+                headers: {
+                    Authorization: `Bearer ${this.state.accessToken}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            });
+
+            console.log("Logout data: ", data);
+
             await Promise.all([removeUserToken(), removeRefreshToken()]);
 
             this.setState({

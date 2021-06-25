@@ -100,17 +100,14 @@ export const Profile = ({ navigation }) => {
 
                 if (!result.cancelled) {
                     setProfileImage(result.uri);
-
                     setLoading("uploading-image");
-
                     const now = new Date();
 
                     const formdata = new FormData();
-
                     formdata.append("imageFile", { uri: result.uri, type: result.type, name: "Emmanuel" });
 
                     try {
-                        const { data } = await axios.put(`${config.SERVER_URL}/app/user/picture`, formdata, {
+                        await axios.put(`${config.SERVER_URL}/app/user/picture`, formdata, {
                             headers: {
                                 "Content-Type": "multipart/form-data",
                                 Authorization: `Bearer ${accessToken}`,
@@ -142,7 +139,7 @@ export const Profile = ({ navigation }) => {
             </View>
 
             <ScrollView contentContainerStyle={{ padding: 25 }}>
-                <TouchableOpacity style={styles.avatarWrapper}>
+                <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
                     {profileImage ? (
                         <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
                     ) : (
