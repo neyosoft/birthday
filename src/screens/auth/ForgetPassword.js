@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
+import { StyleSheet, View, Image, ScrollView, TouchableOpacity } from "react-native";
 
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
+import { baseRequest } from "../../utils/request.utils";
 import { AppText, Page, AppButton, TextField } from "../../components";
-import { baseRequest, debugAxiosError } from "../../utils/request.utils";
 
 export const ForgetPassword = ({ navigation }) => {
     const toast = useToast();
@@ -16,8 +16,8 @@ export const ForgetPassword = ({ navigation }) => {
     const handleSubmit = async () => {
         setLoading(true);
 
-        if (email.length < 1) {
-            toast.show("Email is required.");
+        if (email.trim().length < 1) {
+            return toast.show("Email is required.");
         }
 
         const now = new Date();
