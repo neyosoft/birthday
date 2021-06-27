@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
+import { useToast } from "react-native-fast-toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { StyleSheet, View, Image, TouchableOpacity, Platform, Alert } from "react-native";
 
+import { theme } from "../../theme";
 import { BackIcon, ShieldIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import { AppText, Page, AppButton, DateField } from "../../components";
 import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 
-import { theme } from "../../theme";
-
 export const SignupDateofBirth = ({ navigation, route }) => {
+    const toast = useToast();
+
     const [show, setShow] = useState(false);
     const [date, setDate] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -24,6 +26,10 @@ export const SignupDateofBirth = ({ navigation, route }) => {
     };
 
     const handleSubmit = async () => {
+        if (!(date && isValid(date))) {
+            return toast.show("Date of birth is required.");
+        }
+
         setLoading(true);
 
         const accountPayload = {

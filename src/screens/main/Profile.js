@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import { launchImageLibrary } from "react-native-image-picker";
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Linking } from "react-native";
 
 import config from "../../config";
 import { theme } from "../../theme";
@@ -233,7 +233,9 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>About us</AppText>
-                    <Ionicons name="open-outline" size={24} color="#A3A2A2" />
+                    <TouchableOpacity onPress={() => Linking.openURL("https://pokeet.co")}>
+                        <Ionicons name="open-outline" size={24} color="#A3A2A2" />
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
 
