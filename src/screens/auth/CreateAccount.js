@@ -13,7 +13,7 @@ export const CreateAccount = ({ navigation }) => {
         <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ padding: 20 }}
-            style={{ backgroundColor: theme.color.primary }}>
+            style={{ backgroundColor: theme.backgroundColor }}>
             <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
                 <BackIcon />
             </TouchableOpacity>
