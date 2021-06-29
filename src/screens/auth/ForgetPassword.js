@@ -14,11 +14,11 @@ export const ForgetPassword = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async () => {
-        setLoading(true);
-
         if (email.trim().length < 1) {
             return toast.show("Email is required.");
         }
+
+        setLoading(true);
 
         const now = new Date();
 
