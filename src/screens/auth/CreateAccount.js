@@ -82,7 +82,8 @@ export const CreateAccount = ({ navigation }) => {
                             onChangeText={handleChange("password")}
                             hasError={errors.password && touched.password}
                         />
-                        <AppText style={{ fontSize: 10, color: "gray", marginTop: 4 }}>
+
+                        <AppText style={{ fontSize: 13, color: "gray", marginTop: 4 }}>
                             NOTE: Password must be atleast 8 characters and must contain atleast one uppercase letter,
                             one number and one special character.
                         </AppText>
@@ -123,7 +124,7 @@ const registrationSchema = object().shape({
     password: string()
         .required("Password is required.")
         .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^&\*])(?=.{8,})/,
             "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character",
         ),
 });
