@@ -120,11 +120,11 @@ const registrationSchema = object().shape({
     firstName: string().required("First name is required").trim(),
     lastName: string().required("Last name is required").trim(),
     email: string().email("Invalid email").required().lowercase(),
-    phoneNumber: string().required("Phone number is required.").trim(),
+    phoneNumber: string().required("Phone number is required.").length(11).trim(),
     password: string()
         .required("Password is required.")
         .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^\(\)&\*])(?=.{8,})/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$%\^\(\)\[\]\-:;,\?\+=\/'"<>&\*])(?=.{8,})/,
             "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and One Special Case Character",
         ),
 });
