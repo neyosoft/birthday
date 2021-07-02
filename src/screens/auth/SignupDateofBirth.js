@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { format, isValid } from "date-fns";
 import { useToast } from "react-native-fast-toast";
+import { CommonActions } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { StyleSheet, View, Image, TouchableOpacity, Platform, Alert } from "react-native";
 
@@ -47,9 +48,14 @@ export const SignupDateofBirth = ({ navigation, route }) => {
 
             Alert.alert("Success", "An email has been sent to your email for verification.");
 
-            navigation.navigate("SignIn");
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 1,
+                    routes: [{ name: "Welcome" }, { name: "SignIn" }],
+                }),
+            );
         } catch (error) {
-            Alert.alert("Registration Failed.", extractResponseErrorMessage(error));
+            return toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
         }
@@ -100,11 +106,11 @@ export const SignupDateofBirth = ({ navigation, route }) => {
             </View>
 
             <AppButton
-                label="Continue"
                 disabled={loading}
                 variant="secondary"
                 onPress={handleSubmit}
                 style={styles.continueBtn}
+                label={loading ? "Processing..." : "Continue"}
             />
 
             {show && <DateTimePicker mode="date" value={date || new Date()} display="default" onChange={onChange} />}
