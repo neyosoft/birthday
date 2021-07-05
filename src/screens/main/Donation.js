@@ -7,6 +7,7 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from 
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
+import { moneyFormat } from "../../utils/money.utils";
 import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import CalendarIcon from "../../../assets/images/Calendar2.png";
@@ -40,6 +41,10 @@ export const Donation = ({ navigation, route }) => {
 
         if (amount <= 0) {
             return toast.show("Kindly input a valid donation amount.");
+        }
+
+        if (amount < 100) {
+            return toast.show(`Mininum donation is ${moneyFormat(100)}.`);
         }
 
         try {
