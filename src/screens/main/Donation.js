@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import React, { useRef, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
+import crashlytics from "@react-native-firebase/crashlytics";
 import { StyleSheet, View, TouchableOpacity, Image, Dimensions } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -63,6 +64,8 @@ export const Donation = ({ navigation, route }) => {
                 setPassword("");
                 setDonationAmount("");
 
+                crashlytics().log("Donation completed.");
+
                 toast.show("You have successfully completed your donation.", { type: "success", duration: 3000 });
 
                 queryClient.invalidateQueries("wallet");
@@ -76,6 +79,7 @@ export const Donation = ({ navigation, route }) => {
                 toast.show(data.responseDescription);
             }
         } catch (error) {
+            crashlytics().recordError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(null);

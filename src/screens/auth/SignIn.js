@@ -6,6 +6,7 @@ import Constants from "expo-constants";
 import { useToast } from "react-native-fast-toast";
 import * as Notifications from "expo-notifications";
 import * as LocalAuthentication from "expo-local-authentication";
+import crashlytics from "@react-native-firebase/crashlytics";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Platform } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
@@ -41,6 +42,8 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
+            crashlytics().log("User signed in.");
+
             const devicePayload = {
                 osVersion: Device.osVersion,
                 versionCode: Config.appVersion,
@@ -48,6 +51,8 @@ export const SignIn = ({ navigation }) => {
                 deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
                 notificationToken: await registerForPushNotificationsAsync(),
             };
+
+            console.log("devicePayload: ", devicePayload);
 
             if (data && data.access_token && data.refresh_token) {
                 await saveBiometricLogin(values);
@@ -58,11 +63,14 @@ export const SignIn = ({ navigation }) => {
                             Authorization: `Bearer ${data.access_token}`,
                         },
                     });
-                } catch (error) {}
+                } catch (error) {
+                    crashlytics().recordError(error);
+                }
 
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
+            crashlytics().recordError(error);
             let message;
 
             if (error.response) {
@@ -113,6 +121,7 @@ export const SignIn = ({ navigation }) => {
                 throw new Error("Unable to login with biometrics at the moment...");
             }
         } catch (error) {
+            crashlytics().recordError(error);
             setLoading(false);
             toast.show(error.message);
         }

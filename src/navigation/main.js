@@ -49,19 +49,22 @@ const MainApplicationNavigation = () => {
 
     const registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
+            try {
+                const { status: existingStatus } = await Notifications.getPermissionsAsync();
 
-            let finalStatus = existingStatus;
-            if (existingStatus !== "granted") {
-                const { status } = await Notifications.requestPermissionsAsync();
-                finalStatus = status;
-            }
-            if (finalStatus !== "granted") {
-                alert("Failed to get push token for push notification!");
-                return;
-            }
+                let finalStatus = existingStatus;
 
-            return (await Notifications.getExpoPushTokenAsync()).data;
+                if (existingStatus !== "granted") {
+                    const { status } = await Notifications.requestPermissionsAsync();
+                    finalStatus = status;
+                }
+                if (finalStatus !== "granted") {
+                    alert("Failed to get push token for push notification!");
+                    return;
+                }
+            } catch (error) {
+                console.log("There is problem registering device token: ", error);
+            }
         } else {
             alert("Must use physical device for Push Notifications");
         }

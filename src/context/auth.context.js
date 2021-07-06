@@ -1,6 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import React, { Component, useContext } from "react";
+import crashlytics from "@react-native-firebase/crashlytics";
 
 import {
     getUserToken,
@@ -226,6 +227,8 @@ export default class AuthProvider extends Component {
 
                         if (userData && userData.email) {
                             user = userData;
+
+                            crashlytics().setAttributes(userData);
                         }
 
                         this.setState({

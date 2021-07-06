@@ -4,6 +4,7 @@ import { useToast } from "react-native-fast-toast";
 import { CommonActions } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { StyleSheet, View, Image, TouchableOpacity, Platform, Alert } from "react-native";
+import crashlytics from "@react-native-firebase/crashlytics";
 
 import { theme } from "../../theme";
 import { BackIcon, ShieldIcon } from "../../../assets/svg";
@@ -46,6 +47,8 @@ export const SignupDateofBirth = ({ navigation, route }) => {
         try {
             await baseRequest.post("/app/auth/signup", accountPayload);
 
+            crashlytics().log("User registered.");
+
             Alert.alert("Success", "An email has been sent to your email for verification.");
 
             navigation.dispatch(
@@ -55,6 +58,7 @@ export const SignupDateofBirth = ({ navigation, route }) => {
                 }),
             );
         } catch (error) {
+            crashlytics().recordError(error);
             return toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
