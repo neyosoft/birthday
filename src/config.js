@@ -1,4 +1,4 @@
 export default {
-    SERVER_URL: "https://dev.pokeet.co:8443",
-    appVersion: "1.1.8",
+    SERVER_URL: "https://dev.pokeet.com.ng:8443",
+    appVersion: "1.2.0",
 };
