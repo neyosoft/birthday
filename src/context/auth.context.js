@@ -67,9 +67,9 @@ export default class AuthProvider extends Component {
         logout: async () => {
             const params = new URLSearchParams();
 
-            params.append("client_id", "api-access");
+            params.append("client_id", "api");
             params.append("refresh_token", this.state.refreshToken);
-            params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+            params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
 
             try {
                 await axios.post("/auth/realms/vibes/protocol/openid-connect/logout", params, {
@@ -131,9 +131,9 @@ export default class AuthProvider extends Component {
                     const params = new URLSearchParams();
 
                     params.append("refresh_token", refreshToken);
-                    params.append("client_id", "api-access");
+                    params.append("client_id", "api");
                     params.append("grant_type", "refresh_token");
-                    params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+                    params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
 
                     const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
                         baseURL: Config.SERVER_URL,
@@ -196,9 +196,9 @@ export default class AuthProvider extends Component {
                     const params = new URLSearchParams();
 
                     params.append("refresh_token", refreshToken);
-                    params.append("client_id", "api-access");
+                    params.append("client_id", "api");
                     params.append("grant_type", "refresh_token");
-                    params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+                    params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
 
                     const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
                         baseURL: Config.SERVER_URL,

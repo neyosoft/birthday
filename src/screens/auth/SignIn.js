@@ -30,8 +30,8 @@ export const SignIn = ({ navigation }) => {
         params.append("username", values.email);
         params.append("password", encodeURIComponent(values.password));
         params.append("grant_type", "password");
-        params.append("client_id", "api-access");
-        params.append("client_secret", "977d186a-095b-4705-a1cb-26b774fce3e1");
+        params.append("client_id", "api");
+        params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
 
         try {
             setLoading(true);
