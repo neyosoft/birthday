@@ -242,6 +242,11 @@ export const Profile = ({ navigation }) => {
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
+                    <AppText style={styles.subtitle}>App Version:</AppText>
+                    <AppText style={styles.subtitleValue}>{Config.appVersion}</AppText>
+                </View>
+                <View style={styles.separator} />
+                <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>About us</AppText>
                     <TouchableOpacity onPress={() => Linking.openURL("https://pokeet.co")}>
                         <Ionicons name="open-outline" size={24} color="#A3A2A2" />
@@ -252,7 +257,15 @@ export const Profile = ({ navigation }) => {
             <View style={{ flex: 1, marginTop: 5 }} />
 
             <View style={{ marginHorizontal: 25, marginVertical: 10 }}>
-                <AppButton onPress={logout} label="Log out" labelStyle={styles.btnLabelStyle} />
+                <AppButton
+                    onPress={() => {
+                        setLoading("logout");
+
+                        logout();
+                    }}
+                    labelStyle={styles.btnLabelStyle}
+                    label={loading === "logout" ? "Loging out..." : "Log out"}
+                />
             </View>
         </View>
     );

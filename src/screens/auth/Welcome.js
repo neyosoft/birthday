@@ -4,6 +4,8 @@ import { StyleSheet, Image, View, Dimensions } from "react-native";
 import { AppText, Page, AppButton } from "../../components";
 import Illustration1 from "../../../assets/images/illustration1.png";
 import Logo from "../../../assets/images/Logo.png";
+import Config from "../../config";
+import { theme } from "../../theme";
 
 const { width } = Dimensions.get("window");
 
@@ -24,6 +26,11 @@ export const Welcome = ({ navigation }) => {
                     style={styles.btnSeparator}
                     onPress={() => navigation.navigate("CreateAccount")}
                 />
+            </View>
+
+            <View style={styles.versionbox}>
+                <AppText style={{ fontSize: 12, color: "gray" }}>App version: </AppText>
+                <AppText style={{ fontSize: 12 }}>{Config.appVersion}</AppText>
             </View>
         </Page>
     );
@@ -66,5 +73,10 @@ const styles = StyleSheet.create({
     },
     btnSeparator: {
         marginTop: 16,
+    },
+    versionbox: {
+        marginBottom: -10,
+        flexDirection: "row",
+        justifyContent: "center",
     },
 });

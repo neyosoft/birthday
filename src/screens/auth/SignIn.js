@@ -16,7 +16,7 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
@@ -53,11 +53,9 @@ export const SignIn = ({ navigation }) => {
                 osVersion: Device.osVersion,
                 versionCode: Config.appVersion,
                 deviceType: Platform.OS.toUpperCase(),
-                deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
                 notificationToken: await registerForPushNotificationsAsync(),
+                deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
             };
-
-            console.log("devicePayload: ", devicePayload);
 
             if (data && data.access_token && data.refresh_token) {
                 await saveBiometricLogin(values);
@@ -75,6 +73,7 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
+            debugAxiosError(error);
             crashlytics().recordError(error);
             let message;
 
@@ -111,6 +110,8 @@ export const SignIn = ({ navigation }) => {
             }
 
             const loginInfo = await getBiometricLogin();
+
+            console.log("loginInfo: ", loginInfo);
 
             if (!loginInfo) {
                 throw new Error("You need to first try manual login before this feature is enable.");
