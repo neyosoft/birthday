@@ -6,7 +6,7 @@ import { useToast } from "react-native-fast-toast";
 import { launchImageLibrary } from "react-native-image-picker";
 import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Linking } from "react-native";
 
-import config from "../../config";
+import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
@@ -64,7 +64,11 @@ export const Profile = ({ navigation }) => {
     const toast = useToast();
 
     const { user, logout, accessToken, refreshUser, authenticatedRequest } = useAuth();
-    const [profileImage, setProfileImage] = useState(user.picUrl ? `${config.SERVER_URL}/${user.picUrl}` : null);
+    const [profileImage, setProfileImage] = useState(
+        user.picUrl
+            ? `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/${user.picUrl}`
+            : null,
+    );
 
     const [loading, setLoading] = useState(null);
 
@@ -105,15 +109,21 @@ export const Profile = ({ navigation }) => {
                     formdata.append("imageFile", { uri: result.uri, type: result.type, name: result.fileName });
 
                     try {
-                        await axios.put(`${config.SERVER_URL}/app/user/picture`, formdata, {
-                            headers: {
-                                "Content-Type": "multipart/form-data",
-                                Authorization: `Bearer ${accessToken}`,
-                                TimeStamp: `${now.getFullYear()}-${
-                                    now.getMonth() + 1
-                                }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                        await axios.put(
+                            `${
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL
+                            }/app/user/picture`,
+                            formdata,
+                            {
+                                headers: {
+                                    "Content-Type": "multipart/form-data",
+                                    Authorization: `Bearer ${accessToken}`,
+                                    TimeStamp: `${now.getFullYear()}-${
+                                        now.getMonth() + 1
+                                    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                                },
                             },
-                        });
+                        );
 
                         await refreshUser();
                     } catch (error) {

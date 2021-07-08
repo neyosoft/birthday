@@ -1,9 +1,9 @@
 import axios from "axios";
 
-import CONFIG from "../config";
+import Config from "../config";
 
 const instance = axios.create({
-    baseURL: CONFIG.SERVER_URL,
+    baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
 });
 
 instance.interceptors.request.use(
@@ -25,7 +25,7 @@ export const baseRequest = instance;
 
 export const authenticatedRequest = (token) => {
     const instance = axios.create({
-        baseURL: CONFIG.SERVER_URL,
+        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
         headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,

@@ -34,7 +34,7 @@ export default class AuthProvider extends Component {
             await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
 
             const { data } = await axios.get("/app/user/information", {
-                baseURL: Config.SERVER_URL,
+                baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -67,13 +67,18 @@ export default class AuthProvider extends Component {
         logout: async () => {
             const params = new URLSearchParams();
 
-            params.append("client_id", "api");
+            params.append("client_id", Config.environment === "production" ? "api" : "api-access");
             params.append("refresh_token", this.state.refreshToken);
-            params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
+            params.append(
+                "client_secret",
+                Config.environment === "production"
+                    ? "532fd353-3e2c-49f6-a917-4d828c178b80"
+                    : "977d186a-095b-4705-a1cb-26b774fce3e1",
+            );
 
             try {
-                await axios.post("/auth/realms/vibes/protocol/openid-connect/logout", params, {
-                    baseURL: Config.SERVER_URL,
+                await axios.post("/auth/realms/pokeet/protocol/openid-connect/logout", params, {
+                    baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${this.state.accessToken}`,
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -92,7 +97,7 @@ export default class AuthProvider extends Component {
         refreshUser: async () => {
             try {
                 const { data } = await axios.get("/app/user/information", {
-                    baseURL: Config.SERVER_URL,
+                    baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                     headers: {
                         Authorization: `Bearer ${this.state.accessToken}`,
                     },
@@ -112,7 +117,7 @@ export default class AuthProvider extends Component {
             const now = new Date();
 
             const instance = axios.create({
-                baseURL: Config.SERVER_URL,
+                baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     Accept: "application/json",
@@ -131,12 +136,17 @@ export default class AuthProvider extends Component {
                     const params = new URLSearchParams();
 
                     params.append("refresh_token", refreshToken);
-                    params.append("client_id", "api");
+                    params.append("client_id", Config.environment === "production" ? "api" : "api-access");
                     params.append("grant_type", "refresh_token");
-                    params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
+                    params.append(
+                        "client_secret",
+                        Config.environment === "production"
+                            ? "532fd353-3e2c-49f6-a917-4d828c178b80"
+                            : "977d186a-095b-4705-a1cb-26b774fce3e1",
+                    );
 
-                    const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
-                        baseURL: Config.SERVER_URL,
+                    const { data } = await axios.post("/auth/realms/pokeet/protocol/openid-connect/token", params, {
+                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                             TimeStamp: `${now.getFullYear()}-${
@@ -180,7 +190,7 @@ export default class AuthProvider extends Component {
 
                 if (isFuture(new Date(decoded.exp * 1000))) {
                     const { data } = await axios.get("/app/user/information", {
-                        baseURL: Config.SERVER_URL,
+                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
                             TimeStamp: `${now.getFullYear()}-${
@@ -196,12 +206,17 @@ export default class AuthProvider extends Component {
                     const params = new URLSearchParams();
 
                     params.append("refresh_token", refreshToken);
-                    params.append("client_id", "api");
+                    params.append("client_id", Config.environment === "production" ? "api" : "api-access");
                     params.append("grant_type", "refresh_token");
-                    params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
+                    params.append(
+                        "client_secret",
+                        Config.environment === "production"
+                            ? "532fd353-3e2c-49f6-a917-4d828c178b80"
+                            : "977d186a-095b-4705-a1cb-26b774fce3e1",
+                    );
 
-                    const { data } = await axios.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
-                        baseURL: Config.SERVER_URL,
+                    const { data } = await axios.post("/auth/realms/pokeet/protocol/openid-connect/token", params, {
+                        baseURL: Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded",
                             TimeStamp: `${now.getFullYear()}-${
@@ -219,7 +234,8 @@ export default class AuthProvider extends Component {
                         await Promise.all([saveUserToken(accessToken), saveRefreshToken(refreshToken)]);
 
                         const { data: userData } = await axios.get("/app/user/information", {
-                            baseURL: Config.SERVER_URL,
+                            baseURL:
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL,
                             headers: {
                                 Authorization: `Bearer ${accessToken}`,
                             },

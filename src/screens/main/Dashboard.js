@@ -228,7 +228,17 @@ export const Dashboard = ({ navigation }) => {
                         onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
                         <Image
                             style={styles.profileImage}
-                            source={item.picUrl ? { uri: `${Config.SERVER_URL}/${item.picUrl}` } : UserOne}
+                            source={
+                                item.picUrl
+                                    ? {
+                                          uri: `${
+                                              Config.environment === "production"
+                                                  ? Config.PROD_SERVER_URL
+                                                  : Config.DEV_SERVER_URL
+                                          }/${item.picUrl}`,
+                                      }
+                                    : UserOne
+                            }
                         />
                         <AppText style={styles.renderItemText}>{item.given_name}</AppText>
                     </TouchableOpacity>

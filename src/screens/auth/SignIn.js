@@ -30,13 +30,18 @@ export const SignIn = ({ navigation }) => {
         params.append("username", values.email);
         params.append("password", encodeURIComponent(values.password));
         params.append("grant_type", "password");
-        params.append("client_id", "api");
-        params.append("client_secret", "532fd353-3e2c-49f6-a917-4d828c178b80");
+        params.append("client_id", Config.environment === "production" ? "api" : "api-access");
+        params.append(
+            "client_secret",
+            Config.environment === "production"
+                ? "532fd353-3e2c-49f6-a917-4d828c178b80"
+                : "977d186a-095b-4705-a1cb-26b774fce3e1",
+        );
 
         try {
             setLoading(true);
 
-            const { data } = await baseRequest.post("/auth/realms/vibes/protocol/openid-connect/token", params, {
+            const { data } = await baseRequest.post("/auth/realms/pokeet/protocol/openid-connect/token", params, {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
