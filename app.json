@@ -3,7 +3,7 @@
     "displayName": "Pokeet",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "assetBundlePatterns": ["assets/images/*"],
     "expo": {
         "icon": "./assets/images/icon.png",
@@ -23,7 +23,7 @@
             "googleServicesFile": "./google-services.json"
         },
         "ios": {
-            "buildNumber": "1.2.0",
+            "buildNumber": "1.2.1",
             "bundleIdentifier": "co.pokeet.vibes",
             "googleServicesFile": "./GoogleService-Info.plist",
             "infoPlist": {
@@ -32,7 +32,7 @@
         },
         "name": "Pokeet",
         "slug": "pokeet",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "description": "A birthday give-away application."
     }
 }
