@@ -15,7 +15,7 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
 } from "react-native";
-import { addYears, getYear, isPast, setYear, format, differenceInDays } from "date-fns";
+import { addYears, getYear, isPast, setYear, format, differenceInCalendarDays, isToday } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import Config from "../../config";
@@ -37,6 +37,10 @@ import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } fro
 const getDurationToBirthday = (dateOfBirth) => {
     const thisYearBirthday = setYear(new Date(dateOfBirth), getYear(new Date()));
 
+    if (isToday(thisYearBirthday)) {
+        return "Happy birthday...";
+    }
+
     let nextBirthday;
 
     if (isPast(thisYearBirthday)) {
@@ -45,19 +49,21 @@ const getDurationToBirthday = (dateOfBirth) => {
         nextBirthday = thisYearBirthday;
     }
 
-    const numberOfDays = differenceInDays(nextBirthday, new Date());
+    const numberOfDays = differenceInCalendarDays(nextBirthday, new Date());
 
-    const weeks = Math.ceil(numberOfDays / 7);
+    console.log("numberOfDays: ", numberOfDays);
+
+    const weeks = Math.floor(numberOfDays / 7);
     const days = numberOfDays % 7;
 
     if (weeks > 0) {
         if (days > 0) {
-            return `${weeks} weeks and ${days} days`;
+            return `${weeks} ${weeks === 1 ? "week" : "weeks"} and ${days} ${days === 1 ? "day" : "days"}`;
         } else {
-            return `${weeks} weeks`;
+            return `${weeks} ${weeks === 1 ? "week" : "weeks"}`;
         }
     } else {
-        return `${days} days`;
+        return `${days} ${days === 1 ? "day" : "days"}`;
     }
 };
 
@@ -267,7 +273,9 @@ export const Dashboard = ({ navigation }) => {
 
             <View style={styles.birthdayInformtionContainer}>
                 <View>
-                    <AppText style={styles.shortStyle}>Your birthday is in</AppText>
+                    {!isToday(setYear(new Date(user.dob), getYear(new Date()))) && (
+                        <AppText style={styles.shortStyle}>Your birthday is in</AppText>
+                    )}
                     <AppText style={styles.birthdayCountdown}>
                         {getDurationToBirthday(user.dob)} | {format(new Date(user.dob), "MMMM, dd")}
                     </AppText>

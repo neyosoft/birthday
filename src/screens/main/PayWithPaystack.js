@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { AppButton, AppText } from "../../components";
+import Config from "../../config";
 
 export const PayWithPaystack = ({ navigation, route }) => {
     const { user, authenticatedRequest } = useAuth();
@@ -31,7 +32,9 @@ export const PayWithPaystack = ({ navigation, route }) => {
                 <script>
                     function payWithPaystack() {
                         var handler = PaystackPop.setup({
-                            key: 'pk_test_8f9f5aa4bafc2189704496a9594a41bed04436ea',
+                            key: '${
+                                Config.environment === "production" ? Config.PROD_PAYSTACK_KEY : Config.DEV_PAYSTACK_KEY
+                            }',
                             email: '${email}',
                             amount: ${amount * 100},
                             currency: 'NGN',

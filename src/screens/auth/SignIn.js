@@ -111,8 +111,6 @@ export const SignIn = ({ navigation }) => {
 
             const loginInfo = await getBiometricLogin();
 
-            console.log("loginInfo: ", loginInfo);
-
             if (!loginInfo) {
                 throw new Error("You need to first try manual login before this feature is enable.");
             }
