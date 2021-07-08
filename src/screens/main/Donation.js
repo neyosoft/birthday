@@ -14,6 +14,7 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import CalendarIcon from "../../../assets/images/Calendar2.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppButton, AppText, Page, PasswordField, TextField } from "../../components";
+import Config from "../../config";
 
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
@@ -94,7 +95,18 @@ export const Donation = ({ navigation, route }) => {
             <AppText style={styles.title}>Profile</AppText>
 
             <View style={styles.avatarWrapper}>
-                <UserAvatarIcon />
+                {profile.picUrl ? (
+                    <Image
+                        style={styles.profileImage}
+                        source={{
+                            uri: `${
+                                Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL
+                            }/${profile.picUrl}`,
+                        }}
+                    />
+                ) : (
+                    <UserAvatarIcon />
+                )}
             </View>
 
             <AppText style={styles.username}>
@@ -335,5 +347,9 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         marginTop: 30,
+    },
+    profileImage: {
+        width: 50,
+        height: 50,
     },
 });

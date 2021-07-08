@@ -24,6 +24,7 @@ import { theme } from "../../theme";
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
 import { useAuth } from "../../context";
+import { UserAvatarIcon } from "../../../assets/svg";
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
 import CopyIcon from "../../../assets/images/copy.png";
@@ -208,16 +209,6 @@ export const Dashboard = ({ navigation }) => {
             );
         }
 
-        if (birthdayUser.data && birthdayUser.data.length === 0) {
-            return (
-                <View style={styles.descriptionViewStyle}>
-                    <AppText style={styles.descriptionLabelStyle}>
-                        You can only appear on this list when it’s your birthday and if all your details have been
-                        verified and validated. Go to setting to verify your details
-                    </AppText>
-                </View>
-            );
-        }
         return (
             <FlatList
                 numColumns={4}
@@ -230,22 +221,34 @@ export const Dashboard = ({ navigation }) => {
                     <TouchableOpacity
                         style={styles.renderItemContainer}
                         onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
-                        <Image
-                            style={styles.profileImage}
-                            source={
-                                item.picUrl
-                                    ? {
-                                          uri: `${
-                                              Config.environment === "production"
-                                                  ? Config.PROD_SERVER_URL
-                                                  : Config.DEV_SERVER_URL
-                                          }/${item.picUrl}`,
-                                      }
-                                    : UserOne
-                            }
-                        />
+                        {item.picUrl ? (
+                            <Image
+                                style={styles.profileImage}
+                                source={
+                                    item.picUrl
+                                        ? {
+                                              uri: `${
+                                                  Config.environment === "production"
+                                                      ? Config.PROD_SERVER_URL
+                                                      : Config.DEV_SERVER_URL
+                                              }/${item.picUrl}`,
+                                          }
+                                        : UserOne
+                                }
+                            />
+                        ) : (
+                            <UserAvatarIcon width={50} height={50} />
+                        )}
                         <AppText style={styles.renderItemText}>{item.given_name}</AppText>
                     </TouchableOpacity>
+                )}
+                ListEmptyComponent={() => (
+                    <View style={styles.descriptionViewStyle}>
+                        <AppText style={styles.descriptionLabelStyle}>
+                            You can only appear on this list when it’s your birthday and if all your details have been
+                            verified and validated. Go to setting to verify your details
+                        </AppText>
+                    </View>
                 )}
             />
         );
