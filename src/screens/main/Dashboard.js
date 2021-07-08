@@ -51,8 +51,6 @@ const getDurationToBirthday = (dateOfBirth) => {
 
     const numberOfDays = differenceInCalendarDays(nextBirthday, new Date());
 
-    console.log("numberOfDays: ", numberOfDays);
-
     const weeks = Math.floor(numberOfDays / 7);
     const days = numberOfDays % 7;
 
