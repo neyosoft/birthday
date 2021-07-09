@@ -135,8 +135,8 @@ android {
         applicationId 'co.pokeet.vibes'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 29
-        versionName "1.2.2"
+        versionCode 31
+        versionName "1.2.3"
     }
     splits {
         abi {

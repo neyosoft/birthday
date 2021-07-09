@@ -1,6 +1,6 @@
 export default {
-    appVersion: "1.2.2",
-    environment: "development",
+    appVersion: "1.2.3",
+    environment: "production",
     DEV_SERVER_URL: "https://dev.pokeet.com.ng:8443",
     PROD_SERVER_URL: "https://prod.pokeet.com.ng:8443",
     DEV_PAYSTACK_KEY: "pk_test_8f9f5aa4bafc2189704496a9594a41bed04436ea",
