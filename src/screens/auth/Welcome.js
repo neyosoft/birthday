@@ -5,7 +5,6 @@ import { AppText, Page, AppButton } from "../../components";
 import Illustration1 from "../../../assets/images/illustration1.png";
 import Logo from "../../../assets/images/Logo.png";
 import Config from "../../config";
-import { theme } from "../../theme";
 
 const { width } = Dimensions.get("window");
 

@@ -303,7 +303,13 @@ export const Dashboard = ({ navigation }) => {
                     label="Withdraw"
                     variant="secondary"
                     style={styles.withdrawBtn}
-                    onPress={() => withdrawalRef.current.present()}
+                    onPress={() => {
+                        if (user.pinSet) {
+                            withdrawalRef.current.present();
+                        } else {
+                            toast.show("Kindly set transaction pin.");
+                        }
+                    }}
                 />
             </View>
 

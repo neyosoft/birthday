@@ -1,5 +1,6 @@
 import OTPTextView from "react-native-otp-textinput";
 import React, { useRef, useState, useEffect } from "react";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 
 import { theme } from "../../theme";
@@ -123,12 +124,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     roundedTextInput: {
-        width: 50,
-        height: 50,
-        fontSize: 20,
         borderWidth: 0,
         color: theme.white,
         borderBottomWidth: 2,
+        width: RFPercentage(6),
+        height: RFPercentage(7),
+        fontSize: RFPercentage(2.5),
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,
     },

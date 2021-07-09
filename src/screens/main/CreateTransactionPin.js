@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 import OTPTextView from "react-native-otp-textinput";
 
@@ -136,12 +137,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     roundedTextInput: {
-        width: 60,
-        height: 55,
-        fontSize: 20,
         borderWidth: 0,
         color: theme.white,
         borderBottomWidth: 2,
+        width: RFPercentage(8),
+        height: RFPercentage(7),
+        fontSize: RFPercentage(3),
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,
     },
