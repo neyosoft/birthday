@@ -9,7 +9,7 @@ import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import { AppButton, AppText, Page } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const CreateTransactionPin = ({ navigation }) => {
     const pinInput = useRef();
@@ -43,7 +43,6 @@ export const CreateTransactionPin = ({ navigation }) => {
                 toast.show("BVN verification failed.");
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
