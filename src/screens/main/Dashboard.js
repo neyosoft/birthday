@@ -307,7 +307,7 @@ export const Dashboard = ({ navigation }) => {
                         if (user.pinSet) {
                             withdrawalRef.current.present();
                         } else {
-                            toast.show("Kindly set transaction pin.");
+                            toast.show("Kindly set transaction pin in your settings.");
                         }
                     }}
                 />
