@@ -5,8 +5,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import crashlytics from "@react-native-firebase/crashlytics";
 
-import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
-
 import AppNavigator from "./navigation";
 import AuthProvider from "./context/auth.context";
 
@@ -20,12 +18,6 @@ export default function App() {
     useEffect(() => {
         crashlytics().log("App mounted.");
     }, []);
-
-    const [fontsLoaded] = useFonts({ Lato_400Regular });
-
-    if (!fontsLoaded) {
-        return null;
-    }
 
     return (
         <QueryClientProvider client={queryClient}>

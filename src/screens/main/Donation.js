@@ -23,7 +23,7 @@ export const Donation = ({ navigation, route }) => {
     const pinInputRef = useRef();
     const theAmountRef = useRef();
     const queryClient = useQueryClient();
-    const { refreshUser, authenticatedRequest } = useAuth();
+    const { user, refreshUser, authenticatedRequest } = useAuth();
 
     const donationRef = useRef();
     const confirmDonationRef = useRef();
@@ -128,7 +128,21 @@ export const Donation = ({ navigation, route }) => {
 
             <View style={{ flex: 1 }} />
 
-            <AppButton variant="secondary" label="Do Giveaway" onPress={() => donationRef.current.present()} />
+            <AppButton
+                variant="secondary"
+                label="Do Giveaway"
+                onPress={() => {
+                    if (user.pinSet) {
+                        if (["TIER1", "TIER2"].includes(user.kyclevel)) {
+                            toast.show("Kindly verify your phone number in settings before you proceed.");
+                        } else {
+                            donationRef?.current?.present();
+                        }
+                    } else {
+                        toast.show("Kindly set transaction pin in your settings.");
+                    }
+                }}
+            />
 
             <BottomSheetModalProvider>
                 <BottomSheetModal
