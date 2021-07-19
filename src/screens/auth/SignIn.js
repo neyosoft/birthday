@@ -16,7 +16,7 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError } from "../../utils/request.utils";
+import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
@@ -47,7 +47,7 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
-            crashlytics().log("User signed in.");
+            crashlytics().log("User signed in.", data);
 
             const devicePayload = {
                 osVersion: Device.osVersion,
@@ -62,6 +62,7 @@ export const SignIn = ({ navigation }) => {
 
                 try {
                     await baseRequest.put("/app/user/app/update", devicePayload, {
+                        timeout: 30,
                         headers: {
                             Authorization: `Bearer ${data.access_token}`,
                         },
@@ -73,16 +74,9 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            crashlytics().recordError(error);
-            let message;
+            crashlytics().log("Login failed.", values);
 
-            if (error.response) {
-                message = error.response.data.error_description;
-            } else {
-                message = error.message;
-            }
-
-            toast.show(message, { type: "danger" });
+            toast.show(extractResponseErrorMessage(error), { type: "danger" });
 
             setLoading(false);
         }
