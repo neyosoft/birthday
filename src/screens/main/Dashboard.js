@@ -27,11 +27,10 @@ import { useAuth } from "../../context";
 import { UserAvatarIcon } from "../../../assets/svg";
 import UserOne from "../../../assets/images/user1.png";
 import PlusIcon from "../../../assets/images/plus.png";
-import CopyIcon from "../../../assets/images/copy.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import CongratulationIcon from "../../../assets/images/congratulation.png";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
@@ -72,10 +71,7 @@ export const Dashboard = ({ navigation }) => {
     const toast = useToast();
     const queryClient = useQueryClient();
 
-    const cardInputRef = useRef();
     const fundWalletRef = useRef();
-    const confirmOtpRef = useRef();
-    const fundingSuccessfulRef = useRef();
 
     const [loading, setLoading] = useState(null);
 
@@ -188,6 +184,7 @@ export const Dashboard = ({ navigation }) => {
                 navigation.navigate("Dashboard");
             }, 1000);
         } catch (error) {
+            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
@@ -266,7 +263,7 @@ export const Dashboard = ({ navigation }) => {
                     </TouchableOpacity>
                     <Image source={CongratulationIcon} style={styles.titleIcon} />
                 </View>
-                <TouchableOpacity style={styles.titleRow} onPress={() => cardInputRef.current.present()}>
+                <TouchableOpacity style={styles.titleRow} onPress={() => fundWalletRef.current.present()}>
                     <Image source={PlusIcon} style={styles.titleIcon} />
                     <AppText style={{ marginLeft: 10 }}>Fund Wallet</AppText>
                 </TouchableOpacity>
@@ -322,50 +319,7 @@ export const Dashboard = ({ navigation }) => {
             <BottomSheetModalProvider>
                 <BottomSheetModal
                     index={1}
-                    stackBehavior="push"
                     ref={fundWalletRef}
-                    snapPoints={[-1, 350]}
-                    enableHandlePanningGesture={false}
-                    enableContentPanningGesture={false}
-                    backdropComponent={BackdropComponent}
-                    backgroundComponent={BackgroundComponent}
-                    handleComponent={BottomSheetHandleComponent}
-                    enableFlashScrollableIndicatorOnExpand={false}>
-                    <View style={styles.contentContainer}>
-                        <AppText style={styles.modalTitle}>Fund Wallet</AppText>
-
-                        <TouchableOpacity onPress={handleCopyAccountNumber}>
-                            <View style={styles.fundCard}>
-                                <View style={{ flex: 1 }}>
-                                    <AppText>{user.virtualAccountNumber}</AppText>
-                                    <AppText style={styles.fundAccountName}>{user.virtualAccountName}</AppText>
-                                </View>
-                                <View style={{ alignItems: "flex-end", width: "40%" }}>
-                                    <View style={{ flexDirection: "row" }}>
-                                        <Image source={CopyIcon} />
-                                        <AppText style={styles.fundCopyText}>Tap to copy account number</AppText>
-                                    </View>
-                                    <AppText style={styles.fundBankName}>Rubies MFB</AppText>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-
-                        <AppText style={styles.fundAccountDescription}>
-                            You can send money to the account number above. Funds will reflect in your wallet in
-                            minutes.
-                        </AppText>
-
-                        <AppButton
-                            variant="secondary"
-                            style={styles.submitBtn}
-                            label="Fund wallet with Bank Card"
-                            onPress={() => cardInputRef.current.present()}
-                        />
-                    </View>
-                </BottomSheetModal>
-                <BottomSheetModal
-                    index={1}
-                    ref={cardInputRef}
                     stackBehavior="push"
                     snapPoints={[-1, 300]}
                     enableHandlePanningGesture={false}
@@ -396,69 +350,11 @@ export const Dashboard = ({ navigation }) => {
                                     return toast.show("Kindly specify amount.");
                                 }
 
-                                cardInputRef.current.dismiss();
+                                fundWalletRef.current.dismiss();
 
                                 setTimeout(() => {
                                     navigation.navigate("PayWithPaystack", { amount: theAmount });
                                 }, 1000);
-                            }}
-                        />
-                    </View>
-                </BottomSheetModal>
-                <BottomSheetModal
-                    index={1}
-                    stackBehavior="push"
-                    ref={confirmOtpRef}
-                    snapPoints={[-1, 310]}
-                    enableHandlePanningGesture={false}
-                    enableContentPanningGesture={false}
-                    backdropComponent={BackdropComponent}
-                    backgroundComponent={BackgroundComponent}
-                    handleComponent={BottomSheetHandleComponent}
-                    enableFlashScrollableIndicatorOnExpand={false}>
-                    <View style={styles.contentContainer}>
-                        <AppText style={styles.modalTitle}>Confirm OTP</AppText>
-                        <AppText style={styles.modalDescription}>
-                            Enter OTP Code sent to 0802404xxxx to authorize this payment
-                        </AppText>
-
-                        <PasswordField label="OTP Code" style={styles.formGroup} placeholder="X X X X" />
-
-                        <AppButton
-                            label="Authorize"
-                            variant="secondary"
-                            style={styles.submitBtn}
-                            onPress={() => {
-                                fundingSuccessfulRef.current.present();
-                            }}
-                        />
-                    </View>
-                </BottomSheetModal>
-                <BottomSheetModal
-                    index={1}
-                    stackBehavior="push"
-                    snapPoints={[-1, 250]}
-                    ref={fundingSuccessfulRef}
-                    enableHandlePanningGesture={false}
-                    enableContentPanningGesture={false}
-                    backdropComponent={BackdropComponent}
-                    backgroundComponent={BackgroundComponent}
-                    handleComponent={BottomSheetHandleComponent}
-                    enableFlashScrollableIndicatorOnExpand={false}>
-                    <View style={styles.contentContainer}>
-                        <View style={{ alignItems: "center", marginTop: 10, fontWeight: "600" }}>
-                            <Ionicons name="checkmark-circle-outline" size={50} color="#03E895" />
-                            <AppText style={{ fontSize: 20, marginTop: 15 }}>Success</AppText>
-                        </View>
-
-                        <AppButton
-                            label="Dismiss"
-                            variant="secondary"
-                            style={styles.submitBtn}
-                            onPress={() => {
-                                fundingSuccessfulRef.current.dismiss();
-                                cardInputRef.current.dismiss();
-                                confirmOtpRef.current.dismiss();
                             }}
                         />
                     </View>
