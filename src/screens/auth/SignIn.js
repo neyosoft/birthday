@@ -73,7 +73,6 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            debugAxiosError(error);
             crashlytics().recordError(error);
             let message;
 
@@ -173,9 +172,9 @@ export const SignIn = ({ navigation }) => {
                 <AppText style={styles.welcomeMessage}>Welcome, sign in to your account</AppText>
 
                 <Formik
+                    onSubmit={handleSubmit}
                     validationSchema={loginSchema}
-                    initialValues={{ email: "", password: "" }}
-                    onSubmit={handleSubmit}>
+                    initialValues={{ email: "", password: "" }}>
                     {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
                         <>
                             <View style={styles.form}>
@@ -199,9 +198,17 @@ export const SignIn = ({ navigation }) => {
                                     hasError={errors.password && touched.password}
                                 />
 
-                                <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
-                                    <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
-                                </TouchableOpacity>
+                                <View style={styles.passwordInfoRow}>
+                                    <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                        <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                        <AppText style={[styles.forgetPasswordStyle, { color: "#fff" }]}>
+                                            Resend Verification Mail
+                                        </AppText>
+                                    </TouchableOpacity>
+                                </View>
 
                                 <View style={styles.securityRole}>
                                     <TouchableOpacity onPress={() => handleBiometricLogin(2)}>
@@ -263,9 +270,12 @@ const styles = StyleSheet.create({
     form: {
         marginTop: 30,
     },
+    passwordInfoRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
     forgetPasswordStyle: {
         marginTop: 15,
-        alignSelf: "center",
         color: theme.color.yellow,
     },
     securityRole: {

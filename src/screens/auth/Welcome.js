@@ -1,11 +1,10 @@
 import React from "react";
 import { StyleSheet, Image, View, Dimensions } from "react-native";
 
-import { AppText, Page, AppButton } from "../../components";
-import Illustration1 from "../../../assets/images/illustration1.png";
-import Logo from "../../../assets/images/Logo.png";
 import Config from "../../config";
-import { theme } from "../../theme";
+import Logo from "../../../assets/images/Logo.png";
+import { AppText, Page, AppButton } from "../../components";
+import WelcomeImg from "../../../assets/images/welcome.png";
 
 const { width } = Dimensions.get("window");
 
@@ -13,18 +12,25 @@ export const Welcome = ({ navigation }) => {
     return (
         <Page style={styles.container}>
             <Image source={Logo} style={styles.logo} />
-            <Image source={Illustration1} style={styles.illustration} resizeMode="contain" />
+            <View style={styles.welcomeImageWrapper}>
+                <Image source={WelcomeImg} style={styles.welcomeImgStyle} resizeMode="contain" />
+            </View>
             <View style={styles.textWrapper}>
                 <AppText style={styles.title}>Celebrate with others while celebrating yourself</AppText>
                 <AppText style={styles.description}>Share fun moments with friends and loved ones</AppText>
             </View>
             <View style={styles.buttonWrapper}>
-                <AppButton variant="secondary" label="Sign In" onPress={() => navigation.navigate("SignIn")} />
                 <AppButton
                     variant="primary"
+                    style={styles.btn}
                     label="Create Account"
-                    style={styles.btnSeparator}
                     onPress={() => navigation.navigate("CreateAccount")}
+                />
+                <AppButton
+                    label="Sign In"
+                    style={styles.btn}
+                    variant="secondary"
+                    onPress={() => navigation.navigate("SignIn")}
                 />
             </View>
 
@@ -46,10 +52,12 @@ const styles = StyleSheet.create({
         marginBottom: 50,
         alignSelf: "center",
     },
-    illustration: {
+    welcomeImageWrapper: {
+        width: "100%",
+    },
+    welcomeImgStyle: {
         width: "90%",
         height: width * 0.7,
-        alignSelf: "center",
     },
     textWrapper: {
         marginTop: 30,
@@ -69,10 +77,12 @@ const styles = StyleSheet.create({
     },
     buttonWrapper: {
         marginTop: 50,
-        marginBottom: 15,
+        marginBottom: 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
-    btnSeparator: {
-        marginTop: 16,
+    btn: {
+        width: "47%",
     },
     versionbox: {
         marginBottom: -10,
