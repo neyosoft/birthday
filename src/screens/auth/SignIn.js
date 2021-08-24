@@ -57,6 +57,8 @@ export const SignIn = ({ navigation }) => {
                 deviceName: `${Device.manufacturer} - ${Device.brand} - ${Device.modelName}`,
             };
 
+            console.log("devicePayload: ", devicePayload);
+
             if (data && data.access_token && data.refresh_token) {
                 await saveBiometricLogin(values);
 
@@ -160,7 +162,7 @@ export const SignIn = ({ navigation }) => {
                     <BackIcon />
                 </TouchableOpacity>
                 <View style={styles.titleRow}>
-                    <AppText style={styles.title}>Sign In</AppText>
+                    <AppText style={styles.title}>Sign In 2</AppText>
                     <Image source={LockImage} style={styles.lockIcon} />
                 </View>
                 <AppText style={styles.welcomeMessage}>Welcome, sign in to your account</AppText>
