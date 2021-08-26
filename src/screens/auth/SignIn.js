@@ -140,7 +140,6 @@ export const SignIn = ({ navigation }) => {
 
             toast.show("Verification email has been re-sent to your email address.");
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
