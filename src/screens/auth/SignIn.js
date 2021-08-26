@@ -16,7 +16,7 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, extractResponseErrorMessage } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
@@ -47,6 +47,8 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
+            console.log("data: ", data);
+
             crashlytics().log("User signed in.", data);
 
             const devicePayload = {
@@ -74,6 +76,8 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
+            console.log("Login eventually failed....");
+            debugAxiosError(error);
             crashlytics().log("Login failed.", values);
 
             toast.show(extractResponseErrorMessage(error), { type: "danger" });

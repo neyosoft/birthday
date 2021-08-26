@@ -60,6 +60,8 @@ export const extractResponseErrorMessage = (error, defaultMessage = "Kindly chec
             }
         } else if (error.response.data && error.response.data.responseDescription) {
             return error.response.data.responseDescription;
+        } else if (error.response.data && error.response.data.error_description) {
+            return error.response.data.error_description;
         } else {
             return defaultMessage;
         }
