@@ -47,8 +47,6 @@ export const SignIn = ({ navigation }) => {
                 },
             });
 
-            console.log("data: ", data);
-
             crashlytics().log("User signed in.", data);
 
             const devicePayload = {
@@ -76,7 +74,6 @@ export const SignIn = ({ navigation }) => {
                 await authenticate({ accessToken: data.access_token, refreshToken: data.refresh_token });
             }
         } catch (error) {
-            console.log("Login eventually failed....");
             debugAxiosError(error);
             crashlytics().log("Login failed.", values);
 

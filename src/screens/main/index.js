@@ -1,5 +1,7 @@
 export { Profile } from "./Profile";
+export { History } from "./History";
 export { Donation } from "./Donation";
+export { ChangePIN } from "./ChangePIN";
 export { VerifyBvn } from "./VerifyBvn";
 export { Dashboard } from "./Dashboard";
 export { PayWithPaystack } from "./PayWithPaystack";

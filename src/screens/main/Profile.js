@@ -4,16 +4,17 @@ import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import { launchImageLibrary } from "react-native-image-picker";
-import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Linking } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Linking, Alert } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
 import { AppButton, AppText } from "../../components";
-import { BackIcon, UserAvatarIcon } from "../../../assets/svg";
+import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
@@ -138,35 +139,51 @@ export const Profile = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ padding: 25, paddingBottom: 0 }}>
+            <View style={styles.backBtnArea}>
                 <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
                     <BackIcon />
                 </TouchableOpacity>
-                <AppText style={styles.title}>Profile</AppText>
             </View>
 
-            <ScrollView contentContainerStyle={{ padding: 25 }}>
-                <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
-                    {profileImage ? (
-                        <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
-                    ) : (
-                        <UserAvatarIcon />
-                    )}
-                </TouchableOpacity>
+            <ScrollView contentContainerStyle={{ padding: 25, paddingTop: 5 }}>
+                <View style={styles.profileHeaderRow}>
+                    <TouchableOpacity style={styles.avatarWrapper} onPress={handleImageUpload}>
+                        {profileImage ? (
+                            <Image source={{ uri: profileImage }} style={{ width: 60, height: 60 }} />
+                        ) : (
+                            <UserAvatarIcon />
+                        )}
+                    </TouchableOpacity>
 
-                <AppText style={styles.username}>
-                    {user.givenName} {user.familyName}
-                </AppText>
-
-                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 20 }}>
-                    <Image source={BirthdayIcon} style={{ width: 20, height: 20, marginRight: 10 }} />
-                    <AppText style={styles.subtitle}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
+                    <View style={{ marginLeft: RFPercentage(3) }}>
+                        <AppText style={styles.username}>
+                            {user.givenName} {user.familyName}
+                        </AppText>
+                        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 5 }}>
+                            <Image source={BirthdayIcon} style={{ width: 17, height: 17, marginRight: 7 }} />
+                            <AppText style={styles.subtitle}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
+                        </View>
+                    </View>
                 </View>
+
+                <View style={styles.socialLinkContainer}>
+                    <TouchableOpacity
+                        style={styles.socialLinkItem}
+                        onPress={() => Alert.alert("Twitter", "Twitter not available because of Nigeria.")}>
+                        <TwitterIcon style={styles.socialLinkIcon} />
+                        <AppText>Link Twitter</AppText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.socialLinkItem}>
+                        <InstagramIcon style={styles.socialLinkIcon} />
+                        <AppText>Link Instagram</AppText>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>Donations</AppText>
                     <AppText style={styles.subtitleValue}>
-                        {moneyFormat(user.donationsValue) || 0} ({user.donationsVolume || 0}) total
+                        {moneyFormat(user.donationsValue) || 0} ({user.donationsVolume || 0}) Total
                     </AppText>
                 </View>
                 <View style={styles.separator} />
@@ -233,7 +250,11 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>PIN</AppText>
                     {user.pinSet ? (
-                        <AppText style={styles.subtitleValue}>******</AppText>
+                        <TouchableOpacity onPress={() => navigation.navigate("ChangePIN")}>
+                            <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>
+                                Change PIN
+                            </AppText>
+                        </TouchableOpacity>
                     ) : (
                         <TouchableOpacity onPress={() => navigation.navigate("CreateTransactionPin")}>
                             <AppText style={[styles.subtitleValue, { color: theme.color.secondary }]}>Set PIN</AppText>
@@ -263,7 +284,6 @@ export const Profile = ({ navigation }) => {
 
                         logout();
                     }}
-                    labelStyle={styles.btnLabelStyle}
                     label={loading === "logout" ? "Loging out..." : "Log out"}
                 />
             </View>
@@ -274,15 +294,16 @@ export const Profile = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 20,
         backgroundColor: theme.backgroundColor,
     },
-    backIcon: {
-        marginVertical: 25,
+    backBtnArea: {
+        padding: 25,
+        paddingBottom: 20,
+        flexDirection: "row",
     },
-    title: {
-        fontSize: 20,
-        fontWeight: "700",
-        marginBottom: 10,
+    profileHeaderRow: {
+        flexDirection: "row",
     },
     avatarWrapper: {
         width: 60,
@@ -296,6 +317,17 @@ const styles = StyleSheet.create({
     },
     username: {
         fontWeight: "600",
+    },
+    socialLinkContainer: {
+        flexDirection: "row",
+        marginVertical: RFPercentage(2),
+    },
+    socialLinkItem: {
+        flex: 1,
+        flexDirection: "row",
+    },
+    socialLinkIcon: {
+        marginRight: RFPercentage(1),
     },
     subtitle: {
         color: "#A3A2A2",
@@ -317,8 +349,5 @@ const styles = StyleSheet.create({
         height: 1,
         marginVertical: 20,
         backgroundColor: "#464646",
-    },
-    btnLabelStyle: {
-        color: theme.color.danger,
     },
 });

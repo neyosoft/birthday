@@ -8,21 +8,25 @@ import OTPTextView from "react-native-otp-textinput";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
-import { AppButton, AppText, Page } from "../../components";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { AppButton, AppText, Page, PasswordField } from "../../components";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
-export const CreateTransactionPin = ({ navigation }) => {
+export const ChangePIN = ({ navigation }) => {
     const pinInput = useRef();
     const toast = useToast();
     const confirmPinInput = useRef();
-    const { authenticatedRequest, refreshUser } = useAuth();
+    const { authenticatedRequest } = useAuth();
 
     const [loading, setLoading] = useState(false);
 
     const [pin, setPin] = useState("");
+    const [password, setPassword] = useState("");
     const [confirmPin, setConfirmPin] = useState("");
 
     const handleSubmit = async () => {
+        if (password.length < 6) {
+            return toast.show("Password can not be less than 6 characters.");
+        }
         if (pin.length != 4) {
             return toast.show("PIN must be 4 characters.");
         }
@@ -33,16 +37,15 @@ export const CreateTransactionPin = ({ navigation }) => {
         setLoading(true);
 
         try {
-            const { data } = await authenticatedRequest().put("/app/auth/pin/setup", { pin });
+            await authenticatedRequest().put("/app/auth/pin/change/v2", null, {
+                params: { newPin: pin, password },
+            });
 
-            if (data && data.responseCode === "00") {
-                await refreshUser();
+            toast.show("PIN successfully changed..");
 
-                navigation.navigate("Profile");
-            } else {
-                toast.show("There is problem creating PIN.");
-            }
+            navigation.navigate("Profile");
         } catch (error) {
+            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
@@ -55,14 +58,17 @@ export const CreateTransactionPin = ({ navigation }) => {
                 <TouchableOpacity style={styles.backIcon} onPress={navigation.goBack}>
                     <BackIcon />
                 </TouchableOpacity>
+
                 <View style={styles.titleRow}>
-                    <AppText style={styles.title}>Create Transaction PIN</AppText>
+                    <AppText style={styles.title}>Change Transaction PIN</AppText>
                 </View>
 
                 <AppText style={styles.welcomeMessage}>Secure your account with your transaction PIN</AppText>
 
                 <View style={styles.form}>
-                    <AppText style={styles.label}>Enter 4 digits PIN</AppText>
+                    <PasswordField label="Your password" value={password} onChangeText={setPassword} />
+
+                    <AppText style={[styles.label, { marginTop: RFPercentage(2) }]}>Enter 4 digits PIN</AppText>
                     <OTPTextView
                         ref={pinInput}
                         inputCount={4}

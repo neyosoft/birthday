@@ -1,22 +1,13 @@
-import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useQueryClient } from "react-query";
 import { useToast } from "react-native-fast-toast";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
+import React, { useRef, useState, useEffect } from "react";
+import { getYear, setYear, format, isToday } from "date-fns";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import {
-    View,
-    Image,
-    FlatList,
-    StyleSheet,
-    Dimensions,
-    ImageBackground,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-} from "react-native";
-import { addYears, getYear, isPast, setYear, format, differenceInCalendarDays, isToday } from "date-fns";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { View, Image, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
@@ -24,12 +15,12 @@ import { theme } from "../../theme";
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
 import { useAuth } from "../../context";
-import { UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
 import UserOne from "../../../assets/images/user1.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { ReloadIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
 export const Dashboard = ({ navigation }) => {
@@ -151,7 +142,6 @@ export const Dashboard = ({ navigation }) => {
                 navigation.navigate("Dashboard");
             }, 1000);
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
@@ -239,22 +229,27 @@ export const Dashboard = ({ navigation }) => {
             <ImageBackground
                 source={require("../../../assets/images/balance-bg.png")}
                 style={styles.birthdayInformtionContainer}>
+                <TouchableOpacity
+                    style={styles.reloadBtn}
+                    onPress={wallet.refetch}
+                    disabled={wallet.isLoading || wallet.isFetching}>
+                    <ReloadIcon />
+                </TouchableOpacity>
+
                 <View style={styles.balanceArea}>
-                    <TouchableWithoutFeedback onPress={wallet.refetch}>
-                        <View style={{ alignItems: "center" }}>
-                            <AppText style={styles.availableBalance}>Available Balance</AppText>
-                            {wallet.isLoading || wallet.isFetching ? (
-                                <AppText style={styles.walletBalance}>Loading...</AppText>
-                            ) : (
-                                <View style={styles.amountRow}>
-                                    <AppText style={{ fontSize: 12, color: "gray", margin: 6 }}>₦</AppText>
-                                    <AppText style={styles.walletBalance}>
-                                        {moneyFormatWNS(wallet.data, 2) || "0.00"}
-                                    </AppText>
-                                </View>
-                            )}
-                        </View>
-                    </TouchableWithoutFeedback>
+                    <View style={{ alignItems: "center" }}>
+                        <AppText style={styles.availableBalance}>Available Balance</AppText>
+                        {wallet.isLoading || wallet.isFetching ? (
+                            <AppText style={styles.walletBalance}>Loading...</AppText>
+                        ) : (
+                            <View style={styles.amountRow}>
+                                <AppText style={{ fontSize: 12, color: "gray", margin: 6 }}>₦</AppText>
+                                <AppText style={styles.walletBalance}>
+                                    {moneyFormatWNS(wallet.data, 2) || "0.00"}
+                                </AppText>
+                            </View>
+                        )}
+                    </View>
                 </View>
 
                 <View style={styles.actionBtnWrapper}>
@@ -575,6 +570,11 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(1.5),
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,
+    },
+    reloadBtn: {
+        right: RFPercentage(3),
+        top: RFPercentage(2),
+        position: "absolute",
     },
     balanceArea: {
         alignItems: "center",

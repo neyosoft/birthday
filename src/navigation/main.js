@@ -2,19 +2,25 @@ import React, { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/stack";
 
 import {
     Profile,
+    History,
     Donation,
     VerifyBvn,
     Dashboard,
+    ChangePIN,
     PayWithPaystack,
     VerifyPhoneNumber,
     CreateTransactionPin,
 } from "../screens/main";
+import { theme } from "../theme";
+import { HistoryIcon, HomeIcon, ProfileIcon } from "../../assets/svg";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const MainApplicationNavigation = () => {
     const notificationListener = useRef();
@@ -79,6 +85,34 @@ const MainApplicationNavigation = () => {
         }
     };
 
+    const TabNavigator = () => (
+        <Tab.Navigator
+            initialRouteName="Dashboard"
+            tabBarOptions={{
+                labelPosition: "beside-icon",
+                inactiveTintColor: "#9C9C9C",
+                activeTintColor: theme.color.secondary,
+                // tabStyle: {
+                //     backgroundColor: theme.backgroundColor,
+                // },
+            }}
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color }) => {
+                    if (route.name === "Profile") {
+                        return <ProfileIcon color={color} />;
+                    } else if (route.name === "Dashboard") {
+                        return <HomeIcon color={color} />;
+                    } else if (route.name === "History") {
+                        return <HistoryIcon color={color} />;
+                    }
+                },
+            })}>
+            <Tab.Screen name="Dashboard" component={Dashboard} options={{ title: "Home" }} />
+            <Tab.Screen name="History" component={History} />
+            <Tab.Screen name="Profile" component={Profile} options={{ title: "Account" }} />
+        </Tab.Navigator>
+    );
+
     return (
         <Stack.Navigator
             headerMode="none"
@@ -86,10 +120,10 @@ const MainApplicationNavigation = () => {
             screenOptions={{
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
-            <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="Donation" component={Donation} />
+            <Stack.Screen name="ChangePIN" component={ChangePIN} />
             <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
-            <Stack.Screen name="Dashboard" component={Dashboard} />
+            <Stack.Screen name="Dashboard" component={TabNavigator} />
             <Stack.Screen name="PayWithPaystack" component={PayWithPaystack} />
             <Stack.Screen name="VerifyPhoneNumber" component={VerifyPhoneNumber} />
             <Stack.Screen name="CreateTransactionPin" component={CreateTransactionPin} />

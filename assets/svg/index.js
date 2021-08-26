@@ -1,6 +1,16 @@
 export { BackIcon } from "./BackIcon";
+export { HomeIcon } from "./HomeIcon";
+export { ReloadIcon } from "./ReloadIcon";
 export { ShieldIcon } from "./ShieldIcon";
+export { TwitterIcon } from "./TwitterIcon";
+export { ProfileIcon } from "./ProfileIcon";
+export { HistoryIcon } from "./HistoryIcon";
 export { Fingerprint } from "./Fingerprint";
 export { BarcodeScan } from "./BarcodeScan";
+export { GiveAwayIcon } from "./GiveAwayIcon";
 export { WithdrawIcon } from "./WithdrawIcon";
+export { InstagramIcon } from "./InstagramIcon";
+export { FundWalletIcon } from "./FundWalletIcon";
 export { UserAvatarIcon } from "./UserAvatarIcon";
+export { WithdrawalIcon } from "./WithdrawalIcon";
+export { GiftReceivedIcon } from "./GiftReceivedIcon";
