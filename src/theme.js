@@ -11,6 +11,7 @@ export const theme = {
         secondary: "#03E895",
         accent: "#D0FFEE",
         yellow: "#F2BD00",
+        lightYello: "#FEC65A",
         danger: "#EE3A3A",
     },
 };

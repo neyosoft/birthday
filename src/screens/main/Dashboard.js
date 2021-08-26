@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useQuery } from "react-query";
-import Clipboard from "expo-clipboard";
 import { useQueryClient } from "react-query";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import RNPickerSelect from "react-native-picker-select";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import {
@@ -12,6 +11,7 @@ import {
     FlatList,
     StyleSheet,
     Dimensions,
+    ImageBackground,
     TouchableOpacity,
     TouchableWithoutFeedback,
 } from "react-native";
@@ -24,46 +24,13 @@ import { theme } from "../../theme";
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
 import { useAuth } from "../../context";
-import { UserAvatarIcon } from "../../../assets/svg";
+import { UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
 import UserOne from "../../../assets/images/user1.png";
-import PlusIcon from "../../../assets/images/plus.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
-import CongratulationIcon from "../../../assets/images/congratulation.png";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
-
-const getDurationToBirthday = (dateOfBirth) => {
-    const thisYearBirthday = setYear(new Date(dateOfBirth), getYear(new Date()));
-
-    if (isToday(thisYearBirthday)) {
-        return "Happy birthday...";
-    }
-
-    let nextBirthday;
-
-    if (isPast(thisYearBirthday)) {
-        nextBirthday = addYears(thisYearBirthday, 1);
-    } else {
-        nextBirthday = thisYearBirthday;
-    }
-
-    const numberOfDays = differenceInCalendarDays(nextBirthday, new Date());
-
-    const weeks = Math.floor(numberOfDays / 7);
-    const days = numberOfDays % 7;
-
-    if (weeks > 0) {
-        if (days > 0) {
-            return `${weeks} ${weeks === 1 ? "week" : "weeks"} and ${days} ${days === 1 ? "day" : "days"}`;
-        } else {
-            return `${weeks} ${weeks === 1 ? "week" : "weeks"}`;
-        }
-    } else {
-        return `${days} ${days === 1 ? "day" : "days"}`;
-    }
-};
 
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
@@ -191,130 +158,128 @@ export const Dashboard = ({ navigation }) => {
         }
     };
 
-    const handleCopyAccountNumber = async () => {
-        await Clipboard.setString(user.virtualAccountNumber);
-
-        toast.show("Account number has been copied.");
-    };
-
     const renderBirthdayList = (walletBalance) => {
         if (birthdayUser.isLoading) {
             return (
-                <View style={styles.descriptionViewStyle}>
+                <View style={styles.centeredContent}>
                     <AppText style={styles.descriptionLabelStyle}>Loading birthday users...</AppText>
                 </View>
             );
         }
 
+        if (birthdayUser.data.length === 0) {
+            return (
+                <View style={styles.centeredContent}>
+                    <AppText style={styles.inviteText}>Celebrants will be listed here</AppText>
+                    <AppButton style={styles.inviteBtn} labelStyle={{ color: "#000" }} label="Invite Celebrants" />
+                </View>
+            );
+        }
+
         return (
-            <FlatList
-                numColumns={4}
-                style={styles.flatList}
-                data={birthdayUser.data}
-                keyExtractor={(item) => item.bioId}
-                onRefresh={birthdayUser.refetch}
-                refreshing={birthdayUser.isFetching}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.renderItemContainer}
-                        onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
-                        {item.picUrl ? (
-                            <Image
-                                style={styles.profileImage}
-                                source={
-                                    item.picUrl
-                                        ? {
-                                              uri: `${
-                                                  Config.environment === "production"
-                                                      ? Config.PROD_SERVER_URL
-                                                      : Config.DEV_SERVER_URL
-                                              }/${item.picUrl}`,
-                                          }
-                                        : UserOne
-                                }
-                            />
-                        ) : (
-                            <UserAvatarIcon width={50} height={50} />
-                        )}
-                        <AppText style={styles.renderItemText}>{item.given_name}</AppText>
-                    </TouchableOpacity>
-                )}
-                ListEmptyComponent={() => (
-                    <View style={styles.descriptionViewStyle}>
-                        <AppText style={styles.descriptionLabelStyle}>
-                            You can only appear on this list when it’s your birthday and if all your details have been
-                            verified and validated. Go to setting to verify your details
-                        </AppText>
-                    </View>
-                )}
-            />
+            <View>
+                <AppText style={styles.celebrantTitle}>Explore</AppText>
+                <FlatList
+                    numColumns={4}
+                    style={styles.flatList}
+                    data={birthdayUser.data}
+                    onRefresh={birthdayUser.refetch}
+                    keyExtractor={(item) => item.bioId}
+                    refreshing={birthdayUser.isFetching}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.renderItemContainer}
+                            onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
+                            {item.picUrl ? (
+                                <Image
+                                    style={styles.profileImage}
+                                    source={
+                                        item.picUrl
+                                            ? {
+                                                  uri: `${
+                                                      Config.environment === "production"
+                                                          ? Config.PROD_SERVER_URL
+                                                          : Config.DEV_SERVER_URL
+                                                  }/${item.picUrl}`,
+                                              }
+                                            : UserOne
+                                    }
+                                />
+                            ) : (
+                                <UserAvatarIcon width={50} height={50} />
+                            )}
+                            <AppText style={styles.renderItemText}>{item.given_name}</AppText>
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
         );
     };
 
     return (
         <Page>
             <View style={styles.header}>
-                <View style={styles.titleRow}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("Profile")}
-                        style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Image source={UserAvatar} style={styles.userIcon} />
-                        <AppText style={styles.title}>Hi, {user.givenName}</AppText>
-                    </TouchableOpacity>
-                    <Image source={CongratulationIcon} style={styles.titleIcon} />
-                </View>
-                <TouchableOpacity style={styles.titleRow} onPress={() => fundWalletRef.current.present()}>
-                    <Image source={PlusIcon} style={styles.titleIcon} />
-                    <AppText style={{ marginLeft: 10 }}>Fund Wallet</AppText>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Profile")}
+                    style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Image source={UserAvatar} style={styles.userIcon} />
+                    <AppText style={styles.title}>Hi, {user.givenName}</AppText>
                 </TouchableOpacity>
-            </View>
-
-            <View style={styles.birthdayInformtionContainer}>
-                <View>
-                    {!isToday(setYear(new Date(user.dob), getYear(new Date()))) && (
-                        <AppText style={styles.shortStyle}>Your birthday is in</AppText>
-                    )}
-                    <AppText style={styles.birthdayCountdown}>
-                        {getDurationToBirthday(user.dob)} | {format(new Date(user.dob), "MMMM, dd")}
-                    </AppText>
-                </View>
-                <Image source={BirthdayIcon} />
-            </View>
-
-            <View style={styles.walletContainer}>
-                <TouchableWithoutFeedback
-                    onPress={() => {
-                        wallet.refetch();
-                    }}>
-                    <View>
-                        <AppText style={styles.availableBalance}>Available Balance</AppText>
-                        <AppText style={styles.walletBalance}>
-                            {wallet.isLoading || wallet.isFetching
-                                ? "Loading..."
-                                : `NGN ${moneyFormatWNS(wallet.data, 2) || "0.00"}`}
-                        </AppText>
+                <View style={styles.rightHeader}>
+                    <View style={styles.rightHeaderContent}>
+                        {!isToday(setYear(new Date(user.dob), getYear(new Date()))) && (
+                            <AppText style={styles.shortStyle}>Your birthday is in</AppText>
+                        )}
+                        <AppText style={styles.birthdayCountdown}>{format(new Date(user.dob), "MMMM, dd")}</AppText>
                     </View>
-                </TouchableWithoutFeedback>
-
-                <AppButton
-                    label="Withdraw"
-                    variant="secondary"
-                    style={styles.withdrawBtn}
-                    onPress={() => {
-                        if (user.pinSet) {
-                            withdrawalRef.current.present();
-                        } else {
-                            toast.show("Kindly set transaction pin in your settings.");
-                        }
-                    }}
-                />
+                    <Image source={BirthdayIcon} />
+                </View>
             </View>
 
-            <View style={styles.celebrantPanel}>
-                <AppText style={styles.celebrantTitle}>Today's Celebrants</AppText>
+            <ImageBackground
+                source={require("../../../assets/images/balance-bg.png")}
+                style={styles.birthdayInformtionContainer}>
+                <View style={styles.balanceArea}>
+                    <TouchableWithoutFeedback onPress={wallet.refetch}>
+                        <View style={{ alignItems: "center" }}>
+                            <AppText style={styles.availableBalance}>Available Balance</AppText>
+                            {wallet.isLoading || wallet.isFetching ? (
+                                <AppText style={styles.walletBalance}>Loading...</AppText>
+                            ) : (
+                                <View style={styles.amountRow}>
+                                    <AppText style={{ fontSize: 12, color: "gray", margin: 6 }}>₦</AppText>
+                                    <AppText style={styles.walletBalance}>
+                                        {moneyFormatWNS(wallet.data, 2) || "0.00"}
+                                    </AppText>
+                                </View>
+                            )}
+                        </View>
+                    </TouchableWithoutFeedback>
+                </View>
 
-                {renderBirthdayList(wallet.data || 0)}
-            </View>
+                <View style={styles.actionBtnWrapper}>
+                    <TouchableOpacity
+                        style={styles.actionBtn}
+                        onPress={() => {
+                            if (user.pinSet) {
+                                withdrawalRef.current.present();
+                            } else {
+                                toast.show("Kindly set transaction pin in your settings.");
+                            }
+                        }}>
+                        <WithdrawIcon />
+                        <AppText style={[styles.actionbtnText, { marginLeft: 4 }]}>Withdraw</AppText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, { backgroundColor: theme.color.lightYello }]}
+                        onPress={() => fundWalletRef.current.present()}>
+                        <AppText style={[styles.actionbtnText, { color: "#000", marginRight: 4 }]}>Add Funds</AppText>
+                        <AntDesign name="plus" size={16} color="#000" />
+                    </TouchableOpacity>
+                </View>
+            </ImageBackground>
+
+            <View style={styles.celebrantPanel}>{renderBirthdayList(wallet.data || 0)}</View>
 
             <BottomSheetModalProvider>
                 <BottomSheetModal
@@ -568,11 +533,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
     },
-    titleRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: 10,
-    },
     title: {
         fontSize: RFPercentage(2),
     },
@@ -582,47 +542,80 @@ const styles = StyleSheet.create({
     userIcon: {
         marginRight: 10,
     },
-    descriptionViewStyle: {
-        marginTop: 10,
+    rightHeader: {
+        flexDirection: "row",
+    },
+    rightHeaderContent: {
+        alignItems: "flex-end",
+        marginRight: RFPercentage(1),
+    },
+    centeredContent: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    inviteBtn: {
+        marginTop: RFPercentage(2),
+        backgroundColor: theme.color.lightYello,
+    },
+    inviteText: {
+        fontSize: 15,
+        lineHeight: 20,
+        textAlign: "center",
     },
     descriptionLabelStyle: {
         fontSize: 12,
         color: "gray",
         lineHeight: 20,
+        textAlign: "center",
+        marginTop: -RFPercentage(4),
     },
     birthdayInformtionContainer: {
         padding: 20,
-        flexDirection: "row",
+        marginTop: RFPercentage(1.5),
         borderRadius: theme.radii.sm,
-        justifyContent: "space-between",
         backgroundColor: theme.color.primary,
     },
+    balanceArea: {
+        alignItems: "center",
+    },
     shortStyle: {
-        fontSize: 13,
+        fontSize: 12,
         color: theme.color.yellow,
     },
     birthdayCountdown: {
         fontWeight: "700",
         fontSize: RFPercentage(2.1),
     },
-    walletContainer: {
+    actionBtnWrapper: {
+        flexDirection: "row",
+        padding: RFPercentage(1),
+        marginTop: RFPercentage(2),
+        justifyContent: "space-between",
+    },
+    actionBtn: {
+        width: "48%",
+        borderRadius: 10,
         flexDirection: "row",
         alignItems: "center",
-        marginTop: RFPercentage(3),
-        justifyContent: "space-between",
+        justifyContent: "center",
+        backgroundColor: "#494949",
+        paddingVertical: RFPercentage(1.5),
+    },
+    actionbtnText: {
+        fontSize: RFPercentage(1.8),
     },
     availableBalance: {
         fontSize: RFPercentage(1.7),
-        color: "#A3A2A2",
+        color: theme.color.secondary,
     },
     walletBalance: {
         marginTop: 3,
         fontSize: RFPercentage(3),
-        fontWeight: "700",
     },
-    withdrawBtn: {
-        borderRadius: 10,
-        borderTopEndRadius: 10,
+    amountRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
     },
     celebrantPanel: {
         flex: 1,
@@ -633,14 +626,13 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         marginTop: RFPercentage(4),
-        backgroundColor: theme.color.primary,
     },
     celebrantTitle: {
-        marginTop: 5,
+        marginTop: 25,
         fontWeight: "700",
     },
     flatList: {
-        marginTop: 25,
+        marginTop: 5,
     },
     renderItemContainer: {
         width: "25%",
