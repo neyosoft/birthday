@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
+import InstagramLogin from "react-native-instagram-login";
 import { launchImageLibrary } from "react-native-image-picker";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, TouchableOpacity, Image, ScrollView, Linking, Alert } from "react-native";
 
 import Config from "../../config";
@@ -11,10 +13,9 @@ import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
 import { AppButton, AppText } from "../../components";
-import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { RFPercentage } from "react-native-responsive-fontsize";
+import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 
 const extractProfileInfo = (userInfo) => {
     const output = {};
@@ -63,6 +64,7 @@ const extractProfileInfo = (userInfo) => {
 
 export const Profile = ({ navigation }) => {
     const toast = useToast();
+    const instagramLoginRef = useRef();
 
     const { user, logout, accessToken, refreshUser, authenticatedRequest } = useAuth();
     const [profileImage, setProfileImage] = useState(
@@ -173,7 +175,7 @@ export const Profile = ({ navigation }) => {
                         <TwitterIcon style={styles.socialLinkIcon} />
                         <AppText>Link Twitter</AppText>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.socialLinkItem}>
+                    <TouchableOpacity style={styles.socialLinkItem} onPress={() => instagramLoginRef?.current?.show()}>
                         <InstagramIcon style={styles.socialLinkIcon} />
                         <AppText>Link Instagram</AppText>
                     </TouchableOpacity>
@@ -287,6 +289,16 @@ export const Profile = ({ navigation }) => {
                     label={loading === "logout" ? "Loging out..." : "Log out"}
                 />
             </View>
+
+            <InstagramLogin
+                ref={instagramLoginRef}
+                appId="2995596623898286"
+                scopes={["user_profile"]}
+                redirectUrl="http://localhost:3000"
+                onLoginSuccess={(data) => console.log("Instagram data: ", data)}
+                appSecret="9dd86d435f506292c443b48917e6f32c"
+                onLoginFailure={(data) => console.log("Login failed: ", data)}
+            />
         </View>
     );
 };

@@ -71,7 +71,7 @@ export const Dashboard = ({ navigation }) => {
 
     const birthdayUser = useQuery("birthdayUsers", async () => {
         try {
-            const { data } = await authenticatedRequest().get(`/app/bvn/all/1/100`);
+            const { data } = await authenticatedRequest().get(`/app/bvn/all/1/200`);
 
             if (data) {
                 return data;
@@ -148,7 +148,33 @@ export const Dashboard = ({ navigation }) => {
         }
     };
 
-    const renderBirthdayList = (walletBalance) => {
+    const renderItem = ({ item }) => (
+        <TouchableOpacity
+            style={styles.renderItemContainer}
+            onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
+            {item.picUrl ? (
+                <Image
+                    style={styles.profileImage}
+                    source={
+                        item.picUrl
+                            ? {
+                                  uri: `${
+                                      Config.environment === "production"
+                                          ? Config.PROD_SERVER_URL
+                                          : Config.DEV_SERVER_URL
+                                  }/${item.picUrl}`,
+                              }
+                            : UserOne
+                    }
+                />
+            ) : (
+                <UserAvatarIcon width={50} height={50} />
+            )}
+            <AppText style={styles.renderItemText}>{item.given_name}</AppText>
+        </TouchableOpacity>
+    );
+
+    const renderBirthdayList = () => {
         if (birthdayUser.isLoading) {
             return (
                 <View style={styles.centeredContent}>
@@ -173,34 +199,10 @@ export const Dashboard = ({ navigation }) => {
                     numColumns={4}
                     style={styles.flatList}
                     data={birthdayUser.data}
+                    renderItem={renderItem}
                     onRefresh={birthdayUser.refetch}
                     keyExtractor={(item) => item.bioId}
                     refreshing={birthdayUser.isFetching}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.renderItemContainer}
-                            onPress={() => navigation.navigate("Donation", { profile: item, walletBalance })}>
-                            {item.picUrl ? (
-                                <Image
-                                    style={styles.profileImage}
-                                    source={
-                                        item.picUrl
-                                            ? {
-                                                  uri: `${
-                                                      Config.environment === "production"
-                                                          ? Config.PROD_SERVER_URL
-                                                          : Config.DEV_SERVER_URL
-                                                  }/${item.picUrl}`,
-                                              }
-                                            : UserOne
-                                    }
-                                />
-                            ) : (
-                                <UserAvatarIcon width={50} height={50} />
-                            )}
-                            <AppText style={styles.renderItemText}>{item.given_name}</AppText>
-                        </TouchableOpacity>
-                    )}
                 />
             </View>
         );
@@ -274,7 +276,7 @@ export const Dashboard = ({ navigation }) => {
                 </View>
             </ImageBackground>
 
-            <View style={styles.celebrantPanel}>{renderBirthdayList(wallet.data || 0)}</View>
+            <View style={styles.celebrantPanel}>{renderBirthdayList()}</View>
 
             <BottomSheetModalProvider>
                 <BottomSheetModal
@@ -628,11 +630,10 @@ const styles = StyleSheet.create({
         marginTop: RFPercentage(4),
     },
     celebrantTitle: {
-        marginTop: 25,
-        fontWeight: "700",
+        fontSize: 17,
     },
     flatList: {
-        marginTop: 5,
+        marginTop: 25,
     },
     renderItemContainer: {
         width: "25%",
@@ -707,8 +708,9 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
     profileImage: {
-        width: 50,
-        height: 50,
+        width: 75,
+        height: 75,
+        borderRadius: 40,
     },
     bottomSheetInput: {
         height: 47,

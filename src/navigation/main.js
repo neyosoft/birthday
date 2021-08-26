@@ -92,9 +92,9 @@ const MainApplicationNavigation = () => {
                 labelPosition: "beside-icon",
                 inactiveTintColor: "#9C9C9C",
                 activeTintColor: theme.color.secondary,
-                // tabStyle: {
-                //     backgroundColor: theme.backgroundColor,
-                // },
+                tabStyle: {
+                    backgroundColor: theme.backgroundColor,
+                },
             }}
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ color }) => {
