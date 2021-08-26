@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 import { useToast } from "react-native-fast-toast";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 import OTPTextView from "react-native-otp-textinput";
 
@@ -8,7 +9,7 @@ import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import { AppButton, AppText, Page } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const CreateTransactionPin = ({ navigation }) => {
     const pinInput = useRef();
@@ -42,7 +43,6 @@ export const CreateTransactionPin = ({ navigation }) => {
                 toast.show("BVN verification failed.");
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);
@@ -136,12 +136,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     roundedTextInput: {
-        width: 60,
-        height: 55,
-        fontSize: 20,
         borderWidth: 0,
         color: theme.white,
         borderBottomWidth: 2,
+        width: RFPercentage(8),
+        height: RFPercentage(7),
+        fontSize: RFPercentage(3),
         borderRadius: theme.radii.sm,
         backgroundColor: theme.color.primary,
     },

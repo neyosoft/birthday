@@ -7,7 +7,7 @@ import { useAuth } from "../../context";
 import { BackIcon } from "../../../assets/svg";
 import HandIcon from "../../../assets/images/hand.png";
 import { AppText, Page, AppButton, TextField } from "../../components";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const VerifyBvn = ({ navigation }) => {
     const toast = useToast();
@@ -34,7 +34,6 @@ export const VerifyBvn = ({ navigation }) => {
                 toast.show("BVN verification failed.");
             }
         } catch (error) {
-            debugAxiosError(error);
             toast.show(extractResponseErrorMessage(error));
         } finally {
             setLoading(false);

@@ -50,9 +50,21 @@ export const authenticatedRequest = (token) => {
     return instance;
 };
 
-export const extractResponseErrorMessage = (error) => {
+export const extractResponseErrorMessage = (error, defaultMessage = "Kindly check your internet connectivity.") => {
     if (error.response) {
-        return error.response.data.responseDescription;
+        if (error.response.status >= 500) {
+            if (error.response.data && error.response.data.responseDescription) {
+                return error.response.data.responseDescription;
+            } else {
+                return "Unable to reach server at the moment. Kindly try again!";
+            }
+        } else if (error.response.data && error.response.data.responseDescription) {
+            return error.response.data.responseDescription;
+        } else {
+            return defaultMessage;
+        }
+    } else if (error.request) {
+        return defaultMessage;
     } else {
         return error.message;
     }

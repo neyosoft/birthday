@@ -248,7 +248,7 @@ export const Profile = ({ navigation }) => {
                 <View style={styles.separator} />
                 <View style={styles.rowItem}>
                     <AppText style={styles.subtitle}>About us</AppText>
-                    <TouchableOpacity onPress={() => Linking.openURL("https://pokeet.co")}>
+                    <TouchableOpacity onPress={() => Linking.openURL("https://pokeet.com.ng")}>
                         <Ionicons name="open-outline" size={24} color="#A3A2A2" />
                     </TouchableOpacity>
                 </View>
