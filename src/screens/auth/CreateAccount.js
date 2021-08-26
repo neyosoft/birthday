@@ -21,10 +21,6 @@ export const CreateAccount = ({ navigation }) => {
                 <AppText style={styles.title}>Create Account</AppText>
                 <Image source={HandIcon} style={styles.titleIcon} />
             </View>
-            <AppText style={styles.welcomeMessage}>
-                Get celebrated while celebrating others. Kindly provide your personal information as provided on your
-                bank verification number (BVN)
-            </AppText>
 
             <Formik
                 validationSchema={registrationSchema}
@@ -83,23 +79,31 @@ export const CreateAccount = ({ navigation }) => {
                             hasError={errors.password && touched.password}
                         />
 
-                        <AppText style={{ fontSize: 13, color: "gray", marginTop: 4 }}>
-                            NOTE: Password must be atleast 8 characters and must contain atleast one uppercase letter,
-                            one number and one special character.
+                        <AppText
+                            style={{
+                                fontSize: 13,
+                                color: "gray",
+                                marginTop: 4,
+                                width: "90%",
+                                alignSelf: "center",
+                                textAlign: "center",
+                            }}>
+                            Password must be atleast 8 characters and must contain atleast one uppercase letter, one
+                            number and one special character.
                         </AppText>
 
                         <AppText style={styles.agreementLink}>
                             By clicking on 'continue', you agree to our{" "}
                             <AppText
                                 style={styles.link}
-                                onPress={() => Linking.openURL("https://pokeet.co/privacy-policy")}>
-                                Privacy
-                            </AppText>{" "}
-                            and{" "}
+                                onPress={() => Linking.openURL("https://pokeet.co/terms-and-conditions")}>
+                                Terms
+                            </AppText>
+                            {" and "}
                             <AppText
                                 style={styles.link}
-                                onPress={() => Linking.openURL("https://pokeet.co/terms-and-conditions")}>
-                                Terms & Conditions
+                                onPress={() => Linking.openURL("https://pokeet.co/privacy-policy")}>
+                                Privacy
                             </AppText>
                         </AppText>
 
@@ -143,9 +147,6 @@ const styles = StyleSheet.create({
     },
     titleIcon: {
         marginLeft: 10,
-    },
-    welcomeMessage: {
-        color: "#F6F6F6",
     },
     form: {
         marginTop: 30,

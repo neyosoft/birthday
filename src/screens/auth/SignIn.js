@@ -16,7 +16,7 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError } from "../../utils/request.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
 
 export const SignIn = ({ navigation }) => {
@@ -130,6 +130,29 @@ export const SignIn = ({ navigation }) => {
         }
     };
 
+    const resendVerificationMail = async (email) => {
+        if (!email) {
+            return toast.show("Kindly supply your email address.");
+        }
+
+        if (!string().email().isValidSync(email)) {
+            return toast.show("Kindly supply a valid email.");
+        }
+
+        setLoading(true);
+
+        try {
+            await baseRequest.post(`/app/auth/resend/verification/${email}`);
+
+            toast.show("Verification email has been re-sent to your email address.");
+        } catch (error) {
+            debugAxiosError(error);
+            toast.show(extractResponseErrorMessage(error));
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const registerForPushNotificationsAsync = async () => {
         if (Constants.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -203,7 +226,7 @@ export const SignIn = ({ navigation }) => {
                                         <AppText style={styles.forgetPasswordStyle}>Forget Password?</AppText>
                                     </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
+                                    <TouchableOpacity onPress={() => resendVerificationMail(values.email)}>
                                         <AppText style={[styles.forgetPasswordStyle, { color: "#fff" }]}>
                                             Resend Verification Mail
                                         </AppText>
