@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { formatDistanceToNow } from "date-fns";
+import { useFocusEffect } from "@react-navigation/native";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, TouchableOpacity, FlatList } from "react-native";
 
@@ -27,6 +28,12 @@ export const History = ({ navigation }) => {
             throw new Error();
         }
     });
+
+    useFocusEffect(
+        React.useCallback(() => {
+            history.refetch();
+        }, []),
+    );
 
     const renderTransactionRecord = ({ item: record }) => {
         switch (record.transactionType) {
