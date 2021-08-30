@@ -14,7 +14,7 @@ import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
 import { AppButton, AppText } from "../../components";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 
 const extractProfileInfo = (userInfo) => {
@@ -137,6 +137,24 @@ export const Profile = ({ navigation }) => {
                 }
             },
         );
+    };
+
+    const submitInstragramInformation = async (instagramData) => {
+        console.log("the code information: ", instagramData);
+
+        try {
+            const { data } = await axios.get("https://graph.instagram.com/me", {
+                params: { fields: "id,username", access_token: instagramData.access_token },
+            });
+
+            if (data && data.username) {
+                await authenticatedRequest().put("/app/user/app/update", { instagram: data.username });
+
+                toast.show("Account successfully linked.");
+            }
+        } catch (error) {
+            toast.show("There is a problem linking your instagram account.");
+        }
     };
 
     return (
@@ -294,10 +312,10 @@ export const Profile = ({ navigation }) => {
                 ref={instagramLoginRef}
                 appId="2995596623898286"
                 scopes={["user_profile"]}
-                redirectUrl="http://localhost:3000"
                 appSecret="9dd86d435f506292c443b48917e6f32c"
+                redirectUrl="https://pokeet.com.ng/instagram"
+                onLoginSuccess={submitInstragramInformation}
                 onLoginFailure={(data) => console.log("Login failed: ", data)}
-                onLoginSuccess={(data) => console.log("Instagram data: ", data)}
             />
         </View>
     );
