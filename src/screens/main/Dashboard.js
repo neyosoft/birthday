@@ -7,7 +7,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { getYear, setYear, format, isToday } from "date-fns";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { View, Image, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
+import { View, Image, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity, Share } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
@@ -82,6 +82,17 @@ export const Dashboard = ({ navigation }) => {
             throw new Error();
         }
     });
+
+    const handleInvitationShare = () => {
+        Share.share(
+            {
+                message: "http://pokeet.com.ng/linking/",
+                uri: "http://pokeet.com.ng/linking",
+                title: "Share with your friends and family",
+            },
+            { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },
+        );
+    };
 
     useEffect(() => {
         setResolvedName("");
@@ -187,7 +198,12 @@ export const Dashboard = ({ navigation }) => {
             return (
                 <View style={styles.centeredContent}>
                     <AppText style={styles.inviteText}>Celebrants will be listed here</AppText>
-                    <AppButton style={styles.inviteBtn} labelStyle={{ color: "#000" }} label="Invite Celebrants" />
+                    <AppButton
+                        style={styles.inviteBtn}
+                        label="Invite Celebrants"
+                        labelStyle={{ color: "#000" }}
+                        onPress={handleInvitationShare}
+                    />
                 </View>
             );
         }
