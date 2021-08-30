@@ -295,9 +295,9 @@ export const Profile = ({ navigation }) => {
                 appId="2995596623898286"
                 scopes={["user_profile"]}
                 redirectUrl="http://localhost:3000"
-                onLoginSuccess={(data) => console.log("Instagram data: ", data)}
                 appSecret="9dd86d435f506292c443b48917e6f32c"
                 onLoginFailure={(data) => console.log("Login failed: ", data)}
+                onLoginSuccess={(data) => console.log("Instagram data: ", data)}
             />
         </View>
     );
