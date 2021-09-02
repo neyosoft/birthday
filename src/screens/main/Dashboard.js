@@ -86,8 +86,8 @@ export const Dashboard = ({ navigation }) => {
     const handleInvitationShare = () => {
         Share.share(
             {
-                message: "http://pokeet.com.ng/linking/",
                 uri: "http://pokeet.com.ng/linking",
+                message: "http://pokeet.com.ng/linking/",
                 title: "Share with your friends and family",
             },
             { dialogTitle: "Share with your friends and family", subject: "Share with your friends and family" },

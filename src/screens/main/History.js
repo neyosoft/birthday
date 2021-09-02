@@ -153,7 +153,7 @@ export const History = ({ navigation }) => {
                 <View style={styles.centerView}>
                     <AppText>There is problem retrieving history.</AppText>
 
-                    <AppButton label="Try again." onPress={history.fetch} />
+                    <AppButton label="Try again." onPress={history.refetch} />
                 </View>
             );
         }
