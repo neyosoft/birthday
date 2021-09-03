@@ -92,8 +92,19 @@ const MainApplicationNavigation = () => {
                 labelPosition: "beside-icon",
                 inactiveTintColor: "#9C9C9C",
                 activeTintColor: theme.color.secondary,
-                tabStyle: {
-                    backgroundColor: theme.backgroundColor,
+                tabStyle: { backgroundColor: theme.backgroundColor },
+                style: {
+                    borderTopWidth: 0,
+                    elevation: 0, // for Android
+                    shadowOffset: {
+                        width: 0,
+                        height: 0, // for iOS
+                    },
+                },
+                indicatorStyle: {
+                    width: 0,
+                    height: 0,
+                    elevation: 0,
                 },
             }}
             screenOptions={({ route }) => ({

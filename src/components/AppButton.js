@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
         color: theme.backgroundColor,
     },
     label: {
-        fontSize: 15,
         textAlign: "center",
+        fontSize: RFPercentage(2),
     },
     disabledBtn: {
         backgroundColor: "#999",

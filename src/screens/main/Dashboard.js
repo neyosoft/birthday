@@ -6,7 +6,12 @@ import RNPickerSelect from "react-native-picker-select";
 import React, { useRef, useState, useEffect } from "react";
 import { getYear, setYear, format, isToday } from "date-fns";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+    BottomSheetBackdrop,
+    BottomSheetModal,
+    BottomSheetModalProvider,
+    BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { View, Image, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity, Share } from "react-native";
 
 import Config from "../../config";
@@ -19,8 +24,8 @@ import UserOne from "../../../assets/images/user1.png";
 import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { ReloadIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
+import { ReloadIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
 export const Dashboard = ({ navigation }) => {
@@ -34,7 +39,6 @@ export const Dashboard = ({ navigation }) => {
     const [loading, setLoading] = useState(null);
 
     const withdrawalRef = useRef();
-    const upcomingFeatureRef = useRef();
     const confirmWithdrawRef = useRef();
 
     const [pin, setPin] = useState("");
@@ -340,33 +344,6 @@ export const Dashboard = ({ navigation }) => {
 
                 <BottomSheetModal
                     index={1}
-                    stackBehavior="push"
-                    snapPoints={[-1, 220]}
-                    ref={upcomingFeatureRef}
-                    enableHandlePanningGesture={false}
-                    enableContentPanningGesture={false}
-                    backdropComponent={BackdropComponent}
-                    backgroundComponent={BackgroundComponent}
-                    handleComponent={BottomSheetHandleComponent}
-                    enableFlashScrollableIndicatorOnExpand={false}>
-                    <View style={styles.contentContainer}>
-                        <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
-
-                        <AppText style={styles.featureDescription}>
-                            We are currently working on this feature. Kindly check back soon!!!
-                        </AppText>
-
-                        <AppButton
-                            label="Continue"
-                            variant="secondary"
-                            style={styles.submitBtn}
-                            onPress={() => upcomingFeatureRef.current.dismiss()}
-                        />
-                    </View>
-                </BottomSheetModal>
-
-                <BottomSheetModal
-                    index={1}
                     ref={withdrawalRef}
                     stackBehavior="push"
                     snapPoints={[-1, 590]}
@@ -376,7 +353,7 @@ export const Dashboard = ({ navigation }) => {
                     backgroundComponent={BackgroundComponent}
                     handleComponent={BottomSheetHandleComponent}
                     enableFlashScrollableIndicatorOnExpand={false}>
-                    <View style={styles.contentContainer}>
+                    <BottomSheetScrollView style={styles.contentContainer}>
                         <AppText style={styles.modalTitle}>Withdraw Funds</AppText>
                         <View
                             style={{
@@ -459,7 +436,7 @@ export const Dashboard = ({ navigation }) => {
                                 confirmWithdrawRef.current.present();
                             }}
                         />
-                    </View>
+                    </BottomSheetScrollView>
                 </BottomSheetModal>
                 <BottomSheetModal
                     index={1}

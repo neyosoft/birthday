@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, Image, View, Dimensions } from "react-native";
+import { StyleSheet, Image, View } from "react-native";
 
 import Config from "../../config";
 import Logo from "../../../assets/images/Logo.png";
 import { AppText, Page, AppButton } from "../../components";
 import WelcomeImg from "../../../assets/images/welcome.png";
-
-const { width } = Dimensions.get("window");
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 export const Welcome = ({ navigation }) => {
     return (
@@ -24,12 +23,14 @@ export const Welcome = ({ navigation }) => {
                     variant="primary"
                     style={styles.btn}
                     label="Create Account"
+                    labelStyle={styles.btnLabel}
                     onPress={() => navigation.navigate("CreateAccount")}
                 />
                 <AppButton
                     label="Sign In"
                     style={styles.btn}
                     variant="secondary"
+                    labelStyle={styles.btnLabel}
                     onPress={() => navigation.navigate("SignIn")}
                 />
             </View>
@@ -49,40 +50,45 @@ const styles = StyleSheet.create({
     logo: {
         width: 129,
         height: 40,
-        marginBottom: 50,
         alignSelf: "center",
+        marginBottom: RFPercentage(7),
     },
     welcomeImageWrapper: {
         width: "100%",
+        alignItems: "center",
     },
     welcomeImgStyle: {
-        width: "90%",
-        height: width * 0.7,
+        width: RFPercentage(40),
+        height: RFPercentage(40),
     },
     textWrapper: {
-        marginTop: 30,
         width: "90%",
+        marginTop: 30,
         alignSelf: "center",
         alignItems: "center",
     },
     title: {
-        fontSize: 20,
         textAlign: "center",
+        fontSize: RFPercentage(2.4),
     },
     description: {
-        fontSize: 13,
         marginTop: 6,
         color: "#A3A2A2",
         textAlign: "center",
+        fontSize: RFPercentage(1.9),
     },
     buttonWrapper: {
-        marginTop: 50,
         marginBottom: 20,
         flexDirection: "row",
+        alignItems: "center",
+        marginTop: RFPercentage(6),
         justifyContent: "space-between",
     },
     btn: {
         width: "47%",
+    },
+    btnLabel: {
+        fontSize: RFPercentage(1.8),
     },
     versionbox: {
         marginBottom: -10,

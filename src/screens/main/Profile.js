@@ -14,7 +14,7 @@ import { useAuth } from "../../context";
 import { moneyFormat } from "../../utils/money.utils";
 import { AppButton, AppText } from "../../components";
 import BirthdayIcon from "../../../assets/images/birthday.png";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 
 const extractProfileInfo = (userInfo) => {
@@ -65,8 +65,10 @@ const extractProfileInfo = (userInfo) => {
 export const Profile = ({ navigation }) => {
     const toast = useToast();
     const instagramLoginRef = useRef();
-
     const { user, logout, accessToken, refreshUser, authenticatedRequest } = useAuth();
+
+    console.log({ user });
+
     const [profileImage, setProfileImage] = useState(
         user.picUrl
             ? `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/${user.picUrl}`
@@ -140,8 +142,6 @@ export const Profile = ({ navigation }) => {
     };
 
     const submitInstragramInformation = async (instagramData) => {
-        console.log("the code information: ", instagramData);
-
         try {
             const { data } = await axios.get("https://graph.instagram.com/me", {
                 params: { fields: "id,username", access_token: instagramData.access_token },
@@ -151,6 +151,8 @@ export const Profile = ({ navigation }) => {
                 await authenticatedRequest().put("/app/user/app/update", { instagram: data.username });
 
                 toast.show("Account successfully linked.");
+
+                refreshUser();
             }
         } catch (error) {
             toast.show("There is a problem linking your instagram account.");
@@ -195,7 +197,7 @@ export const Profile = ({ navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.socialLinkItem} onPress={() => instagramLoginRef?.current?.show()}>
                         <InstagramIcon style={styles.socialLinkIcon} />
-                        <AppText>Link Instagram</AppText>
+                        <AppText>{user?.instagramUsername || "Link Instagram"}</AppText>
                     </TouchableOpacity>
                 </View>
 
