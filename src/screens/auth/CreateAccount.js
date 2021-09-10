@@ -1,7 +1,63 @@
 import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$\.%\^\(\)\[\]\-:;,\?\+=\/'"<>&\*])(?=.{8,})/;
+
+const renderPasswordStrength = (password) => {
+    if (!password) return null;
+
+    if (password.length < 8) {
+        return (
+            <View>
+                <View style={styles.passwordFeedbackBarRow}>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#D81212" }]}></View>
+                    <View style={styles.passwordFeedbackBar}></View>
+                    <View style={styles.passwordFeedbackBar}></View>
+                    <View style={styles.passwordFeedbackBar}></View>
+                </View>
+                <View style={styles.passwordFeedbackRow}>
+                    <Image source={require("../../../assets/images/password_weak.png")} />
+                    <AppText style={styles.passwordFeedbackText}>Password is weak.</AppText>
+                </View>
+            </View>
+        );
+    }
+
+    if (passwordRegex.test(password)) {
+        return (
+            <View>
+                <View style={styles.passwordFeedbackBarRow}>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#03E895" }]}></View>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#03E895" }]}></View>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#03E895" }]}></View>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#03E895" }]}></View>
+                </View>
+                <View style={styles.passwordFeedbackRow}>
+                    <Image source={require("../../../assets/images/password_strong.png")} />
+                    <AppText style={styles.passwordFeedbackText}>Password is strong.</AppText>
+                </View>
+            </View>
+        );
+    } else {
+        return (
+            <View>
+                <View style={styles.passwordFeedbackBarRow}>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#FEC65A" }]}></View>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#FEC65A" }]}></View>
+                    <View style={[styles.passwordFeedbackBar, { backgroundColor: "#FEC65A" }]}></View>
+                    <View style={styles.passwordFeedbackBar}></View>
+                </View>
+                <View style={styles.passwordFeedbackRow}>
+                    <Image source={require("../../../assets/images/password_okay.png")} />
+                    <AppText style={styles.passwordFeedbackText}>Password is okay.</AppText>
+                </View>
+            </View>
+        );
+    }
+};
 
 import { theme } from "../../theme";
 import { BackIcon } from "../../../assets/svg";
@@ -71,20 +127,22 @@ export const CreateAccount = ({ navigation }) => {
                         <PasswordField
                             label="Password"
                             value={values.password}
-                            style={styles.formField}
-                            style={{ marginTop: 20 }}
                             placeholder="Enter password"
                             onBlur={handleBlur("password")}
                             onChangeText={handleChange("password")}
+                            style={[styles.formField, { marginVertical: 20 }]}
                             hasError={errors.password && touched.password}
                         />
+
+                        {renderPasswordStrength(values.password)}
 
                         <AppText
                             style={{
                                 fontSize: 13,
-                                color: "gray",
-                                marginTop: 4,
+                                marginTop: 10,
                                 width: "90%",
+                                color: "gray",
+                                lineHeight: 18,
                                 alignSelf: "center",
                                 textAlign: "center",
                             }}>
@@ -169,5 +227,25 @@ const styles = StyleSheet.create({
     link: {
         fontSize: 12,
         color: theme.color.secondary,
+    },
+    passwordFeedbackBarRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    passwordFeedbackBar: {
+        height: 5,
+        width: "23%",
+        borderRadius: 10,
+        backgroundColor: "#2D2D2D",
+    },
+    passwordFeedbackRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: RFPercentage(1.5),
+    },
+    passwordFeedbackText: {
+        fontSize: RFPercentage(1.8),
+        marginLeft: 5,
     },
 });
