@@ -1,8 +1,11 @@
 import React from "react";
 import { Formik } from "formik";
 import { object, string } from "yup";
+import { useToast } from "react-native-fast-toast";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
+
+import { baseRequest } from "../../utils/request.utils";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@_#\$\.%\^\(\)\[\]\-:;,\?\+=\/'"<>&\*])(?=.{8,})/;
 
@@ -65,6 +68,22 @@ import HandIcon from "../../../assets/images/hand.png";
 import { AppText, AppButton, TextField, PasswordField } from "../../components";
 
 export const CreateAccount = ({ navigation }) => {
+    const toast = useToast();
+
+    const onSubmit = async (values) => {
+        try {
+            const { data } = await baseRequest.get(`/app/auth/account/exists/${values.email}/${values.phoneNumber}`);
+
+            if (data && data.responseCode && data.responseCode === "30") {
+                navigation.navigate("SignupDateofBirth", { record: values });
+            } else {
+                toast.show("Email already exists");
+            }
+        } catch (error) {
+            toast.show("Email already exists");
+        }
+    };
+
     return (
         <ScrollView
             showsVerticalScrollIndicator={false}
@@ -79,12 +98,10 @@ export const CreateAccount = ({ navigation }) => {
             </View>
 
             <Formik
+                onSubmit={onSubmit}
                 validationSchema={registrationSchema}
-                initialValues={{ firstName: "", lastName: "", email: "", phoneNumber: "", password: "" }}
-                onSubmit={(values) => {
-                    navigation.navigate("SignupDateofBirth", { record: values });
-                }}>
-                {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+                initialValues={{ firstName: "", lastName: "", email: "", phoneNumber: "", password: "" }}>
+                {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
                     <View style={styles.form}>
                         <TextField
                             label="First Name"
@@ -169,6 +186,7 @@ export const CreateAccount = ({ navigation }) => {
                             label="Continue"
                             variant="secondary"
                             onPress={handleSubmit}
+                            disabled={isSubmitting}
                             style={styles.validateBtn}
                         />
                     </View>

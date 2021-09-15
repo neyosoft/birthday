@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { format, isValid } from "date-fns";
 import { useToast } from "react-native-fast-toast";
 import { CommonActions } from "@react-navigation/native";
+import crashlytics from "@react-native-firebase/crashlytics";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { StyleSheet, View, Image, TouchableOpacity, Platform, Alert } from "react-native";
-import crashlytics from "@react-native-firebase/crashlytics";
 
 import { theme } from "../../theme";
 import { BackIcon, ShieldIcon } from "../../../assets/svg";
