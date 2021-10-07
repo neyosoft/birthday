@@ -8,11 +8,16 @@ import { createStackNavigator, CardStyleInterpolators } from "@react-navigation/
 import {
     Profile,
     History,
+    AddFund,
+    AddCard,
     Donation,
     VerifyBvn,
     Dashboard,
     ChangePIN,
+    CardSelection,
+    FundSuccessful,
     PayWithPaystack,
+    FundConfirmation,
     VerifyPhoneNumber,
     CreateTransactionPin,
 } from "../screens/main";
@@ -131,11 +136,16 @@ const MainApplicationNavigation = () => {
             screenOptions={{
                 cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             }}>
+            <Stack.Screen name="AddFund" component={AddFund} />
+            <Stack.Screen name="AddCard" component={AddCard} />
             <Stack.Screen name="Donation" component={Donation} />
             <Stack.Screen name="ChangePIN" component={ChangePIN} />
             <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
             <Stack.Screen name="Dashboard" component={TabNavigator} />
+            <Stack.Screen name="CardSelection" component={CardSelection} />
+            <Stack.Screen name="FundSuccessful" component={FundSuccessful} />
             <Stack.Screen name="PayWithPaystack" component={PayWithPaystack} />
+            <Stack.Screen name="FundConfirmation" component={FundConfirmation} />
             <Stack.Screen name="VerifyPhoneNumber" component={VerifyPhoneNumber} />
             <Stack.Screen name="CreateTransactionPin" component={CreateTransactionPin} />
         </Stack.Navigator>

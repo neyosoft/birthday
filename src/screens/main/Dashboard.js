@@ -7,12 +7,12 @@ import React, { useRef, useState, useEffect } from "react";
 import { getYear, setYear, format, isToday } from "date-fns";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import {
-    BottomSheetBackdrop,
     BottomSheetModal,
-    BottomSheetModalProvider,
+    BottomSheetBackdrop,
     BottomSheetScrollView,
+    BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import { View, Image, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity, Share } from "react-native";
+import { View, Image, Share, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
@@ -25,7 +25,7 @@ import { moneyFormatWNS } from "../../utils/money.utils";
 import UserAvatar from "../../../assets/images/avatar.png";
 import BirthdayIcon from "../../../assets/images/birthday.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { ReloadIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
+import { ReloadIcon, StoryPlusIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
 import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
 
 export const Dashboard = ({ navigation }) => {
@@ -289,14 +289,39 @@ export const Dashboard = ({ navigation }) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.actionBtn, { backgroundColor: theme.color.lightYello }]}
-                        onPress={() => fundWalletRef.current.present()}>
+                        onPress={() => navigation.navigate("AddFund")}>
                         <AppText style={[styles.actionbtnText, { color: "#000", marginRight: 4 }]}>Add Funds</AppText>
                         <AntDesign name="plus" size={16} color="#000" />
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
 
-            <View style={styles.celebrantPanel}>{renderBirthdayList()}</View>
+            <View style={styles.celebrantPanel}>
+                <View>
+                    <FlatList
+                        horizontal={true}
+                        style={styles.flatList}
+                        data={[1, 2, 3, 4, 5, 6]}
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(item, index) => `${index}`}
+                        renderItem={({ index }) => (
+                            <View style={styles.storySingleContainer}>
+                                <View style={styles.innerStorySingleContainer}>
+                                    <Image source={require("../../../assets/images/user1.png")} resizeMode="cover" />
+                                </View>
+                                {index === 0 ? (
+                                    <StoryPlusIcon style={{ position: "absolute", bottom: 7, right: -5 }} />
+                                ) : null}
+                            </View>
+                        )}
+                    />
+                </View>
+                <View style={{ marginTop: RFPercentage(3), flexDirection: "row" }}>
+                    <AppText style={{ marginRight: 10 }}>Today’s Celebrants</AppText>
+                    <Image source={require("../../../assets/images/congratulation.png")} />
+                </View>
+                {renderBirthdayList()}
+            </View>
 
             <BottomSheetModalProvider>
                 <BottomSheetModal
@@ -620,7 +645,26 @@ const styles = StyleSheet.create({
         marginHorizontal: -25,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        marginTop: RFPercentage(4),
+    },
+    storySingleContainer: {
+        width: 70,
+        height: 70,
+        marginRight: 15,
+        borderRadius: 35,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 2,
+        backgroundColor: "#000",
+        borderColor: "#03E895",
+    },
+    innerStorySingleContainer: {
+        width: 66,
+        height: 66,
+        borderWidth: 4,
+        borderRadius: 35,
+        borderColor: "black",
+        overflow: "hidden",
+        backgroundColor: "#000",
     },
     celebrantTitle: {
         fontSize: 17,
