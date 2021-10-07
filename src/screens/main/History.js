@@ -10,7 +10,16 @@ import { useAuth } from "../../context";
 import { AppButton, AppText } from "../../components";
 
 import { moneyFormat } from "../../utils/money.utils";
-import { BackIcon, FundWalletIcon, GiftReceivedIcon, GiveAwayIcon, WithdrawalIcon } from "../../../assets/svg";
+import {
+    BackIcon,
+    VideoIcon,
+    AudioIcon,
+    CameraIcon,
+    GiveAwayIcon,
+    FundWalletIcon,
+    WithdrawalIcon,
+    GiftReceivedIcon,
+} from "../../../assets/svg";
 
 export const History = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
@@ -112,6 +121,37 @@ export const History = ({ navigation }) => {
                                         </AppText>
                                     )}
                                 </View>
+                                {isGiveAway ? null : (
+                                    <View style={styles.thanksbox}>
+                                        <AppText style={styles.thanksText}>Say Thank you now:</AppText>
+
+                                        <View style={styles.thanksIconBox}>
+                                            <TouchableOpacity>
+                                                <View
+                                                    style={[
+                                                        styles.thankIconWrapper,
+                                                        { borderColor: theme.color.yellow },
+                                                    ]}>
+                                                    <VideoIcon />
+                                                </View>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity>
+                                                <View style={[styles.thankIconWrapper, { borderColor: "#A696FB" }]}>
+                                                    <AudioIcon />
+                                                </View>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity>
+                                                <View
+                                                    style={[
+                                                        styles.thankIconWrapper,
+                                                        { borderColor: theme.color.secondary },
+                                                    ]}>
+                                                    <CameraIcon />
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                )}
                             </View>
                         </View>
                     </>
@@ -235,5 +275,26 @@ const styles = StyleSheet.create({
         height: 1,
         marginVertical: 20,
         backgroundColor: "#464646",
+    },
+    thanksbox: {
+        marginTop: RFPercentage(1),
+    },
+    thanksText: {
+        color: "#fff",
+        fontSize: RFPercentage(1.5),
+    },
+    thanksIconBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: RFPercentage(1),
+    },
+    thankIconWrapper: {
+        borderWidth: 2,
+        alignItems: "center",
+        justifyContent: "center",
+        width: RFPercentage(5),
+        height: RFPercentage(5),
+        marginRight: RFPercentage(2),
+        borderRadius: RFPercentage(5),
     },
 });

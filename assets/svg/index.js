@@ -1,5 +1,8 @@
 export { BackIcon } from "./BackIcon";
 export { HomeIcon } from "./HomeIcon";
+export { AudioIcon } from "./AudioIcon";
+export { VideoIcon } from "./VideoIcon";
+export { CameraIcon } from "./CameraIcon";
 export { ReloadIcon } from "./ReloadIcon";
 export { ShieldIcon } from "./ShieldIcon";
 export { TwitterIcon } from "./TwitterIcon";
