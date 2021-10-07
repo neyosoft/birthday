@@ -6,6 +6,7 @@ export { Donation } from "./Donation";
 export { ChangePIN } from "./ChangePIN";
 export { VerifyBvn } from "./VerifyBvn";
 export { Dashboard } from "./Dashboard";
+export { ThankYouVideo } from "./ThankYouVideo";
 export { CardSelection } from "./CardSelection";
 export { FundSuccessful } from "./FundSuccessful";
 export { PayWithPaystack } from "./PayWithPaystack";

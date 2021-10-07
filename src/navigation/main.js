@@ -14,6 +14,7 @@ import {
     VerifyBvn,
     Dashboard,
     ChangePIN,
+    ThankYouVideo,
     CardSelection,
     FundSuccessful,
     PayWithPaystack,
@@ -142,6 +143,7 @@ const MainApplicationNavigation = () => {
             <Stack.Screen name="ChangePIN" component={ChangePIN} />
             <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
             <Stack.Screen name="Dashboard" component={TabNavigator} />
+            <Stack.Screen name="ThankYouVideo" component={ThankYouVideo} />
             <Stack.Screen name="CardSelection" component={CardSelection} />
             <Stack.Screen name="FundSuccessful" component={FundSuccessful} />
             <Stack.Screen name="PayWithPaystack" component={PayWithPaystack} />

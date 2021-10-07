@@ -1,4 +1,5 @@
 import React from "react";
+import { Camera } from "expo-camera";
 import { useQuery } from "react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useFocusEffect } from "@react-navigation/native";
@@ -126,7 +127,7 @@ export const History = ({ navigation }) => {
                                         <AppText style={styles.thanksText}>Say Thank you now:</AppText>
 
                                         <View style={styles.thanksIconBox}>
-                                            <TouchableOpacity>
+                                            <TouchableOpacity onPress={captureVideo}>
                                                 <View
                                                     style={[
                                                         styles.thankIconWrapper,
@@ -206,6 +207,16 @@ export const History = ({ navigation }) => {
                 contentContainerStyle={{ padding: 25, paddingTop: 5 }}
             />
         );
+    };
+
+    const captureVideo = async () => {
+        const { status } = await Camera.requestPermissionsAsync();
+
+        if (status !== "granted") {
+            return alert("You need to enable permission for Camera.");
+        }
+
+        navigation.navigate("ThankYouVideo");
     };
 
     return (
