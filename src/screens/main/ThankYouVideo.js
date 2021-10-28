@@ -1,24 +1,19 @@
-import React, { useState, useRef } from "react";
-// import { Camera } from "expo-camera";
-import { RNCamera } from "react-native-camera";
-
-import { useQuery } from "react-query";
+import React, { useRef } from "react";
+import { StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/core";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 
-import { BackIcon } from "../../../assets/svg";
-import { AppText } from "../../components";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Camera, useCameraDevices } from "react-native-vision-camera";
 
 export const ThankYouVideo = ({ navigation }) => {
     const cameraRef = useRef();
     const isFocused = useIsFocused();
 
-    const { user, authenticatedRequest } = useAuth();
+    const devices = useCameraDevices("wide-angle-camera");
+    const device = devices.back;
 
     const startRecording = async () => {
         try {
@@ -30,32 +25,9 @@ export const ThankYouVideo = ({ navigation }) => {
         }
     };
 
-    // if (!isFocused) return null;
+    if (!isFocused) return null;
 
-    return (
-        <SafeAreaView style={{ backgroundColor: "red", flex: 1 }}>
-            <RNCamera />
-        </SafeAreaView>
-    );
-
-    return (
-        <RNCamera
-            ref={cameraRef}
-            style={styles.camera}
-            androidCameraPermissionOptions={{
-                title: "Permission to use camera",
-                message: "We need your permission to use your camera",
-                buttonPositive: "Ok",
-                buttonNegative: "Cancel",
-            }}
-            androidRecordAudioPermissionOptions={{
-                title: "Permission to use audio recording",
-                message: "We need your permission to use your audio",
-                buttonPositive: "Ok",
-                buttonNegative: "Cancel",
-            }}
-        />
-    );
+    return <Camera style={StyleSheet.absoluteFill} device={device} isActive={true} />;
 };
 
 const styles = StyleSheet.create({
