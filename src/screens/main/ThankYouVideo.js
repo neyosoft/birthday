@@ -1,19 +1,15 @@
 import React, { useRef } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useIsFocused } from "@react-navigation/core";
 
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { Camera, useCameraDevices } from "react-native-vision-camera";
 
 export const ThankYouVideo = ({ navigation }) => {
     const cameraRef = useRef();
     const isFocused = useIsFocused();
-
-    const devices = useCameraDevices("wide-angle-camera");
-    const device = devices.back;
 
     const startRecording = async () => {
         try {
@@ -27,7 +23,7 @@ export const ThankYouVideo = ({ navigation }) => {
 
     if (!isFocused) return null;
 
-    return <Camera style={StyleSheet.absoluteFill} device={device} isActive={true} />;
+    return <View style={StyleSheet.absoluteFill} isActive={true} />;
 };
 
 const styles = StyleSheet.create({
