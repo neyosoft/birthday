@@ -202,7 +202,7 @@ export const History = ({ navigation }) => {
         return (
             <FlatList
                 data={history.data}
-                keyExtractor={(item) => `${item.id}`}
+                keyExtractor={item => `${item.id}`}
                 renderItem={renderTransactionRecord}
                 contentContainerStyle={{ padding: 25, paddingTop: 5 }}
             />
@@ -210,7 +210,7 @@ export const History = ({ navigation }) => {
     };
 
     const captureVideo = async () => {
-        const { status } = await Camera.requestPermissionsAsync();
+        const { status } = await Camera.requestCameraPermissionsAsync();
 
         if (status !== "granted") {
             return alert("You need to enable permission for Camera.");
