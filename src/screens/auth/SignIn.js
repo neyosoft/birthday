@@ -24,7 +24,7 @@ export const SignIn = ({ navigation }) => {
     const toast = useToast();
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (values) => {
+    const handleSubmit = async values => {
         const params = new URLSearchParams();
 
         params.append("username", values.email);
@@ -83,7 +83,7 @@ export const SignIn = ({ navigation }) => {
         }
     };
 
-    const handleBiometricLogin = async (type) => {
+    const handleBiometricLogin = async type => {
         setLoading(true);
 
         try {
@@ -125,7 +125,7 @@ export const SignIn = ({ navigation }) => {
         }
     };
 
-    const resendVerificationMail = async (email) => {
+    const resendVerificationMail = async email => {
         if (!email) {
             return toast.show("Kindly supply your email address.");
         }
@@ -161,7 +161,7 @@ export const SignIn = ({ navigation }) => {
                 return;
             }
 
-            return (await Notifications.getExpoPushTokenAsync()).data;
+            return (await Notifications.getExpoPushTokenAsync({ experienceId: "@neyosoft/pokeet" })).data;
         } else {
             alert("Must use physical device for Push Notifications");
         }

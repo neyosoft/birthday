@@ -30,6 +30,7 @@
                 "NSFaceIDUsageDescription": "Pokeet needs to use Face ID / Touch ID to authenticate you"
             }
         },
+        "plugins": ["@react-native-firebase/app", "@react-native-firebase/crashlytics"],
         "name": "Pokeet",
         "slug": "pokeet",
         "version": "1.3.0",
