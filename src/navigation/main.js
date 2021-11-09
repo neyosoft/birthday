@@ -14,6 +14,7 @@ import {
     VerifyBvn,
     Dashboard,
     ChangePIN,
+    ThankYouPhoto,
     ThankYouVideo,
     CardSelection,
     FundSuccessful,
@@ -44,12 +45,12 @@ const MainApplicationNavigation = () => {
         registerForPushNotificationsAsync();
 
         // This listener is fired whenever a notification is received while the app is foregrounded
-        notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
             console.log("Notification: ", notification);
         });
 
         // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-        responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
             console.log("Notification tapped: ", response);
         });
 
@@ -144,6 +145,7 @@ const MainApplicationNavigation = () => {
             <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
             <Stack.Screen name="Dashboard" component={TabNavigator} />
             <Stack.Screen name="ThankYouVideo" component={ThankYouVideo} />
+            <Stack.Screen name="ThankYouPhoto" component={ThankYouPhoto} />
             <Stack.Screen name="CardSelection" component={CardSelection} />
             <Stack.Screen name="FundSuccessful" component={FundSuccessful} />
             <Stack.Screen name="PayWithPaystack" component={PayWithPaystack} />

@@ -141,7 +141,7 @@ export const History = ({ navigation }) => {
                                                     <AudioIcon />
                                                 </View>
                                             </TouchableOpacity>
-                                            <TouchableOpacity>
+                                            <TouchableOpacity onPress={capturePhoto}>
                                                 <View
                                                     style={[
                                                         styles.thankIconWrapper,
@@ -217,6 +217,16 @@ export const History = ({ navigation }) => {
         }
 
         navigation.navigate("ThankYouVideo");
+    };
+
+    const capturePhoto = async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+
+        if (status !== "granted") {
+            return alert("You need to enable permission for Camera.");
+        }
+
+        navigation.navigate("ThankYouPhoto");
     };
 
     return (

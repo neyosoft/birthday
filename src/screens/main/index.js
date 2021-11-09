@@ -7,6 +7,7 @@ export { ChangePIN } from "./ChangePIN";
 export { VerifyBvn } from "./VerifyBvn";
 export { Dashboard } from "./Dashboard";
 export { ThankYouVideo } from "./ThankYouVideo";
+export { ThankYouPhoto } from "./ThankYouPhoto";
 export { CardSelection } from "./CardSelection";
 export { FundSuccessful } from "./FundSuccessful";
 export { PayWithPaystack } from "./PayWithPaystack";

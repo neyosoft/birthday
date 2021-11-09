@@ -17,7 +17,7 @@ import BirthdayIcon from "../../../assets/images/birthday.png";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 import { BackIcon, InstagramIcon, TwitterIcon, UserAvatarIcon } from "../../../assets/svg";
 
-const extractProfileInfo = (userInfo) => {
+const extractProfileInfo = userInfo => {
     const output = {};
 
     switch (userInfo.kyclevel) {
@@ -67,8 +67,6 @@ export const Profile = ({ navigation }) => {
     const instagramLoginRef = useRef();
     const { user, logout, accessToken, refreshUser, authenticatedRequest } = useAuth();
 
-    console.log({ user });
-
     const [profileImage, setProfileImage] = useState(
         user.picUrl
             ? `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/${user.picUrl}`
@@ -102,7 +100,7 @@ export const Profile = ({ navigation }) => {
                 saveToPhotos: false,
                 includeBase64: false,
             },
-            async (response) => {
+            async response => {
                 if (response.assets && response.assets.length === 1) {
                     const result = response.assets[0];
 
@@ -141,7 +139,7 @@ export const Profile = ({ navigation }) => {
         );
     };
 
-    const submitInstragramInformation = async (instagramData) => {
+    const submitInstragramInformation = async instagramData => {
         try {
             const { data } = await axios.get("https://graph.instagram.com/me", {
                 params: { fields: "id,username", access_token: instagramData.access_token },
@@ -317,7 +315,7 @@ export const Profile = ({ navigation }) => {
                 appSecret="9dd86d435f506292c443b48917e6f32c"
                 redirectUrl="https://pokeet.com.ng/instagram"
                 onLoginSuccess={submitInstragramInformation}
-                onLoginFailure={(data) => console.log("Login failed: ", data)}
+                onLoginFailure={data => console.log("Login failed: ", data)}
             />
         </View>
     );

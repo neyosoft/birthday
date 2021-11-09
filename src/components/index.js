@@ -6,3 +6,4 @@ export { TextField } from "./TextField";
 export { RecordBtn } from "./RecordBtn";
 export { PasswordField } from "./PasswordField";
 export { AutoFillField } from "./AutoFillField";
+export { CapturePhotoBtn } from "./CapturePhotoBtn";
