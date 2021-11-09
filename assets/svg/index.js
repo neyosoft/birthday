@@ -5,6 +5,7 @@ export { VideoIcon } from "./VideoIcon";
 export { CameraIcon } from "./CameraIcon";
 export { ReloadIcon } from "./ReloadIcon";
 export { ShieldIcon } from "./ShieldIcon";
+export { CameraFlip } from "./CameraFlip";
 export { TwitterIcon } from "./TwitterIcon";
 export { ProfileIcon } from "./ProfileIcon";
 export { HistoryIcon } from "./HistoryIcon";
