@@ -5,8 +5,8 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { useToast } from "react-native-fast-toast";
 import * as Notifications from "expo-notifications";
-import * as LocalAuthentication from "expo-local-authentication";
 import crashlytics from "@react-native-firebase/crashlytics";
+import * as LocalAuthentication from "expo-local-authentication";
 import { StyleSheet, View, Image, TouchableOpacity, ScrollView, Platform } from "react-native";
 
 import LockImage from "../../../assets/images/lock.png";
@@ -16,8 +16,10 @@ import { AppText, Page, AppButton, TextField, PasswordField } from "../../compon
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
-import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 import { getBiometricLogin, saveBiometricLogin } from "../../utils/storage.utils";
+import { baseRequest, debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
+
+const experienceId = "@neyosoft/pokeet";
 
 export const SignIn = ({ navigation }) => {
     const { authenticate } = useAuth();
@@ -148,6 +150,15 @@ export const SignIn = ({ navigation }) => {
     };
 
     const registerForPushNotificationsAsync = async () => {
+        if (Platform.OS === "android") {
+            Notifications.setNotificationChannelAsync("default", {
+                name: "default",
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: "#FF231F7C",
+            });
+        }
+
         if (Constants.isDevice) {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
 
@@ -161,18 +172,15 @@ export const SignIn = ({ navigation }) => {
                 return;
             }
 
-            return (await Notifications.getExpoPushTokenAsync({ experienceId: "@neyosoft/pokeet" })).data;
+            try {
+                const expoPushToken = await Notifications.getExpoPushTokenAsync({ experienceId });
+
+                return expoPushToken.data;
+            } catch (error) {
+                console.log("There is a problem registering push notification");
+            }
         } else {
             alert("Must use physical device for Push Notifications");
-        }
-
-        if (Platform.OS === "android") {
-            Notifications.setNotificationChannelAsync("default", {
-                name: "default",
-                importance: Notifications.AndroidImportance.MAX,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: "#FF231F7C",
-            });
         }
     };
 
