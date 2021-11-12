@@ -1,9 +1,9 @@
 export const extractImageData = uri => {
     const partList = uri.split("/");
 
-    const fileName = partList[partList.length - 1];
+    const name = partList[partList.length - 1];
 
-    const extensionParts = fileName.split(".");
+    const extensionParts = name.split(".");
 
     const extension = extensionParts[extensionParts.length - 1];
 
@@ -37,5 +37,5 @@ export const extractImageData = uri => {
             break;
     }
 
-    return { uri, fileName, type };
+    return { uri, name, type };
 };

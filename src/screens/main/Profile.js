@@ -109,6 +109,7 @@ export const Profile = ({ navigation }) => {
                     const now = new Date();
 
                     const formdata = new FormData();
+                    console.log({ uri: result.uri, type: result.type, name: result.fileName });
                     formdata.append("imageFile", { uri: result.uri, type: result.type, name: result.fileName });
 
                     try {
