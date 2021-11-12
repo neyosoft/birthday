@@ -15,7 +15,7 @@ import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 const { width } = Dimensions.get("window");
 
-export const ThankYouVideo = ({ navigation }) => {
+export const ThankYouAudio = ({ navigation }) => {
     const cameraRef = useRef();
     const timerRef = useRef();
     const toast = useToast();

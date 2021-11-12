@@ -1,14 +1,11 @@
 import React from "react";
-import axios from "axios";
 import { Camera } from "expo-camera";
 import { useQuery } from "react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useFocusEffect } from "@react-navigation/native";
-import { launchImageLibrary } from "react-native-image-picker";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { StyleSheet, View, TouchableOpacity, FlatList } from "react-native";
 
-import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { AppButton, AppText } from "../../components";
@@ -24,10 +21,9 @@ import {
     WithdrawalIcon,
     GiftReceivedIcon,
 } from "../../../assets/svg";
-import { debugAxiosError, extractResponseErrorMessage } from "../../utils/request.utils";
 
 export const History = ({ navigation }) => {
-    const { user, accessToken, authenticatedRequest } = useAuth();
+    const { user, authenticatedRequest } = useAuth();
 
     const history = useQuery("history", async () => {
         try {
@@ -225,48 +221,6 @@ export const History = ({ navigation }) => {
 
     const capturePhoto = async () => {
         navigation.navigate("ThankYouPhoto");
-
-        // try {
-        //     launchImageLibrary(
-        //         {
-        //             maxWidth: 500,
-        //             maxHeight: 500,
-        //             mediaType: "photo",
-        //             saveToPhotos: false,
-        //             includeBase64: false,
-        //         },
-        //         async response => {
-        //             if (response.assets && response.assets.length === 1) {
-        //                 const result = response.assets[0];
-
-        //                 const now = new Date();
-
-        //                 const formdata = new FormData();
-        //                 console.log({ uri: result.uri, type: result.type, name: result.fileName });
-        //                 formdata.append("mediaFile", { uri: result.uri, type: result.type, name: result.fileName });
-
-        //                 await axios.post(
-        //                     `${
-        //                         Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL
-        //                     }/media/upload/${user.id}/IMAGE`,
-        //                     formdata,
-        //                     {
-        //                         headers: {
-        //                             "Content-Type": "multipart/form-data",
-        //                             Authorization: `Bearer ${accessToken}`,
-        //                             TimeStamp: `${now.getFullYear()}-${
-        //                                 now.getMonth() + 1
-        //                             }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
-        //                         },
-        //                     },
-        //                 );
-        //             }
-        //         },
-        //     );
-        // } catch (error) {
-        //     console.log("some error happened: ", error);
-        //     debugAxiosError(e);
-        // }
     };
 
     return (

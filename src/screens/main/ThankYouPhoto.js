@@ -1,84 +1,133 @@
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
-import ImagePicker from "expo-image-picker";
 import { useToast } from "react-native-fast-toast";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { launchImageLibrary } from "react-native-image-picker";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Image, StatusBar, Dimensions, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
-import { AppText, CapturePhotoBtn } from "../../components";
 import { useAuth } from "../../context";
-import { extractImageData } from "../../utils/file.utils";
-import { debugAxiosError } from "../../utils/request.utils";
+import { AppText, CapturePhotoBtn } from "../../components";
+import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 const { width } = Dimensions.get("window");
 
 export const ThankYouPhoto = ({ navigation }) => {
-    const cameraRef = useRef();
     const toast = useToast();
 
-    const { user, accessToken, authenticatedRequest } = useAuth();
+    const { user, accessToken } = useAuth();
 
-    const [preview, setPreview] = useState(false);
     const [photoData, setPhotoData] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const [hasPermission, setHasPermission] = useState(null);
 
     useEffect(() => {
         (async () => {
-            // const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            launchImageLibrary(
+                {
+                    maxWidth: 500,
+                    maxHeight: 500,
+                    mediaType: "photo",
+                    saveToPhotos: false,
+                    includeBase64: false,
+                },
+                async response => {
+                    if (response.assets && response.assets.length === 1) {
+                        const result = response.assets[0];
 
-            // console.log("status: ", status);
-
-            if (true) {
-                setHasPermission(true);
-                const result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                    allowsEditing: true,
-                    aspect: [4, 3],
-                    quality: 0.8,
-                });
-
-                console.log(result);
-            } else {
-                setHasPermission(false);
-            }
+                        setPhotoData(result);
+                    }
+                },
+            );
         })();
     }, []);
 
     const takePhoto = async () => {
+        launchImageLibrary(
+            {
+                maxWidth: 500,
+                maxHeight: 500,
+                mediaType: "photo",
+                saveToPhotos: false,
+                includeBase64: false,
+            },
+            async response => {
+                if (response.assets && response.assets.length === 1) {
+                    const result = response.assets[0];
+
+                    setPhotoData(result);
+                }
+            },
+        );
+    };
+
+    const uploadPhoto = async () => {
+        setUploading(true);
+
+        const now = new Date();
+
+        const formdata = new FormData();
+        formdata.append("mediaFile", { uri: photoData.uri, type: photoData.type, name: photoData.fileName });
+
         try {
-            setPreview(true);
+            await axios.post(
+                `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
+                    user.id
+                }/IMAGE`,
+                formdata,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${accessToken}`,
+                        TimeStamp: `${now.getFullYear()}-${
+                            now.getMonth() + 1
+                        }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                    },
+                },
+            );
 
-            const photoPath = await cameraRef?.current?.takePictureAsync({ base64: false, exif: false, quality: 0.7 });
+            toast.show("Image successfully uploaded.");
 
-            await cameraRef?.current?.pausePreview();
-
-            setPhotoData(photoPath);
-
-            console.log({ photoPath });
+            navigation.navigate("Dashboard");
         } catch (error) {
-            toast.show("There is problem taking photo");
+            toast.show(extractResponseErrorMessage(error));
+            setUploading(false);
         }
     };
 
-    if (hasPermission === null) {
-        return <View />;
-    }
-    if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
-    }
-
     return (
         <View style={styles.container}>
-            <View style={styles.cameraArea}></View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity disabled={preview} onPress={takePhoto}>
-                    <CapturePhotoBtn />
-                </TouchableOpacity>
+            <View style={styles.photoContainer}>
+                {photoData ? (
+                    <Image resizeMode="cover" style={styles.photo} source={photoData} />
+                ) : (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <AppText>No image selected</AppText>
+                    </View>
+                )}
+                {photoData && !uploading ? (
+                    <TouchableOpacity style={styles.acceptBtn} onPress={uploadPhoto}>
+                        <Ionicons name="checkmark-circle-sharp" size={RFPercentage(5)} color="#03E895" />
+                    </TouchableOpacity>
+                ) : null}
             </View>
+            <View style={styles.buttonContainer}>
+                {uploading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="small" color="#03E895" />
+                        <AppText style={styles.loadingText}>Uploading photo...</AppText>
+                    </View>
+                ) : (
+                    <TouchableOpacity onPress={takePhoto}>
+                        <CapturePhotoBtn />
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            <TouchableOpacity style={styles.backBtn} onPress={navigation.goBack}>
+                <Ionicons name="arrow-back-sharp" size={24} color="black" />
+            </TouchableOpacity>
         </View>
     );
 };
@@ -86,22 +135,29 @@ export const ThankYouPhoto = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: StatusBar.currentHeight,
         backgroundColor: theme.backgroundColor,
     },
-    closeBtn: {
+    backBtn: {
+        position: "absolute",
+        top: 30,
+        left: 20,
+    },
+    acceptBtn: {
         position: "absolute",
         top: 30,
         right: 20,
     },
-    cameraArea: {
+    photoContainer: {
         width,
         // height: width * 1.6,
         height: (width / 3) * 4,
+        backgroundColor: "gray",
     },
-    camera: {
-        width,
+    photo: {
         flex: 1,
-        height: "70%",
+        width: undefined,
+        height: undefined,
     },
     buttonContainer: {
         flex: 1,
@@ -109,20 +165,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
     },
-    uploadViewArea: {
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        left: RFPercentage(3),
-        flexDirection: "column",
-        justifyContent: "center",
+    loadingContainer: {
+        alignItems: "center",
     },
-    flipArea: {
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        right: RFPercentage(3),
-        flexDirection: "column",
-        justifyContent: "center",
+    loadingText: {
+        color: "#fff",
+        marginTop: RFPercentage(1),
     },
 });

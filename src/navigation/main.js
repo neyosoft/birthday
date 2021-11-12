@@ -14,6 +14,7 @@ import {
     VerifyBvn,
     Dashboard,
     ChangePIN,
+    ThankYouAudio,
     ThankYouPhoto,
     ThankYouVideo,
     CardSelection,
@@ -145,6 +146,7 @@ const MainApplicationNavigation = () => {
             <Stack.Screen name="VerifyBvn" component={VerifyBvn} />
             <Stack.Screen name="Dashboard" component={TabNavigator} />
             <Stack.Screen name="ThankYouVideo" component={ThankYouVideo} />
+            <Stack.Screen name="ThankYouAudio" component={ThankYouAudio} />
             <Stack.Screen name="ThankYouPhoto" component={ThankYouPhoto} />
             <Stack.Screen name="CardSelection" component={CardSelection} />
             <Stack.Screen name="FundSuccessful" component={FundSuccessful} />
