@@ -52,7 +52,6 @@ export const ThankYouAudio = ({ navigation }) => {
                 clearTimeout(timerRef.current);
             } else {
                 setTimeLeft(value => {
-                    console.log(value);
                     if (value <= 0) {
                         clearTimeout(timerRef.current);
                         stopRecording();

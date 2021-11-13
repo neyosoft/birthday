@@ -50,11 +50,15 @@ export const ThankYouVideo = ({ navigation }) => {
         }
 
         timerRef.current = setInterval(() => {
-            if (timeLeft <= 0) {
-                clearTimeout(timerRef.current);
-            } else {
-                setTimeLeft(value => value - 1);
-            }
+            setTimeLeft(value => {
+                if (value <= 0) {
+                    clearTimeout(timerRef.current);
+
+                    return 0;
+                } else {
+                    return value - 1;
+                }
+            });
         }, 1000);
     };
 
