@@ -1,22 +1,21 @@
 import axios from "axios";
-import { Camera } from "expo-camera";
+import { Audio } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import React, { useRef, useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { StyleSheet, View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Dimensions, StatusBar } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
 import { useAuth } from "../../context";
 import { AppText, RecordBtn } from "../../components";
-import { CameraFlip } from "../../../assets/svg";
 import { extractImageData } from "../../utils/file.utils";
 import { extractResponseErrorMessage } from "../../utils/request.utils";
 
 const { width } = Dimensions.get("window");
 
 export const ThankYouAudio = ({ navigation }) => {
-    const cameraRef = useRef();
     const timerRef = useRef();
     const toast = useToast();
     const { user, accessToken } = useAuth();
@@ -24,13 +23,13 @@ export const ThankYouAudio = ({ navigation }) => {
     const [timeLeft, setTimeLeft] = useState(60);
 
     const [recording, setRecording] = useState(false);
-    const [hasPermission, setHasPermission] = useState(null);
-    const [type, setType] = useState(Camera.Constants.Type.front);
+    const [recordHandle, setRecordHandle] = useState(null);
 
     useEffect(() => {
         (async () => {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            setHasPermission(status === "granted");
+            const permissionResponse = await Audio.requestPermissionsAsync();
+
+            console.log("permissionResponse: ", permissionResponse);
         })();
 
         return () => {
@@ -39,10 +38,6 @@ export const ThankYouAudio = ({ navigation }) => {
             }
         };
     }, []);
-
-    const flipCamera = () => {
-        setType(type === Camera.Constants.Type.back ? Camera.Constants.Type.front : Camera.Constants.Type.back);
-    };
 
     const startTimer = () => {
         if (timerRef.current) {
@@ -59,73 +54,61 @@ export const ThankYouAudio = ({ navigation }) => {
     };
 
     const startRecording = async () => {
-        if (recording) {
-            setRecording(false);
-            clearInterval(timerRef.current);
-            await cameraRef?.current?.stopRecording();
-
-            return;
-        }
-
         setRecording(true);
         startTimer();
 
         try {
-            const videoPath = await cameraRef?.current?.recordAsync({ maxDuration: 60 });
+            const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
 
-            const now = new Date();
-
-            const formdata = new FormData();
-            formdata.append("mediaFile", extractImageData(videoPath.uri));
-
-            await axios.post(
-                `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
-                    user.id
-                }/IMAGE`,
-                formdata,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                        Authorization: `Bearer ${accessToken}`,
-                        TimeStamp: `${now.getFullYear()}-${
-                            now.getMonth() + 1
-                        }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
-                    },
-                },
-            );
-
-            toast.show("Image successfully uploaded.");
-
-            navigation.navigate("Dashboard");
+            setRecordHandle(recording);
         } catch (error) {
             toast.show(extractResponseErrorMessage(error));
         }
     };
 
-    if (hasPermission === null) {
-        return <View />;
-    }
-    if (hasPermission === false) {
-        return <Text>No access to camera</Text>;
-    }
+    const stopRecording = async () => {
+        await recordHandle.stopAndUnloadAsync();
+        const uri = recordHandle.getURI();
+
+        console.log("uri: ", uri);
+
+        const now = new Date();
+
+        const formdata = new FormData();
+        formdata.append("mediaFile", extractImageData(uri));
+
+        await axios.post(
+            `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
+                user.id
+            }/AUDIO`,
+            formdata,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${accessToken}`,
+                    TimeStamp: `${now.getFullYear()}-${
+                        now.getMonth() + 1
+                    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                },
+            },
+        );
+
+        toast.show("Image successfully uploaded.");
+
+        navigation.navigate("Dashboard");
+    };
 
     return (
         <View style={styles.container}>
-            <View style={styles.cameraArea}>
-                <Camera ref={cameraRef} style={styles.camera} type={type} />
+            <View style={styles.audioViewContainer}>
+                <Ionicons name="mic" size={RFPercentage(20)} color="#fff" />
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={startRecording}>
+                <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
                     <RecordBtn recording={recording} />
                 </TouchableOpacity>
 
                 {recording ? <AppText style={styles.timeleft}>{timeLeft}</AppText> : null}
-
-                <View style={styles.flipArea}>
-                    <TouchableOpacity onPress={flipCamera}>
-                        <CameraFlip height={40} width={40} />
-                    </TouchableOpacity>
-                </View>
             </View>
         </View>
     );
@@ -134,10 +117,14 @@ export const ThankYouAudio = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: StatusBar.currentHeight,
         backgroundColor: theme.backgroundColor,
     },
-    cameraArea: {
+    audioViewContainer: {
         width,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "gray",
         height: (width / 3) * 4,
     },
     camera: {

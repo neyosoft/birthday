@@ -136,7 +136,7 @@ export const History = ({ navigation }) => {
                                                     <VideoIcon />
                                                 </View>
                                             </TouchableOpacity>
-                                            <TouchableOpacity>
+                                            <TouchableOpacity onPress={() => navigation.navigate("ThankYouAudio")}>
                                                 <View style={[styles.thankIconWrapper, { borderColor: "#A696FB" }]}>
                                                     <AudioIcon />
                                                 </View>

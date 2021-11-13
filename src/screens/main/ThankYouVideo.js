@@ -21,7 +21,7 @@ export const ThankYouVideo = ({ navigation }) => {
     const toast = useToast();
     const { user, accessToken } = useAuth();
 
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(10);
 
     const [recording, setRecording] = useState(false);
     const [hasPermission, setHasPermission] = useState(null);
@@ -71,7 +71,7 @@ export const ThankYouVideo = ({ navigation }) => {
         startTimer();
 
         try {
-            const videoPath = await cameraRef?.current?.recordAsync({ maxDuration: 60 });
+            const videoPath = await cameraRef?.current?.recordAsync({ maxDuration: 10 });
 
             const now = new Date();
 
