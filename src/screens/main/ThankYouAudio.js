@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "react-native-fast-toast";
 import React, { useRef, useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { StyleSheet, View, TouchableOpacity, Dimensions, StatusBar } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Dimensions, StatusBar, ActivityIndicator } from "react-native";
 
 import Config from "../../config";
 import { theme } from "../../theme";
@@ -17,19 +17,22 @@ const { width } = Dimensions.get("window");
 
 export const ThankYouAudio = ({ navigation }) => {
     const timerRef = useRef();
+    const recordRef = useRef();
+
     const toast = useToast();
     const { user, accessToken } = useAuth();
 
-    const [timeLeft, setTimeLeft] = useState(60);
+    const [timeLeft, setTimeLeft] = useState(10);
 
     const [recording, setRecording] = useState(false);
-    const [recordHandle, setRecordHandle] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [hasPermission, setHasPermission] = useState(false);
 
     useEffect(() => {
         (async () => {
             const permissionResponse = await Audio.requestPermissionsAsync();
 
-            console.log("permissionResponse: ", permissionResponse);
+            setHasPermission(permissionResponse.status === "granted");
         })();
 
         return () => {
@@ -48,54 +51,91 @@ export const ThankYouAudio = ({ navigation }) => {
             if (timeLeft <= 0) {
                 clearTimeout(timerRef.current);
             } else {
-                setTimeLeft(value => value - 1);
+                setTimeLeft(value => {
+                    console.log(value);
+                    if (value <= 0) {
+                        clearTimeout(timerRef.current);
+                        stopRecording();
+
+                        return 0;
+                    } else {
+                        return value - 1;
+                    }
+                });
             }
         }, 1000);
     };
 
     const startRecording = async () => {
-        setRecording(true);
-        startTimer();
+        if (recordRef.current) {
+            recordRef.current._cleanupForUnloadedRecorder({ durationMillis: 0 });
+            recordRef.current = undefined;
+        }
 
         try {
             const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+            recordRef.current = recording;
 
-            setRecordHandle(recording);
+            setRecording(true);
+            startTimer();
         } catch (error) {
+            console.log("can't start recording: ", error);
             toast.show(extractResponseErrorMessage(error));
         }
     };
 
     const stopRecording = async () => {
-        await recordHandle.stopAndUnloadAsync();
-        const uri = recordHandle.getURI();
+        console.log("we have stop recording...");
+        setRecording(false);
 
-        console.log("uri: ", uri);
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
 
-        const now = new Date();
+        if (!recordRef.current) return;
 
-        const formdata = new FormData();
-        formdata.append("mediaFile", extractImageData(uri));
+        setUploading(true);
 
-        await axios.post(
-            `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
-                user.id
-            }/AUDIO`,
-            formdata,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${accessToken}`,
-                    TimeStamp: `${now.getFullYear()}-${
-                        now.getMonth() + 1
-                    }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+        try {
+            await recordRef.current.stopAndUnloadAsync();
+            const uri = recordRef.current.getURI();
+
+            recordRef.current = undefined;
+
+            const now = new Date();
+
+            const formdata = new FormData();
+            formdata.append("mediaFile", extractImageData(uri));
+
+            await axios.post(
+                `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
+                    user.id
+                }/AUDIO`,
+                formdata,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${accessToken}`,
+                        TimeStamp: `${now.getFullYear()}-${
+                            now.getMonth() + 1
+                        }-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`,
+                    },
                 },
-            },
-        );
+            );
 
-        toast.show("Image successfully uploaded.");
+            toast.show("Audio successfully uploaded.");
 
-        navigation.navigate("Dashboard");
+            navigation.navigate("Dashboard");
+        } catch (error) {
+            console.log("the error: ", error);
+            setUploading(false);
+
+            if (error?.code === "E_AUDIO_NODATA") {
+                return toast.show(`Stop was called too quickly, no data has yet been received (${error.message})`);
+            }
+
+            toast.show(extractResponseErrorMessage(error));
+        }
     };
 
     return (
@@ -104,11 +144,20 @@ export const ThankYouAudio = ({ navigation }) => {
                 <Ionicons name="mic" size={RFPercentage(20)} color="#fff" />
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
-                    <RecordBtn recording={recording} />
-                </TouchableOpacity>
+                {uploading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="small" color="#03E895" />
+                        <AppText style={styles.loadingText}>Uploading media file...</AppText>
+                    </View>
+                ) : (
+                    <>
+                        <TouchableOpacity onPress={recording ? stopRecording : startRecording}>
+                            <RecordBtn recording={recording} />
+                        </TouchableOpacity>
 
-                {recording ? <AppText style={styles.timeleft}>{timeLeft}</AppText> : null}
+                        {recording ? <AppText style={styles.timeleft}>{timeLeft}</AppText> : null}
+                    </>
+                )}
             </View>
         </View>
     );
@@ -140,12 +189,11 @@ const styles = StyleSheet.create({
     timeleft: {
         marginTop: 5,
     },
-    flipArea: {
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        right: RFPercentage(3),
-        flexDirection: "column",
-        justifyContent: "center",
+    loadingContainer: {
+        alignItems: "center",
+    },
+    loadingText: {
+        color: "#fff",
+        marginTop: RFPercentage(1),
     },
 });

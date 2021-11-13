@@ -52,7 +52,7 @@ export default class AuthProvider extends Component {
                 accountSetupCompleted,
             });
         },
-        updateUser: async (user) => {
+        updateUser: async user => {
             await saveUserDetail(user);
 
             this.setState({ user });
@@ -127,7 +127,7 @@ export default class AuthProvider extends Component {
                 },
             });
 
-            instance.interceptors.request.use(async (config) => {
+            instance.interceptors.request.use(async config => {
                 const decoded = jwt_decode(accessToken);
 
                 if (isFuture(new Date(decoded.exp * 1000))) {

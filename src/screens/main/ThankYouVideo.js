@@ -81,7 +81,7 @@ export const ThankYouVideo = ({ navigation }) => {
             await axios.post(
                 `${Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL}/media/upload/${
                     user.id
-                }/IMAGE`,
+                }/VIDEO`,
                 formdata,
                 {
                     headers: {

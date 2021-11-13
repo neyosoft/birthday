@@ -34,6 +34,8 @@ export const extractImageData = uri => {
             break;
         case "aac":
             type = "audio/aac";
+        case "m4a":
+            type = "audio/mp4";
             break;
     }
 
