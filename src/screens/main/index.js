@@ -6,6 +6,7 @@ export { Donation } from "./Donation";
 export { ChangePIN } from "./ChangePIN";
 export { VerifyBvn } from "./VerifyBvn";
 export { Dashboard } from "./Dashboard";
+// export { MediaPreview } from "./MediaPreview";
 export { ThankYouVideo } from "./ThankYouVideo";
 export { ThankYouAudio } from "./ThankYouAudio";
 export { ThankYouPhoto } from "./ThankYouPhoto";

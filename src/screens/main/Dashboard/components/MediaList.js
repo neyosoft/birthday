@@ -1,13 +1,13 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { View, StyleSheet, Image, FlatList } from "react-native";
+import { View, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
 
 import Config from "../../../../config";
 import { useAuth } from "../../../../context";
 import { AppText } from "../../../../components";
 import { StoryPlusIcon } from "../../../../../assets/svg";
 
-export const MediaList = () => {
+export const MediaList = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
 
     const mediaListResponse = useQuery("mediaList", async () => {
@@ -46,20 +46,24 @@ export const MediaList = () => {
             showsHorizontalScrollIndicator={false}
             keyExtractor={item => item.uploadersProfileUrl}
             renderItem={({ index, item }) => (
-                <View style={styles.storySingleContainer}>
-                    <View style={styles.innerStorySingleContainer}>
-                        <Image
-                            resizeMode="cover"
-                            style={styles.mediaUploaderImage}
-                            source={{
-                                uri: `${
-                                    Config.environment === "production" ? Config.PROD_SERVER_URL : Config.DEV_SERVER_URL
-                                }/${item.uploadersProfileUrl}`,
-                            }}
-                        />
+                <TouchableOpacity onPress={() => navigation.navigate("MediaPreview")}>
+                    <View style={styles.storySingleContainer}>
+                        <View style={styles.innerStorySingleContainer}>
+                            <Image
+                                resizeMode="cover"
+                                style={styles.mediaUploaderImage}
+                                source={{
+                                    uri: `${
+                                        Config.environment === "production"
+                                            ? Config.PROD_SERVER_URL
+                                            : Config.DEV_SERVER_URL
+                                    }/${item.uploadersProfileUrl}`,
+                                }}
+                            />
+                        </View>
+                        {index === 0 ? <StoryPlusIcon style={{ position: "absolute", bottom: 7, right: -5 }} /> : null}
                     </View>
-                    {index === 0 ? <StoryPlusIcon style={{ position: "absolute", bottom: 7, right: -5 }} /> : null}
-                </View>
+                </TouchableOpacity>
             )}
         />
     );
