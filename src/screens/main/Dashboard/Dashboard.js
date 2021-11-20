@@ -14,19 +14,19 @@ import {
 } from "@gorhom/bottom-sheet";
 import { View, Image, Share, FlatList, StyleSheet, Dimensions, ImageBackground, TouchableOpacity } from "react-native";
 
-import Config from "../../config";
-import { theme } from "../../theme";
+import Config from "../../../config";
+import { theme } from "../../../theme";
 
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
-import { useAuth } from "../../context";
-import UserOne from "../../../assets/images/user1.png";
-import { moneyFormatWNS } from "../../utils/money.utils";
-import UserAvatar from "../../../assets/images/avatar.png";
-import BirthdayIcon from "../../../assets/images/birthday.png";
-import { extractResponseErrorMessage } from "../../utils/request.utils";
-import { ReloadIcon, StoryPlusIcon, UserAvatarIcon, WithdrawIcon } from "../../../assets/svg";
-import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../components";
+import { useAuth } from "../../../context";
+import UserOne from "../../../../assets/images/user1.png";
+import { moneyFormatWNS } from "../../../utils/money.utils";
+import UserAvatar from "../../../../assets/images/avatar.png";
+import BirthdayIcon from "../../../../assets/images/birthday.png";
+import { extractResponseErrorMessage } from "../../../utils/request.utils";
+import { ReloadIcon, StoryPlusIcon, UserAvatarIcon, WithdrawIcon } from "../../../../assets/svg";
+import { AppButton, AppText, Page, TextField, AutoFillField, PasswordField } from "../../../components";
 
 export const Dashboard = ({ navigation }) => {
     const { user, authenticatedRequest } = useAuth();
@@ -221,7 +221,7 @@ export const Dashboard = ({ navigation }) => {
                     data={birthdayUser.data}
                     renderItem={renderItem}
                     onRefresh={birthdayUser.refetch}
-                    keyExtractor={(item) => item.bioId}
+                    keyExtractor={item => item.bioId}
                     refreshing={birthdayUser.isFetching}
                 />
             </View>
@@ -249,7 +249,7 @@ export const Dashboard = ({ navigation }) => {
             </View>
 
             <ImageBackground
-                source={require("../../../assets/images/balance-bg.png")}
+                source={require("../../../../assets/images/balance-bg.png")}
                 style={styles.birthdayInformtionContainer}>
                 <TouchableOpacity
                     style={styles.reloadBtn}
@@ -307,7 +307,7 @@ export const Dashboard = ({ navigation }) => {
                         renderItem={({ index }) => (
                             <View style={styles.storySingleContainer}>
                                 <View style={styles.innerStorySingleContainer}>
-                                    <Image source={require("../../../assets/images/user1.png")} resizeMode="cover" />
+                                    <Image source={require("../../../../assets/images/user1.png")} resizeMode="cover" />
                                 </View>
                                 {index === 0 ? (
                                     <StoryPlusIcon style={{ position: "absolute", bottom: 7, right: -5 }} />
@@ -318,7 +318,7 @@ export const Dashboard = ({ navigation }) => {
                 </View>
                 <View style={{ marginTop: RFPercentage(3), flexDirection: "row" }}>
                     <AppText style={{ marginRight: 10 }}>Today’s Celebrants</AppText>
-                    <Image source={require("../../../assets/images/congratulation.png")} />
+                    <Image source={require("../../../../assets/images/congratulation.png")} />
                 </View>
                 {renderBirthdayList()}
             </View>
@@ -410,7 +410,7 @@ export const Dashboard = ({ navigation }) => {
                             Icon={() => <Ionicons name="chevron-down" size={24} color="#fff" />}
                             items={
                                 banks.isSuccess
-                                    ? banks.data.map((record) => ({ label: record.name, value: record.code }))
+                                    ? banks.data.map(record => ({ label: record.name, value: record.code }))
                                     : []
                             }
                             style={{
@@ -505,7 +505,7 @@ export const Dashboard = ({ navigation }) => {
     );
 };
 
-BackdropComponent = (props) => (
+BackdropComponent = props => (
     <BottomSheetBackdrop
         opacity={0.7}
         closeOnPress={true}
